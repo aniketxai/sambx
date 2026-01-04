@@ -29,7 +29,7 @@ export default function CartPage() {
     (sum, item) => sum + item.price * item.quantity,
     0
   );
-  const shipping = subtotal > 500 ? 0 : 50;
+  const shipping = subtotal > 25000 ? 0 : 500;
   const tax = subtotal * 0.1;
   const total = subtotal + shipping + tax;
 
@@ -81,7 +81,7 @@ export default function CartPage() {
                               {item.name}
                             </h3>
                             <p className="text-2xl font-bold">
-                              ${item.price}
+                              ₹{item.price.toLocaleString('en-IN')}
                             </p>
                           </div>
                           <Button
@@ -120,7 +120,7 @@ export default function CartPage() {
                               Subtotal
                             </p>
                             <p className="text-xl font-bold">
-                              ${(item.price * item.quantity).toFixed(2)}
+                              ₹{(item.price * item.quantity).toLocaleString('en-IN')}
                             </p>
                           </div>
                         </div>
@@ -139,31 +139,31 @@ export default function CartPage() {
                 <CardContent className="space-y-4">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Subtotal</span>
-                    <span className="font-medium">${subtotal.toFixed(2)}</span>
+                    <span className="font-medium">₹{subtotal.toLocaleString('en-IN')}</span>
                   </div>
 
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Shipping</span>
                     <span className="font-medium">
-                      {shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}
+                      {shipping === 0 ? 'Free' : `₹${shipping.toLocaleString('en-IN')}`}
                     </span>
                   </div>
 
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Tax (10%)</span>
-                    <span className="font-medium">${tax.toFixed(2)}</span>
+                    <span className="font-medium">₹{tax.toLocaleString('en-IN')}</span>
                   </div>
 
                   <Separator />
 
                   <div className="flex justify-between text-lg">
                     <span className="font-bold">Total</span>
-                    <span className="font-bold">${total.toFixed(2)}</span>
+                    <span className="font-bold">₹{total.toLocaleString('en-IN')}</span>
                   </div>
 
-                  {subtotal < 500 && (
+                  {subtotal < 25000 && (
                     <p className="text-sm text-muted-foreground">
-                      Add ${(500 - subtotal).toFixed(2)} more for free shipping
+                      Add ₹{(25000 - subtotal).toLocaleString('en-IN')} more for free shipping
                     </p>
                   )}
                 </CardContent>

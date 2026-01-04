@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState ,useEffect} from 'react';
 import { useParams } from 'next/navigation';
-import { products } from '@/lib/mockData';
+import axios from 'axios';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
@@ -13,7 +13,25 @@ import ProductCard from '@/components/product-card';
 
 export default function ProductDetailPage() {
   const params = useParams();
-  const product = products.find((p) => p.slug === params.slug);
+  const [products, setProducts] = useState([]);
+
+  //api get slug product
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        const response = await axios.get(`/api/products/${params.slug}`);
+        setProducts([response.data.product]);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      }
+    }
+
+    fetchProducts();
+  }, []);
+  
+  
+
+   const product = products[0];
   const [quantity, setQuantity] = useState(1);
   const [mainImageIndex, setMainImageIndex] = useState(0);
 
@@ -137,8 +155,8 @@ export default function ProductDetailPage() {
               </div>
 
               <div className="flex items-baseline space-x-2">
-                <span className="text-4xl font-bold">${product.price}</span>
-                <span className="text-muted-foreground">USD</span>
+                <span className="text-4xl font-bold">₹{product.price}</span>
+                <span className="text-muted-foreground">INR</span>
               </div>
 
               <Separator />
@@ -208,7 +226,7 @@ export default function ProductDetailPage() {
                   <div className="space-y-2 text-sm">
                     <div className="flex items-center">
                       <Check className="h-4 w-4 mr-2 text-green-500" />
-                      <span>Free shipping on orders over $500</span>
+                      <span>Free shipping on orders over ₹25,000</span>
                     </div>
                     <div className="flex items-center">
                       <Check className="h-4 w-4 mr-2 text-green-500" />

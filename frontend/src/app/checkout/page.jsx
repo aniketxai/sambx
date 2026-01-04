@@ -266,7 +266,7 @@ export default function CheckoutPage() {
                             </p>
                           </div>
                           <p className="font-medium">
-                            ${(item.price * item.quantity).toFixed(2)}
+                            ₹{(item.price * item.quantity).toLocaleString('en-IN')}
                           </p>
                         </div>
                       ))}
@@ -278,20 +278,20 @@ export default function CheckoutPage() {
                       <div className="flex justify-between text-sm">
                         <span className="text-muted-foreground">Subtotal</span>
                         <span className="font-medium">
-                          ${subtotal.toFixed(2)}
+                          ₹{subtotal.toLocaleString('en-IN')}
                         </span>
                       </div>
 
                       <div className="flex justify-between text-sm">
                         <span className="text-muted-foreground">Shipping</span>
                         <span className="font-medium">
-                          {shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}
+                          {shipping === 0 ? 'Free' : `₹${shipping.toLocaleString('en-IN')}`}
                         </span>
                       </div>
 
                       <div className="flex justify-between text-sm">
                         <span className="text-muted-foreground">Tax</span>
-                        <span className="font-medium">${tax.toFixed(2)}</span>
+                        <span className="font-medium">₹{tax.toLocaleString('en-IN')}</span>
                       </div>
                     </div>
 
@@ -299,12 +299,12 @@ export default function CheckoutPage() {
 
                     <div className="flex justify-between text-lg">
                       <span className="font-bold">Total</span>
-                      <span className="font-bold">${total.toFixed(2)}</span>
+                      <span className="font-bold">₹{total.toLocaleString('en-IN')}</span>
                     </div>
                   </CardContent>
                   <CardContent className="pt-0">
                     <Button type="submit" size="lg" className="w-full">
-                      Place Order ${total.toFixed(2)}
+                      Place Order ₹{total.toLocaleString('en-IN')}
                     </Button>
                   </CardContent>
                 </Card>

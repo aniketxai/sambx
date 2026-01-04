@@ -229,7 +229,7 @@ export default function AddProductPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2">Short Description</label>
+                  <label className="block text-sm font-medium mb-2">Description</label>
                   <Textarea
                     name="description"
                     value={formData.description}
@@ -240,7 +240,7 @@ export default function AddProductPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2">Long Description</label>
+                  <label className="block text-sm font-medium mb-2">Product Details</label>
                   <Textarea
                     name="longDescription"
                     value={formData.longDescription}
@@ -298,7 +298,7 @@ export default function AddProductPage() {
 
               {/* Features */}
               <div className="space-y-4 pt-6 border-t">
-                <h3 className="font-semibold text-slate-900 dark:text-slate-100">Features</h3>
+                <h3 className="font-semibold text-slate-900 dark:text-slate-100">Key Features</h3>
                 <div className="flex gap-2 mb-3">
                   <Input
                     value={featureInput}

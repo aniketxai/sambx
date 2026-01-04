@@ -1,12 +1,29 @@
 'use client';
 
-import { useState } from 'react';
+import { useState ,useEffect} from 'react';
 import ProductCard from '@/components/product-card';
-import { products } from '@/lib/mockData';
+import axios from 'axios';  
 import { Button } from '@/components/ui/button';
 
 export default function ProductsPage() {
+   const [products, setProducts] = useState([])
   const [selectedCategory, setSelectedCategory] = useState('All');
+ 
+
+  //axios call to fetch products
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        const response = await axios.get('/api/products');
+        setProducts(response.data.products);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      }
+    }
+
+    fetchProducts();
+  }, []);
+
 
   const categories = [
     'All',
@@ -17,6 +34,11 @@ export default function ProductsPage() {
     selectedCategory === 'All'
       ? products
       : products.filter((product) => product.category === selectedCategory);
+
+
+
+
+
 
   return (
     <div className="min-h-screen pt-20">

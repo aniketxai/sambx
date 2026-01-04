@@ -10,7 +10,7 @@ export default function AddToCartPage() {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [cartItem, setCartItem] = useState({
     name: 'VisionPro AI Camera',
-    price: 1299,
+    price: 109999,
     quantity: 1,
     image: 'https://images.pexels.com/photos/2599244/pexels-photo-2599244.jpeg?auto=compress&cs=tinysrgb&w=400',
   });
@@ -59,7 +59,7 @@ export default function AddToCartPage() {
                       Quantity: {cartItem.quantity}
                     </p>
                     <p className="text-2xl font-bold">
-                      ${(cartItem.price * cartItem.quantity).toFixed(2)}
+                      ₹{(cartItem.price * cartItem.quantity).toLocaleString('en-IN')}
                     </p>
                   </div>
                 </div>
@@ -96,7 +96,7 @@ export default function AddToCartPage() {
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Subtotal</span>
                   <span className="font-medium">
-                    ${cartItem.price.toFixed(2)}
+                    ₹{cartItem.price.toLocaleString('en-IN')}
                   </span>
                 </div>
                 <div className="flex justify-between">
@@ -105,7 +105,7 @@ export default function AddToCartPage() {
                 </div>
                 <div className="flex justify-between text-lg font-bold border-t border-border pt-2">
                   <span>Subtotal</span>
-                  <span>${cartItem.price.toFixed(2)}</span>
+                  <span>₹{cartItem.price.toLocaleString('en-IN')}</span>
                 </div>
               </CardContent>
             </Card>
