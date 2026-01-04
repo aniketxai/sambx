@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { ArrowLeft } from 'lucide-react';
+import axios from 'axios';
 
 export default function AddProductPage() {
   const router = useRouter();
@@ -131,22 +132,8 @@ export default function AddProductPage() {
 
     setLoading(true);
     try {
-      const { error } = await supabase.from('products').insert([{
-        name: formData.name,
-        slug: formData.slug || generateSlug(formData.name),
-        description: formData.description,
-        long_description: formData.longDescription,
-        price: parseFloat(formData.price),
-        status: formData.status,
-        category: formData.category,
-        image: formData.image,
-        images: formData.images,
-        features: formData.features,
-        tech_stack: formData.techStack,
-        use_cases: formData.useCases
-      }]);
-
-      if (error) throw error;
+     // Call the API to add the product(axios)
+      await axios.post('/api/products', formData);
 
       toast.success('Product added successfully!');
       router.push('/products');

@@ -1,13 +1,31 @@
 'use client';
 
 import Link from 'next/link';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import ProductCard from '@/components/product-card';
-import { products } from '@/lib/mockData';
+// import { products } from '@/lib/mockData';
 import { ArrowRight, Eye, Zap, Code } from 'lucide-react';
+import axios from 'axios';
 
 export default function Home() {
+
+  const [products, setProducts] = useState([]);
   const featuredProducts = products.slice(0, 4);
+
+  // Fetch products from the API
+  useState(() => {
+    async function fetchProducts() {
+      try {
+        const response = await axios.get('/api/products');
+        setProducts(response.data.products);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      }
+    }
+
+    fetchProducts();
+  }, []);
 
   const features = [
     {
