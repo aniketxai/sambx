@@ -7,7 +7,7 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import { ArrowRight, ShoppingCart } from "lucide-react";
+import { ArrowRight, ShoppingCart ,Zap,CreditCard} from "lucide-react";
 
 export default function ProductCard({ product }) {
   const statusStyles = {
@@ -61,17 +61,22 @@ export default function ProductCard({ product }) {
         {product.status === "Available" ? (
           <div className="w-full">
             {/* MOBILE */}
+             <Link href={`/order/${product.slug}`} className="flex-1">
             <Button className="w-full h-10 sm:hidden">
               <ShoppingCart className="h-4 w-4 mr-2" />
-              Add to Cart
+              Buy Now
             </Button>
+            </Link>
 
             {/* DESKTOP */}
             <div className="hidden sm:flex gap-2">
+                <Link href={`/order/${product.slug}`} className="flex-1">
               <Button className="flex-1 h-10">
-                <ShoppingCart className="h-4 w-4 mr-2" />
-                Add
+                <Zap className="h-4 w-4 mr-2" />
+                Buy Now
               </Button>
+              </Link>
+
 
               <Link href={`/products/${product.slug}`} className="flex-1">
                 <Button variant="outline" className="w-full h-10">

@@ -59,12 +59,12 @@ export default function Navbar() {
           </div>
 
           <div className="flex items-center space-x-2">
-            <Link href="/cart">
+            <Link href="/products">
               <Button variant="ghost" size="icon" className="relative">
                 <ShoppingCart className="h-5 w-5" />
-                <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs w-5 h-5 rounded-full flex items-center justify-center">
-                  2
-                </span>
+                {/* <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs w-5 h-5 rounded-full flex items-center justify-center">
+                  1
+                </span> */}
               </Button>
             </Link>
 

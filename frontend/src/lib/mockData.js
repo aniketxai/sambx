@@ -1,195 +1,195 @@
-export const products = [
-  {
-    id: 1,
-    name: 'VisionPro AI Camera',
-    slug: 'visionpro-ai-camera',
-    description: 'Advanced AI-powered camera system with real-time object detection and tracking capabilities.',
-    longDescription: 'VisionPro AI Camera combines cutting-edge computer vision algorithms with high-performance hardware to deliver real-time object detection, facial recognition, and behavior analysis. Perfect for security, retail analytics, and smart city applications.',
-    price: 109999,
-    status: 'Available',
-    category: 'Computer Vision',
-    image: 'https://images.pexels.com/photos/2599244/pexels-photo-2599244.jpeg?auto=compress&cs=tinysrgb&w=800',
-    images: [
-      'https://images.pexels.com/photos/2599244/pexels-photo-2599244.jpeg?auto=compress&cs=tinysrgb&w=1000',
-      'https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=1000',
-      'https://images.pexels.com/photos/442150/pexels-photo-442150.jpeg?auto=compress&cs=tinysrgb&w=1000',
-      'https://images.pexels.com/photos/3945683/pexels-photo-3945683.jpeg?auto=compress&cs=tinysrgb&w=1000'
-    ],
-    features: [
-      '4K resolution with 60fps processing',
-      'Real-time object detection (YOLO v8)',
-      'Edge AI processing with NVIDIA Jetson',
-      'Weather-resistant IP67 rating',
-      'Night vision with IR illumination',
-      'Cloud connectivity and local storage'
-    ],
-    techStack: ['Python', 'TensorFlow', 'OpenCV', 'CUDA', 'C++'],
-    useCases: [
-      'Smart retail analytics',
-      'Security and surveillance',
-      'Traffic monitoring',
-      'Industrial automation'
-    ]
-  },
-  {
-    id: 2,
-    name: 'SmartPCB Dev Kit',
-    slug: 'smartpcb-dev-kit',
-    description: 'Professional PCB development kit with modular sensors and IoT connectivity for rapid prototyping.',
-    longDescription: 'SmartPCB Dev Kit is a comprehensive hardware platform designed for engineers and makers. It features modular sensor interfaces, wireless connectivity options, and a powerful microcontroller for developing IoT solutions.',
-    price: 42499,
-    status: 'Available',
-    category: 'Electronics',
-    image: 'https://images.pexels.com/photos/163100/circuit-circuit-board-resistor-computer-163100.jpeg?auto=compress&cs=tinysrgb&w=800',
-    images: [
-      'https://images.pexels.com/photos/163100/circuit-circuit-board-resistor-computer-163100.jpeg?auto=compress&cs=tinysrgb&w=1000',
-      'https://images.pexels.com/photos/3945683/pexels-photo-3945683.jpeg?auto=compress&cs=tinysrgb&w=1000',
-      'https://images.pexels.com/photos/442150/pexels-photo-442150.jpeg?auto=compress&cs=tinysrgb&w=1000',
-      'https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=1000'
-    ],
-    features: [
-      'STM32 ARM Cortex-M4 MCU',
-      'WiFi and Bluetooth 5.0',
-      'Modular sensor ports (I2C, SPI, UART)',
-      'USB-C programming interface',
-      'Integrated power management',
-      'Open-source firmware and schematics'
-    ],
-    techStack: ['C/C++', 'Arduino', 'KiCAD', 'FreeRTOS'],
-    useCases: [
-      'IoT prototyping',
-      'Sensor networks',
-      'Home automation',
-      'Educational projects'
-    ]
-  },
-  {
-    id: 3,
-    name: 'AutoDrone X1',
-    slug: 'autodrone-x1',
-    description: 'Autonomous drone with AI navigation, obstacle avoidance, and 4K camera for aerial intelligence.',
-    longDescription: 'AutoDrone X1 represents the future of autonomous flight. Powered by advanced AI algorithms, it can navigate complex environments, avoid obstacles in real-time, and capture stunning 4K footage while executing autonomous missions.',
-    price: 212499,
-    status: 'In Development',
-    category: 'Automation',
-    image: 'https://images.pexels.com/photos/887828/pexels-photo-887828.jpeg?auto=compress&cs=tinysrgb&w=800',
-    images: [
-      'https://images.pexels.com/photos/887828/pexels-photo-887828.jpeg?auto=compress&cs=tinysrgb&w=1000',
-      'https://images.pexels.com/photos/3945683/pexels-photo-3945683.jpeg?auto=compress&cs=tinysrgb&w=1000',
-      'https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=1000',
-      'https://images.pexels.com/photos/2599244/pexels-photo-2599244.jpeg?auto=compress&cs=tinysrgb&w=1000'
-    ],
-    features: [
-      'Autonomous navigation with GPS and vision',
-      'Real-time obstacle detection and avoidance',
-      '4K camera with gimbal stabilization',
-      '45-minute flight time',
-      'Return-to-home failsafe',
-      'Mobile app control and mission planning'
-    ],
-    techStack: ['Python', 'ROS', 'OpenCV', 'MAVLink', 'C++'],
-    useCases: [
-      'Aerial surveying and mapping',
-      'Search and rescue operations',
-      'Agricultural monitoring',
-      'Infrastructure inspection'
-    ]
-  },
-  {
-    id: 4,
-    name: 'EdgeAI Processor',
-    slug: 'edgeai-processor',
-    description: 'Compact AI processing unit for edge computing with neural network acceleration.',
-    longDescription: 'EdgeAI Processor is a powerful edge computing solution that brings AI inference capabilities to resource-constrained environments. With dedicated neural network acceleration, it can run complex models with minimal latency.',
-    price: 67999,
-    status: 'Prototype',
-    category: 'AI Hardware',
-    image: 'https://images.pexels.com/photos/442150/pexels-photo-442150.jpeg?auto=compress&cs=tinysrgb&w=800',
-    images: [
-      'https://images.pexels.com/photos/442150/pexels-photo-442150.jpeg?auto=compress&cs=tinysrgb&w=1000',
-      'https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=1000',
-      'https://images.pexels.com/photos/163100/circuit-circuit-board-resistor-computer-163100.jpeg?auto=compress&cs=tinysrgb&w=1000'
-    ],
-    features: [
-      'Neural network accelerator (8 TOPS)',
-      'Low power consumption (5W typical)',
-      'USB 3.0 and Ethernet connectivity',
-      'TensorFlow Lite and ONNX support',
-      'Compact form factor',
-      'SDK and API for easy integration'
-    ],
-    techStack: ['Python', 'TensorFlow Lite', 'ONNX', 'C++'],
-    useCases: [
-      'Real-time video analytics',
-      'Industrial quality control',
-      'Smart home devices',
-      'Robotics applications'
-    ]
-  },
-  {
-    id: 5,
-    name: 'IoT Gateway Hub',
-    slug: 'iot-gateway-hub',
-    description: 'Universal IoT gateway supporting multiple protocols for seamless device integration.',
-    longDescription: 'IoT Gateway Hub acts as a central communication bridge for your IoT ecosystem. It supports multiple wireless protocols and provides secure, reliable connectivity between your devices and the cloud.',
-    price: 29699,
-    status: 'Available',
-    category: 'IoT',
-    image: 'https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg?auto=compress&cs=tinysrgb&w=800',
-    images: [
-      'https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg?auto=compress&cs=tinysrgb&w=1000',
-      'https://images.pexels.com/photos/442150/pexels-photo-442150.jpeg?auto=compress&cs=tinysrgb&w=1000',
-      'https://images.pexels.com/photos/163100/circuit-circuit-board-resistor-computer-163100.jpeg?auto=compress&cs=tinysrgb&w=1000'
-    ],
-    features: [
-      'Multi-protocol support (Zigbee, Z-Wave, BLE, WiFi)',
-      'Secure data encryption',
-      'Local processing and edge analytics',
-      'Cloud connectivity (MQTT, HTTP)',
-      'Web-based configuration interface',
-      'Expandable with plugin architecture'
-    ],
-    techStack: ['Node.js', 'MQTT', 'Docker', 'React'],
-    useCases: [
-      'Smart building automation',
-      'Industrial IoT networks',
-      'Home automation',
-      'Environmental monitoring'
-    ]
-  },
-  {
-    id: 6,
-    name: 'Vision Inspection System',
-    slug: 'vision-inspection-system',
-    description: 'Industrial-grade vision system for automated quality control and defect detection.',
-    longDescription: 'Vision Inspection System leverages deep learning and traditional computer vision techniques to perform high-speed quality control inspections. It can detect defects, measure dimensions, and verify assembly with precision.',
-    price: 424999,
-    status: 'Available',
-    category: 'Industrial',
-    image: 'https://images.pexels.com/photos/257736/pexels-photo-257736.jpeg?auto=compress&cs=tinysrgb&w=800',
-    images: [
-      'https://images.pexels.com/photos/257736/pexels-photo-257736.jpeg?auto=compress&cs=tinysrgb&w=1000',
-      'https://images.pexels.com/photos/3945683/pexels-photo-3945683.jpeg?auto=compress&cs=tinysrgb&w=1000',
-      'https://images.pexels.com/photos/2599244/pexels-photo-2599244.jpeg?auto=compress&cs=tinysrgb&w=1000',
-      'https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=1000'
-    ],
-    features: [
-      'High-speed camera (120fps)',
-      'Precision lighting system',
-      'Deep learning defect detection',
-      'Measurement and metrology tools',
-      'Integration with factory systems',
-      'Real-time reporting dashboard'
-    ],
-    techStack: ['Python', 'PyTorch', 'OpenCV', 'C++', 'PLC Integration'],
-    useCases: [
-      'Manufacturing quality control',
-      'Pharmaceutical inspection',
-      'Electronics assembly verification',
-      'Food and beverage inspection'
-    ]
-  }
-];
+// export const products = [
+//   {
+//     id: 1,
+//     name: 'VisionPro AI Camera',
+//     slug: 'visionpro-ai-camera',
+//     description: 'Advanced AI-powered camera system with real-time object detection and tracking capabilities.',
+//     longDescription: 'VisionPro AI Camera combines cutting-edge computer vision algorithms with high-performance hardware to deliver real-time object detection, facial recognition, and behavior analysis. Perfect for security, retail analytics, and smart city applications.',
+//     price: 109999,
+//     status: 'Available',
+//     category: 'Computer Vision',
+//     image: 'https://images.pexels.com/photos/2599244/pexels-photo-2599244.jpeg?auto=compress&cs=tinysrgb&w=800',
+//     images: [
+//       'https://images.pexels.com/photos/2599244/pexels-photo-2599244.jpeg?auto=compress&cs=tinysrgb&w=1000',
+//       'https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=1000',
+//       'https://images.pexels.com/photos/442150/pexels-photo-442150.jpeg?auto=compress&cs=tinysrgb&w=1000',
+//       'https://images.pexels.com/photos/3945683/pexels-photo-3945683.jpeg?auto=compress&cs=tinysrgb&w=1000'
+//     ],
+//     features: [
+//       '4K resolution with 60fps processing',
+//       'Real-time object detection (YOLO v8)',
+//       'Edge AI processing with NVIDIA Jetson',
+//       'Weather-resistant IP67 rating',
+//       'Night vision with IR illumination',
+//       'Cloud connectivity and local storage'
+//     ],
+//     techStack: ['Python', 'TensorFlow', 'OpenCV', 'CUDA', 'C++'],
+//     useCases: [
+//       'Smart retail analytics',
+//       'Security and surveillance',
+//       'Traffic monitoring',
+//       'Industrial automation'
+//     ]
+//   },
+//   {
+//     id: 2,
+//     name: 'SmartPCB Dev Kit',
+//     slug: 'smartpcb-dev-kit',
+//     description: 'Professional PCB development kit with modular sensors and IoT connectivity for rapid prototyping.',
+//     longDescription: 'SmartPCB Dev Kit is a comprehensive hardware platform designed for engineers and makers. It features modular sensor interfaces, wireless connectivity options, and a powerful microcontroller for developing IoT solutions.',
+//     price: 42499,
+//     status: 'Available',
+//     category: 'Electronics',
+//     image: 'https://images.pexels.com/photos/163100/circuit-circuit-board-resistor-computer-163100.jpeg?auto=compress&cs=tinysrgb&w=800',
+//     images: [
+//       'https://images.pexels.com/photos/163100/circuit-circuit-board-resistor-computer-163100.jpeg?auto=compress&cs=tinysrgb&w=1000',
+//       'https://images.pexels.com/photos/3945683/pexels-photo-3945683.jpeg?auto=compress&cs=tinysrgb&w=1000',
+//       'https://images.pexels.com/photos/442150/pexels-photo-442150.jpeg?auto=compress&cs=tinysrgb&w=1000',
+//       'https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=1000'
+//     ],
+//     features: [
+//       'STM32 ARM Cortex-M4 MCU',
+//       'WiFi and Bluetooth 5.0',
+//       'Modular sensor ports (I2C, SPI, UART)',
+//       'USB-C programming interface',
+//       'Integrated power management',
+//       'Open-source firmware and schematics'
+//     ],
+//     techStack: ['C/C++', 'Arduino', 'KiCAD', 'FreeRTOS'],
+//     useCases: [
+//       'IoT prototyping',
+//       'Sensor networks',
+//       'Home automation',
+//       'Educational projects'
+//     ]
+//   },
+//   {
+//     id: 3,
+//     name: 'AutoDrone X1',
+//     slug: 'autodrone-x1',
+//     description: 'Autonomous drone with AI navigation, obstacle avoidance, and 4K camera for aerial intelligence.',
+//     longDescription: 'AutoDrone X1 represents the future of autonomous flight. Powered by advanced AI algorithms, it can navigate complex environments, avoid obstacles in real-time, and capture stunning 4K footage while executing autonomous missions.',
+//     price: 212499,
+//     status: 'In Development',
+//     category: 'Automation',
+//     image: 'https://images.pexels.com/photos/887828/pexels-photo-887828.jpeg?auto=compress&cs=tinysrgb&w=800',
+//     images: [
+//       'https://images.pexels.com/photos/887828/pexels-photo-887828.jpeg?auto=compress&cs=tinysrgb&w=1000',
+//       'https://images.pexels.com/photos/3945683/pexels-photo-3945683.jpeg?auto=compress&cs=tinysrgb&w=1000',
+//       'https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=1000',
+//       'https://images.pexels.com/photos/2599244/pexels-photo-2599244.jpeg?auto=compress&cs=tinysrgb&w=1000'
+//     ],
+//     features: [
+//       'Autonomous navigation with GPS and vision',
+//       'Real-time obstacle detection and avoidance',
+//       '4K camera with gimbal stabilization',
+//       '45-minute flight time',
+//       'Return-to-home failsafe',
+//       'Mobile app control and mission planning'
+//     ],
+//     techStack: ['Python', 'ROS', 'OpenCV', 'MAVLink', 'C++'],
+//     useCases: [
+//       'Aerial surveying and mapping',
+//       'Search and rescue operations',
+//       'Agricultural monitoring',
+//       'Infrastructure inspection'
+//     ]
+//   },
+//   {
+//     id: 4,
+//     name: 'EdgeAI Processor',
+//     slug: 'edgeai-processor',
+//     description: 'Compact AI processing unit for edge computing with neural network acceleration.',
+//     longDescription: 'EdgeAI Processor is a powerful edge computing solution that brings AI inference capabilities to resource-constrained environments. With dedicated neural network acceleration, it can run complex models with minimal latency.',
+//     price: 67999,
+//     status: 'Prototype',
+//     category: 'AI Hardware',
+//     image: 'https://images.pexels.com/photos/442150/pexels-photo-442150.jpeg?auto=compress&cs=tinysrgb&w=800',
+//     images: [
+//       'https://images.pexels.com/photos/442150/pexels-photo-442150.jpeg?auto=compress&cs=tinysrgb&w=1000',
+//       'https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=1000',
+//       'https://images.pexels.com/photos/163100/circuit-circuit-board-resistor-computer-163100.jpeg?auto=compress&cs=tinysrgb&w=1000'
+//     ],
+//     features: [
+//       'Neural network accelerator (8 TOPS)',
+//       'Low power consumption (5W typical)',
+//       'USB 3.0 and Ethernet connectivity',
+//       'TensorFlow Lite and ONNX support',
+//       'Compact form factor',
+//       'SDK and API for easy integration'
+//     ],
+//     techStack: ['Python', 'TensorFlow Lite', 'ONNX', 'C++'],
+//     useCases: [
+//       'Real-time video analytics',
+//       'Industrial quality control',
+//       'Smart home devices',
+//       'Robotics applications'
+//     ]
+//   },
+//   {
+//     id: 5,
+//     name: 'IoT Gateway Hub',
+//     slug: 'iot-gateway-hub',
+//     description: 'Universal IoT gateway supporting multiple protocols for seamless device integration.',
+//     longDescription: 'IoT Gateway Hub acts as a central communication bridge for your IoT ecosystem. It supports multiple wireless protocols and provides secure, reliable connectivity between your devices and the cloud.',
+//     price: 29699,
+//     status: 'Available',
+//     category: 'IoT',
+//     image: 'https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg?auto=compress&cs=tinysrgb&w=800',
+//     images: [
+//       'https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg?auto=compress&cs=tinysrgb&w=1000',
+//       'https://images.pexels.com/photos/442150/pexels-photo-442150.jpeg?auto=compress&cs=tinysrgb&w=1000',
+//       'https://images.pexels.com/photos/163100/circuit-circuit-board-resistor-computer-163100.jpeg?auto=compress&cs=tinysrgb&w=1000'
+//     ],
+//     features: [
+//       'Multi-protocol support (Zigbee, Z-Wave, BLE, WiFi)',
+//       'Secure data encryption',
+//       'Local processing and edge analytics',
+//       'Cloud connectivity (MQTT, HTTP)',
+//       'Web-based configuration interface',
+//       'Expandable with plugin architecture'
+//     ],
+//     techStack: ['Node.js', 'MQTT', 'Docker', 'React'],
+//     useCases: [
+//       'Smart building automation',
+//       'Industrial IoT networks',
+//       'Home automation',
+//       'Environmental monitoring'
+//     ]
+//   },
+//   {
+//     id: 6,
+//     name: 'Vision Inspection System',
+//     slug: 'vision-inspection-system',
+//     description: 'Industrial-grade vision system for automated quality control and defect detection.',
+//     longDescription: 'Vision Inspection System leverages deep learning and traditional computer vision techniques to perform high-speed quality control inspections. It can detect defects, measure dimensions, and verify assembly with precision.',
+//     price: 424999,
+//     status: 'Available',
+//     category: 'Industrial',
+//     image: 'https://images.pexels.com/photos/257736/pexels-photo-257736.jpeg?auto=compress&cs=tinysrgb&w=800',
+//     images: [
+//       'https://images.pexels.com/photos/257736/pexels-photo-257736.jpeg?auto=compress&cs=tinysrgb&w=1000',
+//       'https://images.pexels.com/photos/3945683/pexels-photo-3945683.jpeg?auto=compress&cs=tinysrgb&w=1000',
+//       'https://images.pexels.com/photos/2599244/pexels-photo-2599244.jpeg?auto=compress&cs=tinysrgb&w=1000',
+//       'https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=1000'
+//     ],
+//     features: [
+//       'High-speed camera (120fps)',
+//       'Precision lighting system',
+//       'Deep learning defect detection',
+//       'Measurement and metrology tools',
+//       'Integration with factory systems',
+//       'Real-time reporting dashboard'
+//     ],
+//     techStack: ['Python', 'PyTorch', 'OpenCV', 'C++', 'PLC Integration'],
+//     useCases: [
+//       'Manufacturing quality control',
+//       'Pharmaceutical inspection',
+//       'Electronics assembly verification',
+//       'Food and beverage inspection'
+//     ]
+//   }
+// ];
 
 export const blogPosts = [
   {

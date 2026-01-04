@@ -63,11 +63,11 @@ export default function ProductDetailPage() {
     .slice(0, 4);
 
   const handleAddToCart = () => {
-    window.location.href = '/add-to-cart';
+    window.location.href = '/order/' + product.slug;
   };
 
   const handleBuyNow = () => {
-    alert('This is a UI demo. Checkout functionality is not implemented.');
+    window.location.href = '/order/' + product.slug;
   };
 
   const handlePrevImage = () => {
