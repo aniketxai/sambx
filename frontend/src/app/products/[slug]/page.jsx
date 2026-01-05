@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { ShoppingCart, Heart, Share2, Check, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ShoppingCart, Heart, Share2, Check, ChevronLeft, ChevronRight, MessageSquare } from 'lucide-react';
 import Link from 'next/link';
 import ProductCard from '@/components/product-card';
 
@@ -63,7 +63,7 @@ export default function ProductDetailPage() {
     .slice(0, 4);
 
   const handleAddToCart = () => {
-    window.location.href = '/order/' + product.slug;
+    window.location.href = '/contact/' + product.slug;
   };
 
   const handleBuyNow = () => {
@@ -197,9 +197,9 @@ export default function ProductDetailPage() {
                   className="flex-1 md:size-lg"
                   onClick={handleAddToCart}
                 >
-                  <ShoppingCart className="mr-1 md:mr-2 h-4 md:h-5 w-4 md:w-5" />
-                  <span className="hidden sm:inline">Add to Cart</span>
-                  <span className="sm:hidden">Add</span>
+                  <MessageSquare className="mr-1 md:mr-2 h-4 md:h-5 w-4 md:w-5" />
+                  <span className="hidden sm:inline">Enquiry</span>
+                  <span className="sm:hidden">Enquiry</span>
                 </Button>
                 <Button
                   size="sm"
@@ -299,7 +299,7 @@ export default function ProductDetailPage() {
                     Have questions about this product? Our team is here to help
                     you make the right choice.
                   </p>
-                  <Link href="/contact">
+                  <Link href={`/contact/${product.slug}`}>
                     <Button variant="outline" className="w-full">
                       Contact for Demo
                     </Button>

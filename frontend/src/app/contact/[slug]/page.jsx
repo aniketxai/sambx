@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useParams } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -9,11 +10,23 @@ import { Mail, Github, Instagram, MapPin, Phone, Check, Loader2 } from 'lucide-r
 import axios from 'axios';
 
 export default function ContactPage() {
+  const params = useParams();
+  const productSlug = params?.slug;
+  
+  // Convert slug to readable product name
+  const formatProductName = (slug) => {
+    if (!slug) return '';
+    return slug
+      .split('-')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
+  
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     mobile: '',
-    subject: '',
+    subject: productSlug ? `Enquiry about ${formatProductName(productSlug)}` : '',
     message: '',
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -24,7 +37,8 @@ export default function ContactPage() {
     setIsLoading(true);
 
     try {
-      await axios.post('/api/contact/general', formData);
+      const endpoint = productSlug ? `/api/contact/${productSlug}` : '/api/contact/general';
+      await axios.post(endpoint, formData);
       setIsSubmitted(true);
     } catch (error) {
       console.error('Error submitting form:', error);
@@ -46,10 +60,13 @@ export default function ContactPage() {
       <section className="py-20 md:py-32">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-6 text-gradient">
-            Get In Touch
+            {productSlug ? 'Product Enquiry' : 'Get In Touch'}
           </h1>
           <p className="text-xl text-muted-foreground">
-            Let's collaborate on your next innovative project
+            {productSlug 
+              ? 'Interested in this product? Send us your enquiry' 
+              : "Let's collaborate on your next innovative project"
+            }
           </p>
         </div>
       </section>
@@ -136,7 +153,7 @@ export default function ContactPage() {
                         htmlFor="subject"
                         className="block text-sm font-medium mb-2"
                       >
-                        Subject
+                        Subject {productSlug && '(Auto-filled)'}
                       </label>
                       <Input
                         id="subject"
@@ -145,6 +162,8 @@ export default function ContactPage() {
                         onChange={handleChange}
                         placeholder="What can we help you with?"
                         required
+                        readOnly={!!productSlug}
+                        className={productSlug ? 'bg-muted cursor-not-allowed' : ''}
                       />
                     </div>
 

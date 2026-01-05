@@ -7,15 +7,17 @@ export default function Footer() {
   const footerLinks = {
     Company: [
       { label: 'About', href: '/about' },
-      { label: 'Services', href: '/services' },
-      { label: 'Products', href: '/products' },
       { label: 'Contact', href: '/contact' },
     ],
-    Resources: [
-      { label: 'Blog', href: '/blog' },
-      { label: 'Documentation', href: '#' },
-      { label: 'Support', href: '/contact' },
+    Explore: [
+      { label: 'Services', href: '/services' },
+      { label: 'Products', href: '/products' },
     ],
+    // Resources: [
+    //   { label: 'Blog', href: '/blog' },
+    //   { label: 'Documentation', href: '#' },
+    //   { label: 'Support', href: '/contact' },
+    // ],
   };
 
   return (
@@ -28,12 +30,11 @@ export default function Footer() {
               <span className="text-xl font-bold">SAMBX</span>
             </Link>
             <p className="text-muted-foreground mb-4 max-w-md">
-              AI, Vision & Smart Hardware Engineering. Building the future with
-              cutting-edge technology solutions.
+             AI × Hardware × Innovation — Smart AI Machines Built for eXploration
             </p>
             <div className="flex space-x-4">
               <a
-                href="https://github.com"
+                href="https://github.com/aniketxai"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-foreground transition-colors"
@@ -41,7 +42,7 @@ export default function Footer() {
                 <Github className="h-5 w-5" />
               </a>
               <a
-                href="https://instagram.com"
+                href="https://instagram.com/sambx.tech"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-foreground transition-colors"

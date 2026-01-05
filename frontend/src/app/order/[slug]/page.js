@@ -6,8 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { Check, ArrowLeft } from 'lucide-react';
+import { Check, ArrowLeft, Loader2 } from 'lucide-react';
 import Link from 'next/link';
+import axios from 'axios';
 
 // Mock products - only need name and slug
 const PRODUCTS = [
@@ -34,6 +35,7 @@ export default function OrderPage() {
     extraMessage: '',
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (params?.slug) {
@@ -42,24 +44,35 @@ export default function OrderPage() {
     }
   }, [params]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (!product) return;
 
-    const orderData = {
-      productName: product.name,
-      quantity,
-      customerInfo: formData,
-      orderDate: new Date().toISOString(),
-    };
+    setIsLoading(true);
 
-    // Save to local storage
-    const orders = JSON.parse(localStorage.getItem('orders') || '[]');
-    orders.push(orderData);
-    localStorage.setItem('orders', JSON.stringify(orders));
+    try {
+      const orderData = {
+        productName: product.name,
+        quantity,
+        customerInfo: formData,
+        orderDate: new Date().toISOString(),
+      };
 
-    setIsSubmitted(true);
+      // Save to local storage
+      const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+      orders.push(orderData);
+      localStorage.setItem('orders', JSON.stringify(orders));
+
+      // Send email via API
+      await axios.post(`/api/orders/${product.slug}`, orderData);
+
+      setIsSubmitted(true);
+    } catch (error) {
+      console.error('Error submitting order:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleChange = (e) => {
@@ -225,8 +238,15 @@ export default function OrderPage() {
                       />
                     </div>
 
-                    <Button type="submit" size="lg" className="w-full">
-                      Place Order
+                    <Button type="submit" size="lg" className="w-full" disabled={isLoading}>
+                      {isLoading ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Submitting Order...
+                        </>
+                      ) : (
+                        'Place Order'
+                      )}
                     </Button>
                   </form>
                 )}

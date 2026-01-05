@@ -4,6 +4,7 @@ import { useState ,useEffect} from 'react';
 import ProductCard from '@/components/product-card';
 import axios from 'axios';  
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 export default function ProductsPage() {
    const [products, setProducts] = useState([])
@@ -48,7 +49,7 @@ export default function ProductsPage() {
             Our Products
           </h1>
           <p className="text-xl text-muted-foreground">
-            Innovative hardware and software solutions powered by AI
+          AI × Hardware solutions built to innovate
           </p>
         </div>
       </section>
@@ -89,10 +90,11 @@ export default function ProductsPage() {
             Need a Custom Solution?
           </h2>
           <p className="text-muted-foreground text-lg mb-8">
-            Don't see exactly what you're looking for? We can design and build
-            custom hardware and software solutions tailored to your specific needs.
+            From idea to engineered reality.
           </p>
+          <Link href='/contact'>
           <Button size="lg">Contact Us for Custom Projects</Button>
+          </Link>
         </div>
       </section>
     </div>

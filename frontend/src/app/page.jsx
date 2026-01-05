@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import ProductCard from '@/components/product-card';
 // import { products } from '@/lib/mockData';
-import { ArrowRight, Eye, Zap, Code } from 'lucide-react';
+import { ArrowRight, Eye, Zap,Cpu,CircuitBoard, LayoutDashboard, } from 'lucide-react';
 import axios from 'axios';
 
 export default function Home() {
@@ -27,26 +27,28 @@ export default function Home() {
     fetchProducts();
   }, []);
 
-  const features = [
-    {
-      icon: Eye,
-      title: 'AI & Computer Vision',
-      description:
-        'Real-time AI-powered vision systems for detection, tracking, and intelligent analysis.',
-    },
-    {
-      icon: Zap,
-      title: 'Smart Electronics & PCB Design',
-      description:
-        'From idea to prototype to production — embedded systems and custom PCB engineering.',
-    },
-    {
-      icon: Code,
-      title: 'Automation & Web Systems',
-      description:
-        'Intelligent automation, dashboards, and scalable web systems.',
-    },
-  ];
+
+const features = [
+  {
+    icon: Cpu,
+    title: "IoT, Embedded & PCB Systems",
+    description:
+      "Smart connected hardware from prototype to production — sensors, microcontrollers, and custom PCBs.",
+  },
+  {
+    icon: LayoutDashboard,
+    title: "Web Development & Automation",
+    description:
+      "Modern websites, dashboards, and automation systems built for performance and scalability.",
+  },
+  {
+    icon: Eye,
+    title: "AI & Computer Vision",
+    description:
+      "Real-time vision systems for detection, tracking, and intelligent analysis.",
+  },
+];
+
 
   return (
     <div className="min-h-screen">
@@ -93,7 +95,7 @@ export default function Home() {
               What We Do
             </h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              AI × Hardware × Innovation — engineered to solve real-world problems
+              AI × Hardware × Innovation — Engineering real-world solutions
             </p>
           </div>
 
@@ -123,7 +125,7 @@ export default function Home() {
                 Featured Products
               </h2>
               <p className="text-muted-foreground text-lg">
-                Experimental. Functional. Built to scale.
+               From Prototype to Product
               </p>
             </div>
 
@@ -156,14 +158,14 @@ export default function Home() {
       <section className="py-16 md:py-24 bg-muted/50">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-5xl font-bold mb-6">
-            Ready to Build Something Amazing?
+            Need a Custom Solution?
           </h2>
           <p className="text-muted-foreground text-lg mb-8 max-w-2xl mx-auto">
-            Let’s collaborate on AI, vision, or hardware systems and turn ideas into reality.
+            From idea to engineered reality.
           </p>
           <Link href="/contact">
             <Button size="lg" className="group">
-              Get In Touch
+             Contact Us for Custom Projects
               <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
             </Button>
           </Link>

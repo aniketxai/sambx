@@ -87,7 +87,7 @@ export default function ProductCard({ product }) {
             </div>
           </div>
         ) : (
-          <Link href="/contact" className="w-full">
+          <Link href={`/contact/${product.slug}`} className="w-full">
             <Button variant="outline" className="w-full h-10">
               Contact for Demo
               <ArrowRight className="h-4 w-4 ml-2" />
