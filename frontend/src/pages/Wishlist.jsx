@@ -1,10 +1,11 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Heart, ShoppingCart, Trash2, ArrowRight } from 'lucide-react';
-import { useApp } from '../context/AppContext';
+import { useApp } from '../context/useApp';
 import { products } from '../data/products';
 import Button from '../components/Button';
 import SectionHeading from '../components/SectionHeading';
+import { formatINR } from '../utils/currency';
 
 export default function Wishlist() {
   const { wishlist, toggleWishlist, addToCart } = useApp();
@@ -30,7 +31,7 @@ export default function Wishlist() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeading label="Saved" title="Your Wishlist" description="Products you have saved for later." />
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {wishlistProducts.map((product, i) => (
             <motion.div
               key={product.id}
@@ -55,7 +56,7 @@ export default function Wishlist() {
                     {product.name}
                   </h3>
                 </Link>
-                <p className="text-lg font-bold text-foreground mb-3">${product.price}</p>
+                <p className="text-lg font-bold text-foreground mb-3">{formatINR(product.price)}</p>
                 <div className="flex gap-2">
                   <Button size="sm" icon={ShoppingCart} onClick={() => addToCart(product)} className="flex-1">
                     Add to Cart
