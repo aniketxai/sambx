@@ -1,119 +1,147 @@
-'use client';
-
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { useTheme } from 'next-themes';
-import { Moon, Sun, Menu, X, ShoppingCart } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Link, useLocation } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ShoppingCart, Heart, Menu, X } from 'lucide-react';
+import Logo from './Logo';
+import { useApp } from '../context/AppContext';
+import logoImage from '../assets/logo.png'; // Add your logo image here
+
+const navLinks = [
+  { to: '/', label: 'Home' },
+  { to: '/products', label: 'Products' },
+  { to: '/services', label: 'Services' },
+  { to: '/about', label: 'About' },
+  { to: '/contact', label: 'Contact' },
+];
 
 export default function Navbar() {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const location = useLocation();
+  const { cartCount, wishlist } = useApp();
 
   useEffect(() => {
-    setMounted(true);
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const navLinks = [
-    { href: '/', label: 'Home' },
-    { href: '/about', label: 'About' },
-    { href: '/services', label: 'Services' },
-    { href: '/products', label: 'Products' },
-    { href: '/contact', label: 'Contact' },
-  ];
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [location]);
 
   return (
-    <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
-          ? 'bg-background/80 backdrop-blur-lg border-b border-border shadow-sm'
-          : 'bg-transparent'
-      }`}
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16 md:h-20">
-          <Link href="/" className="flex items-center space-x-2 group">
-            <div className="w-8 h-8 bg-gradient-to-br from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 rounded transform group-hover:rotate-180 transition-transform duration-500" />
-            <span className="text-xl md:text-2xl font-bold tracking-tighter">
-              SAMBX
-            </span>
+    <>
+      <motion.header
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        className={`fixed top-0 left-0 right-0 z-50 transition-material ${
+          scrolled
+            ? 'glass border-b border-surface-muted shadow-sm'
+            : 'bg-transparent'
+        }`}
+      >
+        <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+          <Link to="/" className="flex items-center gap-2">
+            <Logo 
+              useImage={true} 
+              imageSrc={logoImage}
+              size="lg" 
+              className="text-foreground h-12 w-auto max-w-45 object-contain"
+            />
           </Link>
 
-          <div className="hidden md:flex items-center space-x-1">
-            {navLinks.map((link) => (
+          {/* Desktop nav */}
+          <div className="hidden md:flex items-center gap-1">
+            {navLinks.map(link => (
               <Link
-                key={link.href}
-                href={link.href}
-                className="px-4 py-2 text-sm font-medium rounded-md hover:bg-accent transition-colors"
+                key={link.to}
+                to={link.to}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-material ${
+                  location.pathname === link.to
+                    ? 'bg-secondary-container text-primary metal-border'
+                    : 'text-secondary-text hover:bg-surface-container hover:text-surface-bright'
+                }`}
               >
                 {link.label}
               </Link>
             ))}
           </div>
 
-          <div className="flex items-center space-x-2">
-            <Link href="/cart">
-              <Button variant="ghost" size="icon" className="relative">
-                <ShoppingCart className="h-5 w-5" />
-                <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs w-5 h-5 rounded-full flex items-center justify-center">
-                  2
+          {/* Actions */}
+          <div className="flex items-center gap-2">
+            <Link to="/wishlist" className="relative p-2 rounded-full hover:bg-surface-container transition-material metal-border bg-white/5">
+              <Heart size={20} className="text-secondary-text" />
+              {wishlist.length > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-primary text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                  {wishlist.length}
                 </span>
-              </Button>
-            </Link>
-
-            {mounted && (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              >
-                {theme === 'dark' ? (
-                  <Sun className="h-5 w-5" />
-                ) : (
-                  <Moon className="h-5 w-5" />
-                )}
-              </Button>
-            )}
-
-            <Button
-              variant="ghost"
-              size="icon"
-              className="md:hidden"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            >
-              {isMobileMenuOpen ? (
-                <X className="h-5 w-5" />
-              ) : (
-                <Menu className="h-5 w-5" />
               )}
-            </Button>
+            </Link>
+            <Link to="/cart" className="relative p-2 rounded-full hover:bg-surface-container transition-material metal-border bg-white/5">
+              <ShoppingCart size={20} className="text-secondary-text" />
+              {cartCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-primary text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                  {cartCount}
+                </span>
+              )}
+            </Link>
+            <button
+              onClick={() => setMobileOpen(true)}
+              className="md:hidden p-2 rounded-full hover:bg-surface-container transition-material metal-border bg-white/5"
+            >
+              <Menu size={20} className="text-secondary-text" />
+            </button>
           </div>
-        </div>
-      </div>
+        </nav>
+      </motion.header>
 
-      {isMobileMenuOpen && (
-        <div className="md:hidden border-t border-border bg-background/95 backdrop-blur-lg">
-          <div className="px-4 py-4 space-y-2">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="block px-4 py-3 rounded-md hover:bg-accent transition-colors font-medium"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
-    </nav>
+      {/* Mobile menu */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setMobileOpen(false)}
+              className="fixed inset-0 z-50 bg-black/20 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="fixed top-0 right-0 bottom-0 z-50 w-72 bg-background shadow-xl p-6"
+            >
+              <div className="flex items-center justify-between mb-8">
+                <Logo size="sm" />
+                <button
+                  onClick={() => setMobileOpen(false)}
+                  className="p-2 rounded-full hover:bg-surface-container transition-material"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+              <div className="flex flex-col gap-1">
+                {navLinks.map(link => (
+                  <Link
+                    key={link.to}
+                    to={link.to}
+                    className={`px-4 py-3 rounded-2xl text-sm font-medium transition-material ${
+                      location.pathname === link.to
+                        ? 'bg-secondary-container text-primary'
+                        : 'text-secondary-text hover:bg-surface-container'
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </>
   );
 }

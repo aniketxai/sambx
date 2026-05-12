@@ -1,0 +1,217 @@
+@import "tailwindcss";
+
+@theme {
+  /* Primary Background - Dark Premium Black */
+  --color-background: #0A0A0B;
+  --color-foreground: #F8F9FA;
+  
+  /* Forge Orange - Main Accent */
+  --color-primary: #FF6A00;
+  --color-primary-light: #FF8C32;
+  
+  /* Silver Tones */
+  --color-secondary-container: #16181C;
+  --color-tertiary: #A8ADB3;
+  /* Make surface container closer to page background with subtle elevation */
+  --color-surface-container: rgba(255,255,255,0.03);
+  --color-surface-muted: rgba(255,255,255,0.015);
+  --color-outline: #9CA3AF;
+  --color-secondary-text: #D1D5DB;
+  
+  /* Orange Glow */
+  --color-accent-glow: #FF6A00;
+  --color-surface-dim: #111214;
+  --color-surface-bright: #E5E8EB;
+  
+  /* Status Colors */
+  --color-error: #EF4444;
+  --color-success: #10B981;
+  --color-warning: #F97316;
+
+  /* Typography - Futuristic Tech */
+  --font-sans: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  --font-display: 'Space Grotesk', 'Inter', sans-serif;
+  --font-body: 'Inter', 'Roboto', system-ui, sans-serif;
+}
+
+@layer base {
+  * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--color-background);
+    background-image:
+      radial-gradient(circle at top, rgba(255, 106, 0, 0.12), transparent 32%),
+      radial-gradient(circle at bottom right, rgba(229, 232, 235, 0.08), transparent 28%),
+      linear-gradient(180deg, #0A0A0B 0%, #0E1013 100%);
+    background-attachment: fixed;
+    color: var(--color-foreground);
+    font-family: var(--font-body);
+    line-height: 1.6;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--color-surface-container);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-outline);
+    border-radius: 999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-primary);
+  }
+
+  ::selection {
+    background: var(--color-secondary-container);
+    color: var(--color-foreground);
+  }
+}
+
+@layer utilities {
+  .transition-material {
+    transition: all 300ms cubic-bezier(0.2, 0, 0, 1);
+  }
+
+  .transition-material-fast {
+    transition: all 150ms cubic-bezier(0.2, 0, 0, 1);
+  }
+
+  /* Premium Dark Glass Effect */
+  .glass {
+    background: rgba(16, 18, 20, 0.8);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(229, 232, 235, 0.15);
+  }
+
+  .glass-dark {
+    background: rgba(10, 10, 11, 0.9);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(168, 173, 179, 0.2);
+  }
+
+  /* Metallic Silver Effect */
+  .metallic-silver {
+    background: linear-gradient(135deg, #E5E8EB 0%, #A8ADB3 50%, #8A8F96 100%);
+    background-attachment: fixed;
+  }
+
+  /* Orange Glow for Buttons */
+  .glow-orange {
+    box-shadow: 0 0 20px rgba(255, 106, 0, 0.35), 0 0 40px rgba(255, 106, 0, 0.15);
+  }
+
+  .glow-orange-hover:hover {
+    box-shadow: 0 0 30px rgba(255, 106, 0, 0.5), 0 0 60px rgba(255, 106, 0, 0.25);
+  }
+
+  /* Soft Shadow */
+  .shadow-soft {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  }
+
+  .blur-blob {
+    filter: blur(80px);
+    mix-blend-mode: multiply;
+  }
+
+  /* Polished metallic container used for capability strip */
+  .metal-border {
+    border: 1px solid rgba(229, 232, 235, 0.08);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03), 0 8px 24px rgba(0, 0, 0, 0.45);
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border-radius: var(--radius-3xl);
+  }
+
+  /* Make the capability strip neatly scrollable on narrow screens */
+  .metal-border > .flex {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(156,163,175,0.35) transparent;
+    gap: 1rem;
+  }
+
+  .metal-border > .flex::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  .metal-border > .flex::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .metal-border > .flex::-webkit-scrollbar-thumb {
+    background: rgba(156,163,175,0.18);
+    border-radius: 999px;
+  }
+
+  /* Dot / indicator used inside capability items */
+  .metal-border .h-1\.5.w-1\.5 {
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 999px;
+    box-shadow: 0 0 10px rgba(255, 106, 0, 0.55);
+    flex: 0 0 auto;
+  }
+
+  /* Slightly bolder text and spacing for readability */
+  .metal-border .text-sm {
+    color: var(--color-secondary-text);
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+  }
+
+  .accent-line {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #FF6A00 30%, #E5E8EB 70%, transparent);
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Industrial Grid Background */
+  .bg-grid {
+    background-image: 
+      linear-gradient(rgba(229, 232, 235, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(229, 232, 235, 0.05) 1px, transparent 1px);
+    background-size: 50px 50px;
+  }
+
+  /* Ensure bg-surface-container visually matches the new token and feels like an elevated panel */
+  .bg-surface-container {
+    background-color: var(--color-surface-container) !important;
+    background-image: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.04));
+    border: 1px solid rgba(255,255,255,0.03);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    border-radius: 1rem;
+  }
+
+  /* Hide native scrollbars but keep scrolling (good for touch carousels) */
+  .hide-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none; /* Safari and Chrome */
+    height: 0;
+  }
+}
