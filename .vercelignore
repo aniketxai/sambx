@@ -1,0 +1,9 @@
+/.next
+/frontend/.next
+/frontend/.next/**
+/frontend/node_modules
+/frontend/.env
+/frontend/.env.local
+node_modules
+dist
+*.log
