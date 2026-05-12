@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Cpu, Layers, Rocket, Target, Users, Wrench } from 'lucide-react';
+import { Cpu, Layers, Rocket, Target } from 'lucide-react';
 import SectionHeading from '../components/SectionHeading';
 import BlurBlob from '../components/BlurBlob';
 

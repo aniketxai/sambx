@@ -1,9 +1,8 @@
 import { motion } from 'framer-motion';
 import { Heart, ShoppingCart, Star, Eye } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useApp } from '../context/AppContext';
+import { useApp } from '../context/useApp';
 import { formatINR } from '../utils/currency';
-import Button from './Button';
 
 export default function ProductCard({ product, index = 0 }) {
   const { addToCart, toggleWishlist, wishlist } = useApp();
@@ -37,7 +36,7 @@ export default function ProductCard({ product, index = 0 }) {
           )}
 
           {/* Quick actions */}
-          <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-material">
+          <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-material">
             <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={() => toggleWishlist(product.id)}

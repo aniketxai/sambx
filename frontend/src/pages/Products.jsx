@@ -39,7 +39,13 @@ export default function Products() {
       case 'price-asc': result.sort((a, b) => a.price - b.price); break;
       case 'price-desc': result.sort((a, b) => b.price - a.price); break;
       case 'rating': result.sort((a, b) => b.rating - a.rating); break;
-      case 'newest': result.sort((a, b) => (a.badge === 'New' ? -1 : 1)); break;
+      case 'newest':
+        result.sort((a, b) => {
+          if (a.badge === 'New' && b.badge !== 'New') return -1;
+          if (b.badge === 'New' && a.badge !== 'New') return 1;
+          return 0;
+        });
+        break;
       default: break;
     }
 
@@ -56,7 +62,7 @@ export default function Products() {
         />
 
         {/* Search & Filter Bar */}
-        <div className="flex flex-col sm:flex-row gap-3 mb-8">
+        <div className="flex flex-col sm:flex-row gap-3 mb-4">
           <div className="relative flex-1">
             <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-outline" />
             <input
@@ -76,7 +82,7 @@ export default function Products() {
             )}
           </div>
 
-          <div className="relative">
+          <div className="relative hidden sm:block">
             <select
               value={sort}
               onChange={e => setSort(e.target.value)}
@@ -98,8 +104,49 @@ export default function Products() {
           </button>
         </div>
 
+        <AnimatePresence>
+          {showFilters && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="sm:hidden overflow-hidden mb-6"
+            >
+              <div className="bg-surface-container rounded-3xl p-4 space-y-4">
+                <div className="relative">
+                  <select
+                    value={sort}
+                    onChange={e => setSort(e.target.value)}
+                    className="w-full appearance-none pl-4 pr-10 py-3 bg-background rounded-2xl text-sm text-foreground cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/30 transition-material"
+                  >
+                    {sortOptions.map(o => (
+                      <option key={o.value} value={o.value}>{o.label}</option>
+                    ))}
+                  </select>
+                  <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none" />
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {['All', ...categories].map(cat => (
+                    <button
+                      key={cat}
+                      onClick={() => setActiveCategory(cat)}
+                      className={`px-4 py-2 rounded-full text-sm font-medium transition-material cursor-pointer ${
+                        activeCategory === cat
+                          ? 'bg-primary text-white'
+                          : 'bg-background text-secondary-text hover:bg-surface-muted'
+                      }`}
+                    >
+                      {cat}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* Category pills */}
-        <div className="flex flex-wrap gap-2 mb-8">
+        <div className="hidden sm:flex flex-wrap gap-2 mb-8">
           {['All', ...categories].map(cat => (
             <button
               key={cat}
@@ -126,7 +173,7 @@ export default function Products() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6"
             >
               {filtered.map((product, i) => (
                 <ProductCard key={product.id} product={product} index={i} />

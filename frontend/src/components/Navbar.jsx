@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingCart, Heart, Menu, X } from 'lucide-react';
 import Logo from './Logo';
-import { useApp } from '../context/AppContext';
+import { useApp } from '../context/useApp';
 import logoImage from '../assets/logo.png'; // Add your logo image here
 
 const navLinks = [
@@ -41,13 +41,13 @@ export default function Navbar() {
             : 'bg-transparent'
         }`}
       >
-        <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+        <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-3">
           <Link to="/" className="flex items-center gap-2">
             <Logo 
               useImage={true} 
               imageSrc={logoImage}
               size="lg" 
-              className="text-foreground h-12 w-auto max-w-45 object-contain"
+              className="text-foreground h-11 sm:h-12 w-auto max-w-[180px] sm:max-w-[220px] object-contain"
             />
           </Link>
 
@@ -70,7 +70,7 @@ export default function Navbar() {
 
           {/* Actions */}
           <div className="flex items-center gap-2">
-            <Link to="/wishlist" className="relative p-2 rounded-full hover:bg-surface-container transition-material metal-border bg-white/5">
+            <Link to="/wishlist" className="relative p-2 rounded-full hover:bg-surface-container transition-material metal-border bg-white/5 shrink-0">
               <Heart size={20} className="text-secondary-text" />
               {wishlist.length > 0 && (
                 <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-primary text-white text-[10px] font-bold rounded-full flex items-center justify-center">
@@ -78,7 +78,7 @@ export default function Navbar() {
                 </span>
               )}
             </Link>
-            <Link to="/cart" className="relative p-2 rounded-full hover:bg-surface-container transition-material metal-border bg-white/5">
+            <Link to="/cart" className="relative p-2 rounded-full hover:bg-surface-container transition-material metal-border bg-white/5 shrink-0">
               <ShoppingCart size={20} className="text-secondary-text" />
               {cartCount > 0 && (
                 <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-primary text-white text-[10px] font-bold rounded-full flex items-center justify-center">
@@ -88,7 +88,7 @@ export default function Navbar() {
             </Link>
             <button
               onClick={() => setMobileOpen(true)}
-              className="md:hidden p-2 rounded-full hover:bg-surface-container transition-material metal-border bg-white/5"
+              className="md:hidden p-2 rounded-full hover:bg-surface-container transition-material metal-border bg-white/5 shrink-0"
             >
               <Menu size={20} className="text-secondary-text" />
             </button>

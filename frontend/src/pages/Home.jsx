@@ -18,7 +18,9 @@ export default function Home() {
       <HeroSection />
       <SimpleCapabilities />
       <FeaturedProducts products={featured} />
-      
+      <ServicesSection />
+      <WorkflowSection />
+      <WhyChooseUs />
       <TestimonialsSection />
       <FAQSection />
       <CTABanner />
@@ -29,7 +31,7 @@ export default function Home() {
 
 function HeroSection() {
   return (
-    <section className="relative min-h-[88vh] flex items-center pt-8 sm:pt-12">
+    <section className="relative min-h-[80vh] flex items-center pt-8 sm:pt-12">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,106,0,0.12),transparent_35%),radial-gradient(circle_at_bottom_right,rgba(229,232,235,0.08),transparent_30%)]" />
       <div className="absolute inset-0 bg-grid opacity-[0.32]" />
       <div
@@ -59,7 +61,7 @@ function HeroSection() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, delay: 0.08 }}
-            className="text-5xl sm:text-6xl lg:text-7xl font-bold font-display leading-[0.95] tracking-tight mb-6 max-w-3xl"
+            className="text-4xl sm:text-5xl lg:text-7xl font-bold font-display leading-[0.95] tracking-tight mb-6 max-w-3xl text-balance"
           >
             Precision Manufacturing for the Future
           </motion.h1>
@@ -77,7 +79,7 @@ function HeroSection() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, delay: 0.24 }}
-            className="flex flex-wrap gap-3"
+            className="flex flex-col sm:flex-row gap-3"
           >
             <Link to="/contact">
               <Button size="lg" icon={ArrowRight}>
@@ -216,7 +218,7 @@ function FeaturedProducts({ products }) {
           title="Precision-Crafted Products"
           description="Top picks."
         />
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {products.map((product, i) => (
             <ProductCard key={product.id} product={product} index={i} />
           ))}
@@ -293,7 +295,7 @@ function WorkflowSection() {
           title="How it Works"
           description="Five quick steps."
         />
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
           {steps.map((step, i) => (
             <motion.div
               key={step.num}
@@ -340,7 +342,7 @@ function WhyChooseUs() {
           title="Why Customers Choose SAMBX Forge"
           description="Short and reliable."
         />
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
           {reasons.map((r, i) => (
             <motion.div
               key={r.title}

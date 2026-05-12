@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { CreditCard, Lock, ArrowLeft, Check } from 'lucide-react';
-import { useApp } from '../context/AppContext';
+import { useApp } from '../context/useApp';
 import Button from '../components/Button';
+import { formatINR } from '../utils/currency';
 
 export default function Checkout() {
   const { cart, cartTotal, clearCart } = useApp();
@@ -141,7 +142,7 @@ export default function Checkout() {
                 <span>Your payment information is encrypted and secure.</span>
               </div>
               <div className="flex gap-3 mt-6">
-                <Button variant="outline" size="lg" onClick={() => setStep(1)}>
+                  <Button type="button" variant="outline" size="lg" onClick={() => setStep(1)}>
                   Back
                 </Button>
                 <Button type="button" size="lg" onClick={() => setStep(3)} className="flex-1 sm:flex-none">
@@ -166,14 +167,14 @@ export default function Checkout() {
                       <p className="text-sm font-medium text-foreground truncate">{item.name}</p>
                       <p className="text-xs text-outline">Qty: {item.quantity}</p>
                     </div>
-                    <p className="text-sm font-semibold text-foreground">${(item.price * item.quantity).toFixed(2)}</p>
+                    <p className="text-sm font-semibold text-foreground">{formatINR(item.price * item.quantity)}</p>
                   </div>
                 ))}
               </div>
               <div className="border-t border-surface-muted pt-3 mb-6">
                 <div className="flex justify-between mb-1">
                   <span className="text-secondary-text text-sm">Subtotal</span>
-                  <span className="font-semibold text-foreground">${cartTotal.toFixed(2)}</span>
+                  <span className="font-semibold text-foreground">{formatINR(cartTotal)}</span>
                 </div>
                 <div className="flex justify-between mb-1">
                   <span className="text-secondary-text text-sm">Shipping</span>
@@ -181,7 +182,7 @@ export default function Checkout() {
                 </div>
                 <div className="flex justify-between mt-2">
                   <span className="font-bold text-foreground text-lg">Total</span>
-                  <span className="font-bold text-foreground text-2xl">${cartTotal.toFixed(2)}</span>
+                  <span className="font-bold text-foreground text-2xl">{formatINR(cartTotal)}</span>
                 </div>
               </div>
               <div className="flex gap-3">

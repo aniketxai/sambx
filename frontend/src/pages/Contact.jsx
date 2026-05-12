@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, MapPin, Phone, Send, Code, Globe, Share2 } from 'lucide-react';
+import { Mail, MapPin, Phone, Send } from 'lucide-react';
 import SectionHeading from '../components/SectionHeading';
 import BlurBlob from '../components/BlurBlob';
 import Button from '../components/Button';

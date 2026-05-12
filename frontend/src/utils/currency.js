@@ -5,7 +5,7 @@ export function formatINR(usdValue, { rate = DEFAULT_USD_TO_INR, withSymbol = tr
   const inr = Number(usdValue) * rate;
   try {
     return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(inr);
-  } catch (e) {
+  } catch {
     const symbol = withSymbol ? '₹' : '';
     return `${symbol}${inr.toFixed(2)}`;
   }

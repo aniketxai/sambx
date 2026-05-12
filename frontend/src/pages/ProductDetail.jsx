@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Heart, ShoppingCart, Star, ArrowLeft, Package, Ruler, Clock, Layers, ChevronRight } from 'lucide-react';
 import { products } from '../data/products';
-import { useApp } from '../context/AppContext';
+import { useApp } from '../context/useApp';
 import Button from '../components/Button';
 import ProductCard from '../components/ProductCard';
 import BlurBlob from '../components/BlurBlob';

@@ -1,6 +1,5 @@
-import { createContext, useContext, useReducer, useCallback } from 'react';
-
-const AppContext = createContext(null);
+import { useReducer, useCallback } from 'react';
+import { AppContext } from './appContextValue';
 
 const initialState = {
   cart: [],
@@ -76,10 +75,4 @@ export function AppProvider({ children }) {
       {children}
     </AppContext.Provider>
   );
-}
-
-export function useApp() {
-  const context = useContext(AppContext);
-  if (!context) throw new Error('useApp must be used within AppProvider');
-  return context;
 }
