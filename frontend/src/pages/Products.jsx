@@ -3,7 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Search, SlidersHorizontal, X, ChevronDown } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
 import SectionHeading from '../components/SectionHeading';
-import { products, categories } from '../data/products';
+import { useEffect } from 'react';
+import api from '../api';
 
 const sortOptions = [
   { value: 'featured', label: 'Featured' },
@@ -18,6 +19,9 @@ export default function Products() {
   const [activeCategory, setActiveCategory] = useState('All');
   const [sort, setSort] = useState('featured');
   const [showFilters, setShowFilters] = useState(false);
+  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const filtered = useMemo(() => {
     let result = [...products];
@@ -50,6 +54,23 @@ export default function Products() {
     }
 
     return result;
+  }, [products, search, activeCategory, sort]);
+
+  useEffect(() => {
+    let active = true;
+    setLoading(true);
+    api.fetchProducts({ category: activeCategory === 'All' ? undefined : activeCategory, q: search, sort })
+      .then(data => { if (active) setProducts(data); })
+      .catch(() => { if (active) setProducts([]); })
+      .finally(() => { if (active) setLoading(false); });
+
+    api.fetchCategories()
+      .then(data => {
+        if (active) setCategories([...new Set(data.filter(cat => cat !== 'All'))]);
+      })
+      .catch(() => {});
+
+    return () => { active = false; };
   }, [search, activeCategory, sort]);
 
   return (

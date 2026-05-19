@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Heart, ShoppingCart, Star, ArrowLeft, Package, Ruler, Clock, Layers, ChevronRight } from 'lucide-react';
-import { products } from '../data/products';
+import { useEffect } from 'react';
+import api from '../api';
 import { useApp } from '../context/useApp';
 import Button from '../components/Button';
 import ProductCard from '../components/ProductCard';
@@ -11,9 +12,34 @@ import { formatINR } from '../utils/currency';
 
 export default function ProductDetail() {
   const { id } = useParams();
-  const product = products.find(p => p.id === id);
+  const [product, setProduct] = useState(null);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    let active = true;
+    setLoading(true);
+
+    api.fetchProductById(id)
+      .then(p => { if (active) setProduct(p); })
+      .catch(() => { if (active) setProduct(null); });
+
+    api.fetchProducts()
+      .then(list => { if (active) setProducts(list); })
+      .catch(() => { if (active) setProducts([]); })
+      .finally(() => { if (active) setLoading(false); });
+
+    return () => { active = false; };
+  }, [id]);
   const { addToCart, toggleWishlist, wishlist } = useApp();
   const [selectedImage, setSelectedImage] = useState(0);
+
+  if (loading) {
+    return (
+      <div className="pt-24 pb-20 min-h-screen flex items-center justify-center">
+        <p className="text-secondary-text text-lg">Loading product...</p>
+      </div>
+    );
+  }
 
   if (!product) {
     return (
@@ -40,8 +66,8 @@ export default function ProductDetail() {
 
   return (
     <div className="pt-24 pb-20 min-h-screen relative">
-      <BlurBlob className="w-[400px] h-[400px] top-20 -left-20 bg-secondary-container" />
-      <BlurBlob className="w-[300px] h-[300px] bottom-20 right-0 bg-accent-glow" />
+      <BlurBlob className="w-100 h-100 top-20 -left-20 bg-secondary-container" />
+      <BlurBlob className="w-75 h-75 bottom-20 right-0 bg-accent-glow" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Breadcrumb */}

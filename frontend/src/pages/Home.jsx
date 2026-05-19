@@ -5,24 +5,51 @@ import Button from '../components/Button';
 import ProductCard from '../components/ProductCard';
 import SectionHeading from '../components/SectionHeading';
 import BlurBlob from '../components/BlurBlob';
-import { products, services, testimonials, faqs } from '../data/products';
+import api from '../api';
 import { useState, useRef, useEffect } from 'react';
 
 const iconMap = { Printer, Zap, Cog, Navigation, PenTool, Box };
 
 export default function Home() {
-  const featured = products.filter(p => p.badge === 'Best Seller' || p.badge === 'Popular').slice(0, 4);
+  const [homeData, setHomeData] = useState({ featuredProducts: [], services: [], testimonials: [], faqs: [] });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let active = true;
+
+    api.fetchHomeData()
+      .then(data => {
+        if (active) {
+          setHomeData({
+            featuredProducts: data.featuredProducts || [],
+            services: data.services || [],
+            testimonials: data.testimonials || [],
+            faqs: data.faqs || [],
+          });
+        }
+      })
+      .catch(() => {
+        if (active) {
+          setHomeData({ featuredProducts: [], services: [], testimonials: [], faqs: [] });
+        }
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+
+    return () => { active = false; };
+  }, []);
 
   return (
     <div className="overflow-hidden bg-background text-foreground">
       <HeroSection />
       <SimpleCapabilities />
-      <FeaturedProducts products={featured} />
-      <ServicesSection />
+      <FeaturedProducts products={homeData.featuredProducts} loading={loading} />
+      <ServicesSection services={homeData.services} />
       <WorkflowSection />
       <WhyChooseUs />
-      <TestimonialsSection />
-      <FAQSection />
+      <TestimonialsSection testimonials={homeData.testimonials} />
+      <FAQSection faqs={homeData.faqs} />
       <CTABanner />
       <BrandClosing />
     </div>
@@ -208,7 +235,7 @@ function BrandClosing() {
   );
 }
 
-function FeaturedProducts({ products }) {
+function FeaturedProducts({ products, loading }) {
   return (
     <section className="pt-8 pb-20 relative">
       <BlurBlob className="w-100 h-100 top-0 right-0 bg-secondary-container" />
@@ -218,11 +245,19 @@ function FeaturedProducts({ products }) {
           title="Precision-Crafted Products"
           description="Top picks."
         />
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-          {products.map((product, i) => (
-            <ProductCard key={product.id} product={product} index={i} />
-          ))}
-        </div>
+        {loading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="rounded-3xl bg-surface-container h-80 animate-pulse" />
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            {products.map((product, i) => (
+              <ProductCard key={product.id} product={product} index={i} />
+            ))}
+          </div>
+        )}
         <div className="text-center mt-10">
           <Link to="/products">
             <Button variant="outline" icon={ArrowRight}>
@@ -235,7 +270,7 @@ function FeaturedProducts({ products }) {
   );
 }
 
-function ServicesSection() {
+function ServicesSection({ services }) {
   return (
     <section className="py-20 bg-surface-container relative">
       <BlurBlob className="w-75 h-75 bottom-0 left-10 bg-accent-glow" />
@@ -362,7 +397,7 @@ function WhyChooseUs() {
   );
 }
 
-function TestimonialsSection() {
+function TestimonialsSection({ testimonials }) {
   return (
     <section className="py-20 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -405,7 +440,7 @@ function TestimonialsSection() {
   );
 }
 
-function FAQSection() {
+function FAQSection({ faqs }) {
   const [open, setOpen] = useState(null);
 
   return (

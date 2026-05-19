@@ -1,8 +1,7 @@
-// Simple currency helper to format USD prices into INR for display
-const DEFAULT_USD_TO_INR = 82.0; // change if you want a different conversion rate
+// Simple currency helper to format raw INR prices from the API/JSON data
 
-export function formatINR(usdValue, { rate = DEFAULT_USD_TO_INR, withSymbol = true } = {}) {
-  const inr = Number(usdValue) * rate;
+export function formatINR(inrValue, { withSymbol = true } = {}) {
+  const inr = Number(inrValue);
   try {
     return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(inr);
   } catch {
