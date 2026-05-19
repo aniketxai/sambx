@@ -22,6 +22,9 @@ const footerLinks = {
     { label: 'Careers', to: '/about' },
     { label: 'Blog', to: '/about' },
   ],
+  Catalogue: [
+    { label: 'Download Catalogue', to: '/catalogue.pdf' },
+  ],
 };
 
 export default function Footer() {
@@ -55,12 +58,23 @@ export default function Footer() {
               <ul className="space-y-2.5">
                 {links.map(link => (
                   <li key={link.label}>
-                    <Link
-                      to={link.to}
-                      className="text-secondary-text text-sm hover:text-primary transition-material"
-                    >
-                      {link.label}
-                    </Link>
+                    {link.to && link.to.endsWith('.pdf') ? (
+                      <a
+                        href={link.to}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-secondary-text text-sm hover:text-primary transition-material"
+                      >
+                        {link.label}
+                      </a>
+                    ) : (
+                      <Link
+                        to={link.to}
+                        className="text-secondary-text text-sm hover:text-primary transition-material"
+                      >
+                        {link.label}
+                      </Link>
+                    )}
                   </li>
                 ))}
               </ul>
