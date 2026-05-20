@@ -13,47 +13,56 @@ import { errorHandler } from './middleware/errorMiddleware.js';
 
 const app = express();
 
+const allowedOrigins = [
+  ...(process.env.CORS_ORIGIN?.split(',').map((s) => s.trim()).filter(Boolean) || []),
+  ...(process.env.NODE_ENV === 'production' ? ['https://sambx.vercel.app'] : []),
+];
+
+function isAllowedOrigin(origin) {
+  if (!origin) return true;
+
+  return allowedOrigins.includes('*') || allowedOrigins.includes(origin);
+}
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    console.log('Incoming request origin:', origin);
+
+    if (isAllowedOrigin(origin)) {
+      return callback(null, true);
+    }
+
+    console.warn('Blocked by CORS:', origin);
+    return callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  optionsSuccessStatus: 200,
+};
+
 /* =========================
    CORS SETUP
 ========================= */
-const allowedOrigins = process.env.CORS_ORIGIN
-  ?.split(',')
-  .map((s) => s.trim())
-  .filter(Boolean) || [];
-
 console.log('CORS_ORIGIN env:', process.env.CORS_ORIGIN);
 console.log('Allowed Origins:', allowedOrigins);
 
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      console.log('Incoming request origin:', origin);
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
 
-      // Allow requests without origin (Postman, curl, server-to-server)
-      if (!origin) {
-        return callback(null, true);
-      }
+  if (origin && isAllowedOrigin(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Vary', 'Origin');
+  }
 
-      // Check allowed origins
-      if (
-        allowedOrigins.includes(origin) ||
-        allowedOrigins.includes('*')
-      ) {
-        return callback(null, true);
-      }
+  next();
+});
 
-      console.warn('Blocked by CORS:', origin);
-
-      return callback(new Error('Not allowed by CORS'));
-    },
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-  })
-);
+app.use(cors(corsOptions));
 
 // Handle preflight requests
-app.options('*', cors());
+app.options('*', cors(corsOptions));
 
 /* =========================
    MIDDLEWARE
