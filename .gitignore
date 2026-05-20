@@ -8,6 +8,15 @@ dist/
 build/
 **/build/
 coverage/
+**/coverage/
+.next/
+**/.next/
+.vite/
+**/.vite/
+.turbo/
+**/.turbo/
+.output/
+**/.output/
 
 # Environment files
 .env
@@ -22,6 +31,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+*.log
 
 # OS / editor files
 .DS_Store
@@ -37,5 +47,10 @@ __pycache__/
 venv/
 env/
 
+# Deployment / hosting
+.vercel/
+.netlify/
+.firebase/
+
 # Misc
-*.log
+*.local
