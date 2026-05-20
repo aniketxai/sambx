@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -22,6 +23,14 @@ app.use(
 app.use(express.json({ limit: '2mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
+
+app.get('/', (req, res) => {
+  res.json({
+    success: true,
+    message: 'SAMBX API is running',
+    health: '/api/health',
+  });
+});
 
 app.get('/api/health', (req, res) => {
   res.json({ success: true, message: 'SAMBX API is running' });

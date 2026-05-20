@@ -1,8 +1,13 @@
-# React + Vite
+# SAMBX Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Vite + React app for SAMBX.
 
-Currently, two official plugins are available:
+## Deployment
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+For a separate frontend deployment, set `VITE_API_URL` to the deployed backend URL.
+
+Example:
+
+- `VITE_API_URL=https://your-backend.vercel.app`
+
+The frontend uses this value for all API requests.

@@ -11,6 +11,17 @@ Express + MongoDB API for the SAMBX Forge frontend.
 4. Run the server:
    - `npm run dev`
 
+## Deployment
+
+For a separate backend deployment, set these environment variables in your hosting provider:
+
+- `MONGO_URI`
+- `CORS_ORIGIN` - include your deployed frontend URL, for example `https://your-frontend.vercel.app`
+- `ORDER_NOTIFICATION_EMAIL`
+- `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS`, `MAIL_FROM`
+
+The backend health check is available at `/api/health`.
+
 ## Order notifications
 
 To send an email after each order is created, configure SMTP settings in `.env`:
