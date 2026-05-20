@@ -14,14 +14,16 @@ import { errorHandler } from './middleware/errorMiddleware.js';
 const app = express();
 
 app.use(helmet());
+const allowedOrigins = process.env.CORS_ORIGIN
+  ?.split(',')
+  .map((s) => s.trim())
+  .filter(Boolean) || [];
+
+console.log('CORS allowed origins:', allowedOrigins.length ? allowedOrigins : '[any]');
+
 app.use(
   cors({
     origin: (origin, callback) => {
-      const allowedOrigins = process.env.CORS_ORIGIN
-        ?.split(',')
-        .map(s => s.trim())
-        .filter(Boolean) || [];
-
       // Allow requests with no origin (like mobile apps or Curl requests)
       if (!origin) return callback(null, true);
 
@@ -30,7 +32,9 @@ app.use(
         if (allowedOrigins.includes(origin) || allowedOrigins.includes('*')) {
           return callback(null, true);
         }
-        return callback(new Error('CORS not allowed'));
+
+        console.warn('Blocked CORS origin:', origin);
+        return callback(null, false);
       }
 
       // In development, allow localhost
@@ -39,7 +43,6 @@ app.use(
       }
 
       // Fallback: allow all origins if CORS_ORIGIN is not set
-      // (set CORS_ORIGIN in production for security)
       return callback(null, true);
     },
     credentials: true,

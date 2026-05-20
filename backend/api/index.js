@@ -13,7 +13,8 @@ async function ensureConnected() {
       dbConnected = true;
     } catch (error) {
       console.error('Failed to connect to database:', error);
-      throw error;
+      // Do not re-throw: let Express handle request errors so middleware
+      // (including CORS) can still add headers to responses.
     }
   }
 }
@@ -22,15 +23,12 @@ async function ensureConnected() {
 export default async (req, res) => {
   try {
     await ensureConnected();
-    return app(req, res);
   } catch (error) {
-    console.error('Serverless function error:', error);
-
-    if (!res.headersSent) {
-      res.status(500).json({
-        success: false,
-        message: 'Internal Server Error',
-      });
-    }
+    // ensureConnected should not throw, but guard anyway
+    console.error('Unexpected error in ensureConnected:', error);
   }
+
+  // Always pass the request to the Express app so middleware (CORS, logging,
+  // error handlers) run and responses include proper headers.
+  return app(req, res);
 };
