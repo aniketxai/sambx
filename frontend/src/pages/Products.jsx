@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, SlidersHorizontal, X, ChevronDown } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
+import ProductCardSkeleton from '../components/ProductCardSkeleton';
 import SectionHeading from '../components/SectionHeading';
 import { useEffect } from 'react';
 import api from '../api';
@@ -188,29 +189,43 @@ export default function Products() {
 
         {/* Grid */}
         <AnimatePresence mode="wait">
-          {filtered.length > 0 ? (
+          {loading ? (
             <motion.div
-              key="grid"
+              key="skeleton-grid"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6"
             >
-              {filtered.map((product, i) => (
-                <ProductCard key={product.id} product={product} index={i} />
+              {Array.from({ length: 8 }).map((_, i) => (
+                <ProductCardSkeleton key={i} />
               ))}
             </motion.div>
           ) : (
-            <motion.div
-              key="empty"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="text-center py-20"
-            >
-              <p className="text-secondary-text text-lg mb-2">No products found</p>
-              <p className="text-outline text-sm">Try adjusting your search or filters.</p>
-            </motion.div>
+            filtered.length > 0 ? (
+              <motion.div
+                key="grid"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6"
+              >
+                {filtered.map((product, i) => (
+                  <ProductCard key={product.id} product={product} index={i} />
+                ))}
+              </motion.div>
+            ) : (
+              <motion.div
+                key="empty"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="text-center py-20"
+              >
+                <p className="text-secondary-text text-lg mb-2">No products found</p>
+                <p className="text-outline text-sm">Try adjusting your search or filters.</p>
+              </motion.div>
+            )
           )}
         </AnimatePresence>
       </div>

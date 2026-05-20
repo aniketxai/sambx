@@ -23,7 +23,10 @@ export default function ProductCard({ product, index = 0 }) {
             <img
               src={product.images[0]}
               alt={product.name}
-              className="w-full h-full object-cover transition-material group-hover:scale-105"
+              width="500"
+              height="500"
+              decoding="async"
+              className="w-full h-full object-contain object-center transition-material group-hover:scale-105 bg-white/5"
               loading="lazy"
             />
           </Link>
