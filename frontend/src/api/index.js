@@ -5,7 +5,7 @@ function getBaseUrl() {
     throw new Error('VITE_API_URL is missing. Set it to your deployed backend URL.');
   }
 
-  return BASE;
+  return BASE.replace(/\/+$/, '');
 }
 
 function buildUrl(path, params = {}) {
