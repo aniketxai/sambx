@@ -46,8 +46,8 @@ export default function Home() {
       <SimpleCapabilities />
       <FeaturedProducts products={homeData.featuredProducts} loading={loading} />
       <ServicesSection services={homeData.services} />
-      <WorkflowSection />
-      <WhyChooseUs />
+      {/* <WorkflowSection /> */}
+      {/* <WhyChooseUs /> */}
       <TestimonialsSection testimonials={homeData.testimonials} />
       <FAQSection faqs={homeData.faqs} />
       <CTABanner />
