@@ -1,3 +1,4 @@
+
 import nodemailer from 'nodemailer';
 
 const DEFAULT_RECIPIENT = 'aniketxai@gmail.com';
@@ -15,79 +16,514 @@ function buildTransport() {
   return nodemailer.createTransport({
     host,
     port,
-    secure: process.env.SMTP_SECURE === 'true' || port === 465,
-    auth: { user, pass },
+    secure:
+      process.env.SMTP_SECURE === 'true' ||
+      port === 465,
+
+    auth: {
+      user,
+      pass,
+    },
   });
 }
 
 function formatCurrency(value) {
-  return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(Number(value || 0));
+  return new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+  }).format(Number(value || 0));
 }
 
 function buildOrderEmail(order) {
-  const recipient = process.env.ORDER_NOTIFICATION_EMAIL || DEFAULT_RECIPIENT;
-  const from = process.env.MAIL_FROM || process.env.SMTP_USER || 'no-reply@sambx.local';
-  const customerName = `${order.shipping.firstName} ${order.shipping.lastName}`.trim();
+  const recipient =
+    process.env.ORDER_NOTIFICATION_EMAIL ||
+    DEFAULT_RECIPIENT;
+
+  const from =
+    process.env.MAIL_FROM ||
+    process.env.SMTP_USER ||
+    'no-reply@sambx.local';
+
+  const customerName =
+    `${order.shipping.firstName} ${order.shipping.lastName}`.trim();
+
+  const paymentMethod =
+    order.payment?.method === 'cod'
+      ? 'Cash on Delivery'
+      : 'Online Payment';
+
   const itemsHtml = order.items
     .map(
       (item) => `
         <tr>
-          <td style="padding:8px 0;border-bottom:1px solid #eee;">${item.name}</td>
-          <td style="padding:8px 0;border-bottom:1px solid #eee;text-align:center;">${item.quantity}</td>
-          <td style="padding:8px 0;border-bottom:1px solid #eee;text-align:right;">${formatCurrency(item.price * item.quantity)}</td>
-        </tr>`
+          <td style="padding:10px;border-bottom:1px solid #eee;">
+            ${item.name}
+          </td>
+
+          <td style="padding:10px;border-bottom:1px solid #eee;text-align:center;">
+            ${item.quantity}
+          </td>
+
+          <td style="padding:10px;border-bottom:1px solid #eee;text-align:right;">
+            ${formatCurrency(
+              item.price * item.quantity
+            )}
+          </td>
+        </tr>
+      `
     )
     .join('');
 
   return {
     from,
+
     to: recipient,
-    subject: `New order received - ${order.orderNumber}`,
+
+    subject: `🛒 New Order - ${order.orderNumber}`,
+
     text: [
-      `Order: ${order.orderNumber}`,
+      `Order Number: ${order.orderNumber}`,
+
       `Customer: ${customerName}`,
+
+      `Phone: ${order.shipping.phone || 'N/A'}`,
+
       `Email: ${order.shipping.email || 'N/A'}`,
-      `Payment: ${order.payment.method}${order.payment.last4 ? ` ending ${order.payment.last4}` : ''}`,
+
+      `Payment Method: ${paymentMethod}`,
+
       `Total: ${formatCurrency(order.total)}`,
+
       '',
+
+      'Shipping Address:',
+
+      `${order.shipping.address}`,
+
+      `${order.shipping.apartment || ''}`,
+
+      `${order.shipping.landmark || ''}`,
+
+      `${order.shipping.city}, ${order.shipping.state}`,
+
+      `${order.shipping.country || 'India'} - ${order.shipping.zipCode}`,
+
+      '',
+
       'Items:',
-      ...order.items.map((item) => `- ${item.name} x${item.quantity} (${formatCurrency(item.price * item.quantity)})`),
-      '',
-      `Shipping address: ${order.shipping.address}, ${order.shipping.city}, ${order.shipping.zipCode}`,
+
+      ...order.items.map(
+        (item) =>
+          `- ${item.name} x${item.quantity} (${formatCurrency(
+            item.price * item.quantity
+          )})`
+      ),
     ].join('\n'),
+
     html: `
-      <div style="font-family:Arial,sans-serif;line-height:1.5;color:#1f2937;max-width:720px;">
-        <h2 style="margin:0 0 12px;">New order received</h2>
-        <p style="margin:0 0 8px;"><strong>Order:</strong> ${order.orderNumber}</p>
-        <p style="margin:0 0 8px;"><strong>Customer:</strong> ${customerName}</p>
-        <p style="margin:0 0 8px;"><strong>Email:</strong> ${order.shipping.email || 'N/A'}</p>
-        <p style="margin:0 0 8px;"><strong>Shipping:</strong> ${order.shipping.address}, ${order.shipping.city}, ${order.shipping.zipCode}</p>
-        <p style="margin:0 0 16px;"><strong>Payment:</strong> ${order.payment.method}${order.payment.last4 ? ` ending ${order.payment.last4}` : ''}</p>
-        <table cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;margin-bottom:16px;">
-          <thead>
-            <tr>
-              <th align="left" style="padding:8px 0;border-bottom:2px solid #ddd;">Item</th>
-              <th align="center" style="padding:8px 0;border-bottom:2px solid #ddd;">Qty</th>
-              <th align="right" style="padding:8px 0;border-bottom:2px solid #ddd;">Amount</th>
-            </tr>
-          </thead>
-          <tbody>${itemsHtml}</tbody>
-        </table>
-        <p style="margin:4px 0;"><strong>Subtotal:</strong> ${formatCurrency(order.subtotal)}</p>
-        <p style="margin:4px 0;"><strong>Shipping:</strong> ${formatCurrency(order.shippingFee)}</p>
-        <p style="margin:4px 0 0;"><strong>Total:</strong> ${formatCurrency(order.total)}</p>
+      <div
+        style="
+          font-family:Arial,sans-serif;
+          background:#f5f5f5;
+          padding:24px;
+          color:#111827;
+        "
+      >
+        <div
+          style="
+            max-width:720px;
+            margin:auto;
+            background:white;
+            border-radius:16px;
+            overflow:hidden;
+          "
+        >
+
+          <div
+            style="
+              background:#111827;
+              color:white;
+              padding:24px;
+            "
+          >
+            <h1 style="margin:0;font-size:24px;">
+              New Order Received 🚀
+            </h1>
+
+            <p style="margin-top:10px;">
+              Order Number:
+              <strong>${order.orderNumber}</strong>
+            </p>
+          </div>
+
+          <div style="padding:24px;">
+
+            <h2 style="margin-top:0;">
+              Customer Information
+            </h2>
+
+            <p>
+              <strong>Name:</strong>
+              ${customerName}
+            </p>
+
+            <p>
+              <strong>Phone:</strong>
+              ${order.shipping.phone || 'N/A'}
+            </p>
+
+            <p>
+              <strong>Email:</strong>
+              ${order.shipping.email || 'N/A'}
+            </p>
+
+            <p>
+              <strong>Address:</strong><br/>
+
+              ${order.shipping.address}<br/>
+
+              ${
+                order.shipping.apartment
+                  ? `${order.shipping.apartment}<br/>`
+                  : ''
+              }
+
+              ${
+                order.shipping.landmark
+                  ? `${order.shipping.landmark}<br/>`
+                  : ''
+              }
+
+              ${order.shipping.city},
+              ${order.shipping.state}<br/>
+
+              ${order.shipping.country || 'India'} -
+              ${order.shipping.zipCode}
+            </p>
+
+            <hr style="margin:24px 0;" />
+
+            <h2>
+              Payment Information
+            </h2>
+
+            <p>
+              <strong>Method:</strong>
+              ${paymentMethod}
+            </p>
+
+            ${
+              order.codCharge
+                ? `
+                  <p>
+                    <strong>COD Charges:</strong>
+                    ${formatCurrency(order.codCharge)}
+                  </p>
+                `
+                : ''
+            }
+
+            <hr style="margin:24px 0;" />
+
+            <h2>
+              Ordered Items
+            </h2>
+
+            <table
+              cellpadding="0"
+              cellspacing="0"
+              style="
+                width:100%;
+                border-collapse:collapse;
+                margin-top:10px;
+              "
+            >
+              <thead>
+                <tr style="background:#f3f4f6;">
+                  <th
+                    align="left"
+                    style="
+                      padding:10px;
+                      border-bottom:2px solid #ddd;
+                    "
+                  >
+                    Product
+                  </th>
+
+                  <th
+                    align="center"
+                    style="
+                      padding:10px;
+                      border-bottom:2px solid #ddd;
+                    "
+                  >
+                    Qty
+                  </th>
+
+                  <th
+                    align="right"
+                    style="
+                      padding:10px;
+                      border-bottom:2px solid #ddd;
+                    "
+                  >
+                    Amount
+                  </th>
+                </tr>
+              </thead>
+
+              <tbody>
+                ${itemsHtml}
+              </tbody>
+            </table>
+
+            <div style="margin-top:24px;">
+
+              <p>
+                <strong>Subtotal:</strong>
+                ${formatCurrency(order.subtotal)}
+              </p>
+
+              <p>
+                <strong>Shipping:</strong>
+                ${formatCurrency(order.shippingFee)}
+              </p>
+
+              ${
+                order.codCharge
+                  ? `
+                    <p>
+                      <strong>COD Charges:</strong>
+                      ${formatCurrency(order.codCharge)}
+                    </p>
+                  `
+                  : ''
+              }
+
+              <h2 style="margin-top:14px;">
+                Total:
+                ${formatCurrency(order.total)}
+              </h2>
+            </div>
+
+            ${
+              order.notes
+                ? `
+                  <hr style="margin:24px 0;" />
+
+                  <h2>
+                    Customer Notes
+                  </h2>
+
+                  <p>
+                    ${order.notes}
+                  </p>
+                `
+                : ''
+            }
+          </div>
+        </div>
       </div>
     `,
   };
 }
 
 export async function sendOrderNotificationEmail(order) {
-  const transport = buildTransport();
-  if (!transport) {
-    console.warn('SMTP is not configured. Skipping order notification email.');
+  try {
+    const transport = buildTransport();
+
+    if (!transport) {
+      console.log('SMTP NOT CONFIGURED');
+      return null;
+    }
+
+    await transport.verify();
+
+    console.log('SMTP CONNECTED');
+
+    // ADMIN EMAIL
+    const adminMail = buildOrderEmail(order);
+
+    await transport.sendMail({
+      ...adminMail,
+
+      from: `"Sambx Store" <${process.env.SMTP_USER}>`,
+
+      replyTo:
+        order.shipping.email ||
+        process.env.SMTP_USER,
+    });
+
+    console.log('ADMIN MAIL SENT');
+
+    // CUSTOMER EMAIL
+    if (order.shipping.email) {
+      const customerName =
+        `${order.shipping.firstName} ${order.shipping.lastName}`.trim();
+
+      const customerItems = order.items
+        .map(
+          (item) => `
+            <tr>
+              <td style="padding:10px;border-bottom:1px solid #eee;">
+                ${item.name}
+              </td>
+
+              <td style="padding:10px;border-bottom:1px solid #eee;text-align:center;">
+                ${item.quantity}
+              </td>
+
+              <td style="padding:10px;border-bottom:1px solid #eee;text-align:right;">
+                ${formatCurrency(
+                  item.price * item.quantity
+                )}
+              </td>
+            </tr>
+          `
+        )
+        .join('');
+
+      await transport.sendMail({
+        from: `"Sambx Forge" <${process.env.SMTP_USER}>`,
+
+        to: order.shipping.email,
+
+        subject: `Order Confirmation - ${order.orderNumber}`,
+
+        html: `
+          <div
+            style="
+              font-family:Arial,sans-serif;
+              background:#f5f5f5;
+              padding:24px;
+            "
+          >
+            <div
+              style="
+                max-width:700px;
+                margin:auto;
+                background:white;
+                border-radius:16px;
+                overflow:hidden;
+              "
+            >
+
+              <div
+                style="
+                  background:#111827;
+                  color:white;
+                  padding:24px;
+                  text-align:center;
+                "
+              >
+                <h1 style="margin:0;">
+                  Thank You For Your Order ❤️
+                </h1>
+
+                <p style="margin-top:10px;">
+                  Order Number:
+                  <strong>${order.orderNumber}</strong>
+                </p>
+              </div>
+
+              <div style="padding:24px;">
+
+                <p>
+                  Hi ${customerName},
+                </p>
+
+                <p>
+                  Your order has been placed successfully.
+                  We will contact you soon regarding shipping updates.
+                </p>
+
+                <h2>
+                  Order Summary
+                </h2>
+
+                <table
+                  cellpadding="0"
+                  cellspacing="0"
+                  style="
+                    width:100%;
+                    border-collapse:collapse;
+                    margin-top:10px;
+                  "
+                >
+                  <thead>
+                    <tr style="background:#f3f4f6;">
+                      <th
+                        align="left"
+                        style="padding:10px;"
+                      >
+                        Product
+                      </th>
+
+                      <th
+                        align="center"
+                        style="padding:10px;"
+                      >
+                        Qty
+                      </th>
+
+                      <th
+                        align="right"
+                        style="padding:10px;"
+                      >
+                        Amount
+                      </th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    ${customerItems}
+                  </tbody>
+                </table>
+
+                <div style="margin-top:24px;">
+
+                  <p>
+                    <strong>Total:</strong>
+                    ${formatCurrency(order.total)}
+                  </p>
+
+                  <p>
+                    <strong>Payment:</strong>
+                    ${
+                      order.payment.method === 'cod'
+                        ? 'Cash on Delivery'
+                        : 'Online Payment'
+                    }
+                  </p>
+                </div>
+
+                <div
+                  style="
+                    margin-top:30px;
+                    padding:16px;
+                    background:#f9fafb;
+                    border-radius:12px;
+                  "
+                >
+                  <p style="margin:0;">
+                    Thank you for shopping with Sambx 🚀
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        `,
+      });
+
+      console.log('CUSTOMER MAIL SENT');
+    }
+
+    return true;
+
+  } catch (error) {
+    console.log('EMAIL ERROR');
+    console.log(error);
+
     return null;
   }
-
-  const mail = buildOrderEmail(order);
-  return transport.sendMail(mail);
 }

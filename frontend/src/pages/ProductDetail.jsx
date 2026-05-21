@@ -1,8 +1,18 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Heart, ShoppingCart, Star, ArrowLeft, Package, Ruler, Clock, Layers, ChevronRight } from 'lucide-react';
-import { useEffect } from 'react';
+import {
+  Heart,
+  ShoppingCart,
+  Star,
+  ArrowLeft,
+  Package,
+  Ruler,
+  Clock,
+  Layers,
+  ChevronRight
+} from 'lucide-react';
+
 import api from '../api';
 import { useApp } from '../context/useApp';
 import Button from '../components/Button';
@@ -12,31 +22,63 @@ import { formatINR } from '../utils/currency';
 
 export default function ProductDetail() {
   const { id } = useParams();
+
   const [product, setProduct] = useState(null);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedImage, setSelectedImage] = useState(0);
+
+  const { addToCart, toggleWishlist, wishlist } = useApp();
+
   useEffect(() => {
     let active = true;
+
     setLoading(true);
+    setSelectedImage(0);
 
-    api.fetchProductById(id)
-      .then(p => { if (active) setProduct(p); })
-      .catch(() => { if (active) setProduct(null); });
+    Promise.all([
+      api.fetchProductById(id),
+      api.fetchProducts()
+    ])
+      .then(([singleProduct, allProducts]) => {
+        if (!active) return;
 
-    api.fetchProducts()
-      .then(list => { if (active) setProducts(list); })
-      .catch(() => { if (active) setProducts([]); })
-      .finally(() => { if (active) setLoading(false); });
+        // Safe fallback structure
+        const safeProduct = singleProduct
+          ? {
+              ...singleProduct,
+              images: singleProduct.images || [],
+              features: singleProduct.features || [],
+              specifications: singleProduct.specifications || {},
+            }
+          : null;
 
-    return () => { active = false; };
+        setProduct(safeProduct);
+        setProducts(allProducts || []);
+      })
+      .catch((err) => {
+        console.error('Product fetch error:', err);
+
+        if (active) {
+          setProduct(null);
+          setProducts([]);
+        }
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
   }, [id]);
-  const { addToCart, toggleWishlist, wishlist } = useApp();
-  const [selectedImage, setSelectedImage] = useState(0);
 
   if (loading) {
     return (
       <div className="pt-24 pb-20 min-h-screen flex items-center justify-center">
-        <p className="text-secondary-text text-lg">Loading product...</p>
+        <p className="text-secondary-text text-lg">
+          Loading product...
+        </p>
       </div>
     );
   }
@@ -45,17 +87,38 @@ export default function ProductDetail() {
     return (
       <div className="pt-24 pb-20 min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <p className="text-secondary-text text-lg mb-4">Product not found</p>
+          <p className="text-secondary-text text-lg mb-4">
+            Product not found
+          </p>
+
           <Link to="/products">
-            <Button variant="outline" icon={ArrowLeft}>Back to Products</Button>
+            <Button variant="outline" icon={ArrowLeft}>
+              Back to Products
+            </Button>
           </Link>
         </div>
       </div>
     );
   }
 
+  const images = product.images || [];
+  const features = product.features || [];
+  const specifications = product.specifications || {};
+
+  const currentImage =
+    images[selectedImage] ||
+    images[0] ||
+    'https://via.placeholder.com/600x600?text=No+Image';
+
   const isWished = wishlist.includes(product.id);
-  const related = products.filter(p => p.category === product.category && p.id !== product.id).slice(0, 4);
+
+  const related = products
+    .filter(
+      (p) =>
+        p.category === product.category &&
+        p.id !== product.id
+    )
+    .slice(0, 4);
 
   const specIcons = {
     material: Package,
@@ -70,44 +133,69 @@ export default function ProductDetail() {
       <BlurBlob className="w-75 h-75 bottom-20 right-0 bg-accent-glow" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-sm text-outline mb-8">
-          <Link to="/products" className="hover:text-primary transition-material">Products</Link>
+          <Link
+            to="/products"
+            className="hover:text-primary transition-material"
+          >
+            Products
+          </Link>
+
           <ChevronRight size={14} />
-          <span className="text-secondary-text">{product.category}</span>
+
+          <span className="text-secondary-text">
+            {product.category}
+          </span>
+
           <ChevronRight size={14} />
-          <span className="text-foreground font-medium">{product.name}</span>
+
+          <span className="text-foreground font-medium">
+            {product.name}
+          </span>
         </nav>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-16">
+
           {/* Image Gallery */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
           >
+
+            {/* Main Image */}
             <div className="bg-surface-container rounded-3xl overflow-hidden aspect-square mb-4">
               <img
-                src={product.images[selectedImage]}
+                src={currentImage}
                 alt={product.name}
                 className="w-full h-full object-cover"
               />
             </div>
-            <div className="flex gap-3">
-              {product.images.map((img, i) => (
-                <button
-                  key={i}
-                  onClick={() => setSelectedImage(i)}
-                  className={`w-20 h-20 rounded-2xl overflow-hidden transition-material cursor-pointer ${
-                    selectedImage === i
-                      ? 'ring-2 ring-primary ring-offset-2'
-                      : 'opacity-60 hover:opacity-100'
-                  }`}
-                >
-                  <img src={img} alt="" className="w-full h-full object-cover" />
-                </button>
-              ))}
-            </div>
+
+            {/* Thumbnails */}
+            {images.length > 0 && (
+              <div className="flex gap-3 flex-wrap">
+                {images.map((img, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setSelectedImage(i)}
+                    className={`w-20 h-20 rounded-2xl overflow-hidden transition-material cursor-pointer ${
+                      selectedImage === i
+                        ? 'ring-2 ring-primary ring-offset-2'
+                        : 'opacity-60 hover:opacity-100'
+                    }`}
+                  >
+                    <img
+                      src={img}
+                      alt={`Product ${i + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
           </motion.div>
 
           {/* Product Info */}
@@ -116,12 +204,20 @@ export default function ProductDetail() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
+
+            {/* Badge */}
             {product.badge && (
               <span className="inline-block bg-primary text-white text-xs font-medium px-3 py-1 rounded-full mb-3">
                 {product.badge}
               </span>
             )}
-            <p className="text-xs text-outline font-medium mb-1">{product.category}</p>
+
+            {/* Category */}
+            <p className="text-xs text-outline font-medium mb-1">
+              {product.category}
+            </p>
+
+            {/* Name */}
             <h1 className="text-3xl sm:text-4xl font-bold text-foreground font-display mb-3">
               {product.name}
             </h1>
@@ -133,60 +229,109 @@ export default function ProductDetail() {
                   <Star
                     key={i}
                     size={16}
-                    className={i < Math.round(product.rating) ? 'fill-warning text-warning' : 'text-surface-muted'}
+                    className={
+                      i < Math.round(product.rating || 0)
+                        ? 'fill-warning text-warning'
+                        : 'text-surface-muted'
+                    }
                   />
                 ))}
               </div>
-              <span className="text-sm font-medium text-foreground">{product.rating}</span>
-              <span className="text-sm text-outline">({product.reviews} reviews)</span>
+
+              <span className="text-sm font-medium text-foreground">
+                {product.rating || 0}
+              </span>
+
+              <span className="text-sm text-outline">
+                ({product.reviews || 0} reviews)
+              </span>
             </div>
 
             {/* Price */}
             <div className="flex items-baseline gap-3 mb-6">
-              <span className="text-3xl font-bold text-foreground">{formatINR(product.price)}</span>
+              <span className="text-3xl font-bold text-foreground">
+                {formatINR(product.price || 0)}
+              </span>
+
               {product.originalPrice && (
-                <span className="text-lg text-outline line-through">{formatINR(product.originalPrice)}</span>
+                <span className="text-lg text-outline line-through">
+                  {formatINR(product.originalPrice)}
+                </span>
               )}
             </div>
 
-            <p className="text-secondary-text leading-relaxed mb-6">{product.description}</p>
+            {/* Description */}
+            <p className="text-secondary-text leading-relaxed mb-6">
+              {product.description}
+            </p>
 
             {/* Features */}
-            <div className="mb-6">
-              <h3 className="font-semibold text-foreground text-sm mb-3">Features</h3>
-              <div className="flex flex-wrap gap-2">
-                {product.features.map(f => (
-                  <span key={f} className="text-xs bg-surface-container px-3 py-1.5 rounded-full text-secondary-text">
-                    {f}
-                  </span>
-                ))}
+            {features.length > 0 && (
+              <div className="mb-6">
+                <h3 className="font-semibold text-foreground text-sm mb-3">
+                  Features
+                </h3>
+
+                <div className="flex flex-wrap gap-2">
+                  {features.map((f, index) => (
+                    <span
+                      key={index}
+                      className="text-xs bg-surface-container px-3 py-1.5 rounded-full text-secondary-text"
+                    >
+                      {f}
+                    </span>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Specifications */}
-            <div className="mb-8">
-              <h3 className="font-semibold text-foreground text-sm mb-3">Specifications</h3>
-              <div className="grid grid-cols-2 gap-3">
-                {Object.entries(product.specifications).map(([key, value]) => {
-                  const Icon = specIcons[key] || Layers;
-                  return (
-                    <div key={key} className="bg-surface-container rounded-2xl p-3">
-                      <div className="flex items-center gap-2 mb-1">
-                        <Icon size={14} className="text-primary" />
-                        <span className="text-xs text-outline capitalize">{key.replace(/([A-Z])/g, ' $1')}</span>
+            {Object.keys(specifications).length > 0 && (
+              <div className="mb-8">
+                <h3 className="font-semibold text-foreground text-sm mb-3">
+                  Specifications
+                </h3>
+
+                <div className="grid grid-cols-2 gap-3">
+                  {Object.entries(specifications).map(([key, value]) => {
+                    const Icon = specIcons[key] || Layers;
+
+                    return (
+                      <div
+                        key={key}
+                        className="bg-surface-container rounded-2xl p-3"
+                      >
+                        <div className="flex items-center gap-2 mb-1">
+                          <Icon
+                            size={14}
+                            className="text-primary"
+                          />
+
+                          <span className="text-xs text-outline capitalize">
+                            {key.replace(/([A-Z])/g, ' $1')}
+                          </span>
+                        </div>
+
+                        <p className="text-sm font-medium text-foreground">
+                          {value}
+                        </p>
                       </div>
-                      <p className="text-sm font-medium text-foreground">{value}</p>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Actions */}
             <div className="flex flex-wrap gap-3">
-              <Button size="lg" icon={ShoppingCart} onClick={() => addToCart(product)}>
+              <Button
+                size="lg"
+                icon={ShoppingCart}
+                onClick={() => addToCart(product)}
+              >
                 Add to Cart
               </Button>
+
               <Button
                 variant={isWished ? 'primary' : 'outline'}
                 size="lg"
@@ -195,6 +340,7 @@ export default function ProductDetail() {
               >
                 {isWished ? 'Wishlisted' : 'Wishlist'}
               </Button>
+
               <Button variant="secondary" size="lg">
                 Custom Order
               </Button>
@@ -205,10 +351,17 @@ export default function ProductDetail() {
         {/* Related Products */}
         {related.length > 0 && (
           <div>
-            <h2 className="text-2xl font-bold text-foreground font-display mb-6">Related Products</h2>
+            <h2 className="text-2xl font-bold text-foreground font-display mb-6">
+              Related Products
+            </h2>
+
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
               {related.map((p, i) => (
-                <ProductCard key={p.id} product={p} index={i} />
+                <ProductCard
+                  key={p.id}
+                  product={p}
+                  index={i}
+                />
               ))}
             </div>
           </div>

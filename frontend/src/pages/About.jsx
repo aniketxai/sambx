@@ -1,109 +1,248 @@
 import { motion } from 'framer-motion';
-import { Cpu, Layers, Rocket, Target } from 'lucide-react';
+import {
+  Cpu,
+  Layers,
+  Rocket,
+  Target,
+} from 'lucide-react';
+
 import SectionHeading from '../components/SectionHeading';
 import BlurBlob from '../components/BlurBlob';
 
 export default function About() {
   const values = [
-    { icon: Target, title: 'Precision', desc: '0.15mm detail.' },
-    { icon: Rocket, title: 'Speed', desc: '48hr average.' },
-    { icon: Layers, title: 'Quality', desc: 'Pro-grade hardware.' },
-    { icon: Cpu, title: 'Innovation', desc: 'AI × Hardware × Manufacturing.' },
+    {
+      icon: Target,
+      title: 'Precision',
+      desc: 'High-detail 3D printing with clean finishing and professional quality.',
+    },
+    {
+      icon: Rocket,
+      title: 'Fast Delivery',
+      desc: 'Quick production workflow with rapid shipping across India.',
+    },
+    {
+      icon: Layers,
+      title: 'Creative Manufacturing',
+      desc: 'From custom gifts to prototypes, we turn ideas into reality.',
+    },
+    {
+      icon: Cpu,
+      title: 'Innovation',
+      desc: 'Blending AI, design, hardware, and manufacturing into one ecosystem.',
+    },
+  ];
+
+  const founders = [
+    {
+      name: 'Aniket Singh',
+      role: 'Founder',
+      image:
+        'https://res.cloudinary.com/du8wgbo8b/image/upload/v1779364123/profile_zl7blg.jpg',
+      about:
+        'Engineering student and creator focused on AI, IoT, embedded systems, robotics, and modern digital manufacturing. Passionate about building intelligent hardware, real-world tech products, and future-driven startups. Hackathon builder and innovator.',
+    },
+
+    {
+      name: 'Khushi Kumari',
+      role: 'Co-Founder',
+      image:
+        'https://res.cloudinary.com/du8wgbo8b/image/upload/v1779364629/WhatsApp_Image_2026-05-21_at_17.26.54_jl2a3c.jpg',
+      about:
+        'Passionate about operations, design, branding, and scaling creative technology products.',
+    },
   ];
 
   return (
     <div className="pt-24 pb-20 min-h-screen">
       <BlurBlob className="w-125 h-125 top-0 -left-40 bg-primary" />
+
       <BlurBlob className="w-100 h-100 bottom-20 right-0 bg-secondary-container" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <SectionHeading
-          label="Our Story"
-          title="Built by Makers, For Makers."
-          description="Precision printing."
+          label="About SAMBX"
+          title="Building The Future With 3D Printing"
+          description="SAMBX Forge combines creativity, engineering, and modern manufacturing to create high-quality custom products and prototypes."
         />
 
-        {/* Story */}
+        {/* STORY */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="bg-surface-container rounded-3xl p-8 sm:p-12 mb-16"
+          className="bg-surface-container rounded-3xl p-8 sm:p-12 mb-20"
         >
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h3 className="text-2xl font-bold text-foreground font-display mb-4">The Forge Story</h3>
-              <p className="text-secondary-text leading-relaxed mb-4">
-                SAMBX Forge started in 2025 after a HealthHackathon win showed how hard it is to get quality 3D prints in India.
+              <h3 className="text-3xl font-bold text-foreground font-display mb-5">
+                Our Journey
+              </h3>
+
+              <p className="text-secondary-text leading-relaxed mb-5">
+                SAMBX Forge started with a vision to make high-quality
+                3D printing accessible, affordable, and creative for
+                everyone.
               </p>
-              <p className="text-secondary-text leading-relaxed mb-4">
-                We built a simple answer: fast, precise, affordable printing.
+
+              <p className="text-secondary-text leading-relaxed mb-5">
+                From personalized gifts and decor to engineering
+                prototypes and startup projects, we help transform ideas
+                into physical products with precision and speed.
               </p>
+
               <p className="text-secondary-text leading-relaxed">
-                With Bambu Lab printers and an engineering mindset, we ship across India.
+                Built by passionate makers and innovators from
+                <span className="text-primary font-medium">
+                  {' '}
+                  VIT Bhopal
+                </span>
+                , SAMBX is growing into an ecosystem focused on AI,
+                hardware, manufacturing, and digital innovation.
               </p>
             </div>
-            <div className="flex items-center justify-center">
-              <div className="grid grid-cols-2 gap-4 w-full max-w-sm">
-                {[
-                  { num: '0.05mm', label: 'Layer' },
-                  { num: '500mm/s', label: 'Speed' },
-                  { num: '180mm', label: 'Build' },
-                  { num: '4', label: 'Materials' },
-                ].map(stat => (
-                  <div key={stat.label} className="bg-background rounded-2xl p-5 text-center">
-                    <p className="text-2xl font-bold text-primary font-display">{stat.num}</p>
-                    <p className="text-xs text-outline mt-1">{stat.label}</p>
-                  </div>
-                ))}
-              </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              {[
+                {
+                  num: '0.05mm',
+                  label: 'Layer Precision',
+                },
+                {
+                  num: '500mm/s',
+                  label: 'Print Speed',
+                },
+                {
+                  num: '24/7',
+                  label: 'Production',
+                },
+                {
+                  num: '100+',
+                  label: 'Custom Designs',
+                },
+              ].map((stat) => (
+                <div
+                  key={stat.label}
+                  className="bg-background rounded-3xl p-6 text-center"
+                >
+                  <p className="text-2xl font-bold text-primary font-display">
+                    {stat.num}
+                  </p>
+
+                  <p className="text-xs text-outline mt-2">
+                    {stat.label}
+                  </p>
+                </div>
+              ))}
             </div>
           </div>
         </motion.div>
 
-        {/* Philosophy */}
+        {/* FOUNDERS */}
         <SectionHeading
-          label="Philosophy"
-          title="Founder & Values"
-          description="A few core values."
+          label="Leadership"
+          title="Founder & Co-Founder"
+          description="The people building the SAMBX vision."
         />
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
+          {founders.map((founder, i) => (
+            <motion.div
+              key={founder.name}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{
+                duration: 0.5,
+                delay: i * 0.1,
+              }}
+              className="bg-surface-container rounded-3xl overflow-hidden"
+            >
+              <div className="aspect-[4/3] overflow-hidden">
+                <img
+                  src={founder.image}
+                  alt={founder.name}
+                  className="w-full h-full object-cover hover:scale-105 transition duration-500"
+                />
+              </div>
+
+              <div className="p-6">
+                <p className="text-primary text-sm font-medium mb-2">
+                  {founder.role}
+                </p>
+
+                <h3 className="text-2xl font-bold text-foreground mb-3">
+                  {founder.name}
+                </h3>
+
+                <p className="text-secondary-text leading-relaxed">
+                  {founder.about}
+                </p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* VALUES */}
+        <SectionHeading
+          label="Core Values"
+          title="What Drives Us"
+          description="A few principles behind everything we build."
+        />
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-20">
           {values.map((v, i) => {
             const Icon = v.icon;
+
             return (
               <motion.div
                 key={v.title}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: i * 0.06 }}
-                className="bg-surface-container rounded-3xl p-6 hover:shadow-md transition-material group"
+                transition={{
+                  duration: 0.4,
+                  delay: i * 0.06,
+                }}
+                className="bg-surface-container rounded-3xl p-6 hover:shadow-lg transition-material group"
               >
-                <div className="w-11 h-11 rounded-xl bg-secondary-container flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-white transition-material">
+                <div className="w-12 h-12 rounded-2xl bg-secondary-container flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-white transition-material">
                   <Icon size={20} />
                 </div>
-                <h3 className="font-semibold text-foreground mb-2">{v.title}</h3>
-                <p className="text-secondary-text text-sm leading-relaxed">{v.desc}</p>
+
+                <h3 className="font-semibold text-foreground mb-2">
+                  {v.title}
+                </h3>
+
+                <p className="text-secondary-text text-sm leading-relaxed">
+                  {v.desc}
+                </p>
               </motion.div>
             );
           })}
         </div>
 
-        {/* Vision */}
+        {/* VISION */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="bg-primary rounded-3xl p-8 sm:p-12 text-center relative overflow-hidden"
+          className="bg-primary rounded-3xl p-8 sm:p-14 text-center relative overflow-hidden"
         >
           <div className="absolute inset-0 bg-linear-to-br from-primary via-primary/90 to-transparent" />
+
           <div className="relative z-10">
-            <h3 className="text-3xl font-bold text-white font-display mb-4">SAMBX Ecosystem</h3>
-            <p className="text-white/80 max-w-2xl mx-auto leading-relaxed">
-              SAMBX Forge is one part of SAMBX — AI × Hardware × Manufacturing from VIT Bhopal.
+            <h3 className="text-3xl sm:text-4xl font-bold text-white font-display mb-5">
+              The SAMBX Vision
+            </h3>
+
+            <p className="text-white/80 max-w-3xl mx-auto leading-relaxed text-lg">
+              SAMBX is more than a 3D printing brand. We are building an
+              ecosystem that connects AI, hardware, software, design,
+              manufacturing, and innovation into one powerful platform
+              for the future.
             </p>
           </div>
         </motion.div>

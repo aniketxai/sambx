@@ -3,17 +3,33 @@ import { asyncHandler } from '../utils/asyncHandler.js';
 import { sendOrderNotificationEmail } from '../utils/mailer.js';
 
 function makeOrderNumber() {
-  return `SBX-${Date.now().toString().slice(-8)}-${Math.floor(Math.random() * 900 + 100)}`;
+  return `SBX-${Date.now()
+    .toString()
+    .slice(-8)}-${Math.floor(Math.random() * 900 + 100)}`;
 }
 
-export const createOrder = asyncHandler(async (req, res) => {
-  const { items, shipping, payment = {}, notes = '' } = req.body;
+const createOrder = asyncHandler(async (req, res) => {
+  const {
+    items,
+    shipping,
+    payment = {},
+    notes = '',
+  } = req.body;
 
   if (!Array.isArray(items) || items.length === 0) {
     res.status(400);
     throw new Error('Order items are required');
   }
-  if (!shipping?.firstName || !shipping?.lastName || !shipping?.address || !shipping?.city || !shipping?.zipCode) {
+
+  if (
+    !shipping?.firstName ||
+    !shipping?.lastName ||
+    !shipping?.phone ||
+    !shipping?.address ||
+    !shipping?.city ||
+    !shipping?.state ||
+    !shipping?.zipCode
+  ) {
     res.status(400);
     throw new Error('Shipping information is incomplete');
   }
@@ -30,35 +46,55 @@ export const createOrder = asyncHandler(async (req, res) => {
     firstName: String(shipping.firstName).trim(),
     lastName: String(shipping.lastName).trim(),
     email: String(shipping.email ?? '').trim(),
+    phone: String(shipping.phone ?? '').trim(),
     address: String(shipping.address).trim(),
+    apartment: String(shipping.apartment ?? '').trim(),
+    landmark: String(shipping.landmark ?? '').trim(),
     city: String(shipping.city).trim(),
+    state: String(shipping.state).trim(),
+    country: String(shipping.country ?? 'India').trim(),
     zipCode: String(shipping.zipCode).trim(),
   };
 
-  const normalizedPayment = {
-    method: String(payment.method ?? 'card'),
-    last4: String(payment.last4 ?? '').slice(-4),
-  };
+  const paymentMethod = String(
+    payment.method ?? 'online'
+  ).toLowerCase();
 
-  const subtotal = normalizedItems.reduce((sum, item) => sum + Number(item.price) * Number(item.quantity), 0);
+  const codCharge =
+    paymentMethod === 'cod' ? 100 : 0;
+
+  const subtotal = normalizedItems.reduce(
+    (sum, item) =>
+      sum +
+      Number(item.price) *
+        Number(item.quantity),
+    0
+  );
+
   const shippingFee = 0;
-  const total = subtotal + shippingFee;
+
+  const total =
+    subtotal +
+    shippingFee +
+    codCharge;
 
   const order = await Order.create({
     orderNumber: makeOrderNumber(),
     items: normalizedItems,
     shipping: normalizedShipping,
-    payment: normalizedPayment,
+    payment: {
+      method: paymentMethod,
+      codCharge,
+    },
     subtotal,
     shippingFee,
+    codCharge,
     total,
     status: 'pending',
     notes: String(notes ?? '').trim(),
   });
 
-  await sendOrderNotificationEmail(order).catch((emailError) => {
-    console.error('Order email notification failed:', emailError);
-  });
+  await sendOrderNotificationEmail(order);
 
   res.status(201).json({
     success: true,
@@ -66,3 +102,5 @@ export const createOrder = asyncHandler(async (req, res) => {
     data: order,
   });
 });
+
+export { createOrder };
