@@ -313,50 +313,50 @@ function ServicesSection({ services }) {
   );
 }
 
-// function WorkflowSection() {
-//   const steps = [
-//     { num: '01', title: 'Upload', desc: 'Send STL or idea.' },
-//     { num: '02', title: 'Quote', desc: 'Get pricing fast.' },
-//     { num: '03', title: 'Pay', desc: 'UPI, card, or COD.' },
-//     { num: '04', title: 'Print', desc: 'We make it.' },
-//     { num: '05', title: 'Ship', desc: 'Tracked delivery.' },
-//   ];
+function WorkflowSection() {
+  const steps = [
+    { num: '01', title: 'Upload', desc: 'Send STL or idea.' },
+    { num: '02', title: 'Quote', desc: 'Get pricing fast.' },
+    { num: '03', title: 'Pay', desc: 'UPI, card, or COD.' },
+    { num: '04', title: 'Print', desc: 'We make it.' },
+    { num: '05', title: 'Ship', desc: 'Tracked delivery.' },
+  ];
 
-//   return (
-//     <section className="py-20 relative">
-//       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-//         <SectionHeading
-//           label="Process"
-//           title="How it Works"
-//           description="Five quick steps."
-//         />
-//         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-//           {steps.map((step, i) => (
-//             <motion.div
-//               key={step.num}
-//               initial={{ opacity: 0, y: 20 }}
-//               whileInView={{ opacity: 1, y: 0 }}
-//               viewport={{ once: true }}
-//               transition={{ duration: 0.4, delay: i * 0.1 }}
-//               className="bg-surface-container rounded-3xl p-6 hover:shadow-md transition-material relative"
-//             >
-//               <div className="relative min-h-35">
-//                 <span className="hidden lg:block absolute -left-6 -top-6 text-[96px] font-bold font-display text-surface-muted opacity-10 pointer-events-none select-none">{step.num}</span>
-//                 <h3 className="font-semibold text-foreground text-lg mt-2 mb-2">{step.title}</h3>
-//                 <p className="text-secondary-text text-sm leading-relaxed">{step.desc}</p>
-//               </div>
-//               {i < steps.length - 1 && (
-//                 <div className="hidden lg:block absolute top-6 -right-3 w-6">
-//                   <ArrowRight size={16} className="text-surface-muted" />
-//                 </div>
-//               )}
-//             </motion.div>
-//           ))}
-//         </div>
-//       </div>
-//     </section>
-//   );
-// }
+  return (
+    <section className="py-20 relative">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          label="Process"
+          title="How it Works"
+          description="Five quick steps."
+        />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+          {steps.map((step, i) => (
+            <motion.div
+              key={step.num}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: i * 0.1 }}
+              className="bg-surface-container rounded-3xl p-6 hover:shadow-md transition-material relative"
+            >
+              <div className="relative min-h-35">
+                <span className="hidden lg:block absolute -left-6 -top-6 text-[96px] font-bold font-display text-surface-muted opacity-10 pointer-events-none select-none">{step.num}</span>
+                <h3 className="font-semibold text-foreground text-lg mt-2 mb-2">{step.title}</h3>
+                <p className="text-secondary-text text-sm leading-relaxed">{step.desc}</p>
+              </div>
+              {i < steps.length - 1 && (
+                <div className="hidden lg:block absolute top-6 -right-3 w-6">
+                  <ArrowRight size={16} className="text-surface-muted" />
+                </div>
+              )}
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
 
 function WhyChooseUs() {
   const reasons = [
