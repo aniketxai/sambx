@@ -70,35 +70,35 @@ export default function Wishlist() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: i * 0.05 }}
-              className="bg-surface-container rounded-3xl p-4 flex flex-col sm:flex-row gap-4 sm:items-center"
+              className="bg-surface-container rounded-3xl p-3 sm:p-4 grid grid-cols-4 sm:flex sm:flex-row sm:items-center gap-3 sm:gap-4"
             >
-              <Link to={`/products/${product.id}`} className="shrink-0">
+              <Link to={`/products/${product.id}`} className="col-span-1 shrink-0">
                 <img
                   src={product.images?.[0]}
                   alt={product.name}
-                  className="w-full sm:w-20 h-40 sm:h-20 rounded-2xl object-cover"
+                  className="w-full h-24 sm:w-20 sm:h-20 rounded-2xl object-cover"
                 />
               </Link>
-              <div className="flex-1 min-w-0 text-center sm:text-left">
-                <Link to={`/products/${product.id}`} className="font-semibold text-foreground text-sm hover:text-primary transition-material line-clamp-1">
+              <div className="col-span-3 sm:flex-1 sm:min-w-0 text-left">
+                <Link to={`/products/${product.id}`} className="font-semibold text-foreground text-xs sm:text-sm hover:text-primary transition-material line-clamp-2">
                   {product.name}
                 </Link>
                 <p className="text-xs text-outline mt-0.5">{product.category}</p>
-                <p className="text-lg font-bold text-foreground mt-1">{formatINR(product.price)}</p>
+                <p className="text-sm sm:text-lg font-bold text-foreground mt-1">{formatINR(product.price)}</p>
               </div>
-              <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+              <div className="col-span-4 sm:col-span-auto flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                 <Button 
                   size="sm" 
                   icon={ShoppingCart} 
                   onClick={() => addToCart(product)}
-                  className="flex-1 sm:flex-none"
+                  className="flex-1 sm:flex-none text-xs sm:text-sm py-2 sm:py-2"
                 >
                   Add to Cart
                 </Button>
                 <motion.button
                   whileTap={{ scale: 0.9 }}
                   onClick={() => toggleWishlist(product.id)}
-                  className="p-2 rounded-full hover:bg-error/10 text-outline hover:text-error transition-material self-center sm:self-auto"
+                  className="p-2 rounded-full hover:bg-error/10 text-outline hover:text-error transition-material"
                 >
                   <Trash2 size={16} />
                 </motion.button>
