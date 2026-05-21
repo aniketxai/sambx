@@ -313,7 +313,17 @@ export const updateOrderStatus = asyncHandler(async (req, res) => {
     throw new Error('Status is required');
   }
 
-  const updated = await Order.findByIdAndUpdate(id, { $set: { status } }, { new: true, runValidators: true }).lean();
+  const validStatuses = ['pending', 'paid', 'processing', 'shipped', 'delivered', 'cancelled'];
+  if (!validStatuses.includes(status)) {
+    res.status(400);
+    throw new Error(`Invalid status. Must be one of: ${validStatuses.join(', ')}`);
+  }
+
+  const updated = await Order.findByIdAndUpdate(
+    id,
+    { $set: { status } },
+    { new: true, runValidators: true }
+  ).lean();
 
   if (!updated) {
     res.status(404);

@@ -4,6 +4,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 
+import authRoutes from './routes/authRoutes.js';
 import productRoutes from './routes/productRoutes.js';
 import contactRoutes from './routes/contactRoutes.js';
 import quoteRoutes from './routes/quoteRoutes.js';
@@ -38,7 +39,7 @@ const corsOptions = {
     return callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   optionsSuccessStatus: 200,
 };
@@ -95,11 +96,12 @@ app.get('/api/health', (req, res) => {
 /* =========================
    API ROUTES
 ========================= */
+app.use('/api/auth', authRoutes);
+app.use('/api/admin', adminRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/quotes', quoteRoutes);
 app.use('/api/orders', orderRoutes);
-app.use('/api/admin', adminRoutes);
 app.use('/api/admin', importRoutes);
 
 /* =========================

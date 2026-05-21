@@ -22,8 +22,10 @@ import api from '../api/index.js';
 import AdminAnalytics from './AdminAnalytics';
 import AdminSettings from './AdminSettings';
 import ImportProductsModal from '../components/ImportProductsModal';
+import { AdminLogin, AdminLogoutButton } from './AdminLogin';
 import {
   ProductEditModal,
+  OrderDetailModal,
   OverviewSection,
   CatalogSection,
   OrdersSection,
@@ -102,6 +104,12 @@ function uploadImageToCloudinary(file) {
 }
 
 export default function Admin() {
+  // Authentication state
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return !!localStorage.getItem('adminToken');
+  });
+
+  // UI State
   const [activeSection, setActiveSection] = useState('overview');
   const [productQuery, setProductQuery] = useState('');
   const [productCategory, setProductCategory] = useState('All');
@@ -111,6 +119,8 @@ export default function Admin() {
   const [editingProductId, setEditingProductId] = useState(null);
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [isOrderDetailOpen, setIsOrderDetailOpen] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState(null);
   const [savingProduct, setSavingProduct] = useState(false);
   const [uploadingImages, setUploadingImages] = useState(false);
   const [savingOrderId, setSavingOrderId] = useState(null);
@@ -126,9 +136,16 @@ export default function Admin() {
   const [adminContacts, setAdminContacts] = useState([]);
   const [activity, setActivity] = useState([]);
 
-  const categoryOptions = ['All', ...categories];
+  // Check authentication on mount
+ // Check authentication on mount
+useEffect(() => {
+  const token = localStorage.getItem('adminToken');
+  setIsAuthenticated(!!token);
+}, []);
 
-  const loadAdminData = useCallback(async ({ showLoading = true } = {}) => {
+const categoryOptions = ['All', ...categories];
+
+const loadAdminData = useCallback(async ({ showLoading = true } = {}) => {
     let cancelled = false;
 
     if (showLoading) setLoading(true);
@@ -502,8 +519,8 @@ export default function Admin() {
   }, []);
 
   const handleViewOrder = useCallback((order) => {
-    const orderId = order._id || order.id;
-    alert(`Order Details:\n\nID: ${orderId}\nCustomer: ${order.customerName || order.customer}\nTotal: ${formatINR(order.totalAmount || order.total)}\nStatus: ${order.status}`);
+    setSelectedOrder(order);
+    setIsOrderDetailOpen(true);
   }, []);
 
   const handleRespondToEnquiry = useCallback((enquiry) => {
@@ -541,6 +558,16 @@ export default function Admin() {
       setError(err.message || 'Failed to update contact status');
     }
   }, [refreshData]);
+  // If not authenticated, show login
+if (!isAuthenticated) {
+  return (
+    <AdminLogin
+      onLogin={() => {
+        setIsAuthenticated(true);
+      }}
+    />
+  );
+}
 
   if (loading) {
     return (
@@ -617,6 +644,7 @@ export default function Admin() {
             <p className="text-xs text-secondary-text leading-relaxed">
               Product, order, quote, and message management for the full SAMBX store.
             </p>
+            <AdminLogoutButton onLogout={() => setIsAuthenticated(false)} />
           </div>
         </aside>
 
@@ -784,6 +812,16 @@ export default function Admin() {
             refreshData();
             setSuccessMessage('Products imported successfully!');
             setTimeout(() => setSuccessMessage(null), 3000);
+          }}
+        />
+
+        {/* Order Detail Modal */}
+        <OrderDetailModal
+          isOpen={isOrderDetailOpen}
+          order={selectedOrder}
+          onClose={() => {
+            setIsOrderDetailOpen(false);
+            setSelectedOrder(null);
           }}
         />
       </div>

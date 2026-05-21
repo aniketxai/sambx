@@ -32,9 +32,21 @@ async function fetchWithTimeout(url, options = {}, timeoutMs = REQUEST_TIMEOUT_M
 }
 
 async function requestJson(path, { method = 'GET', body, params } = {}) {
+  const headers = {
+    'Content-Type': 'application/json',
+  };
+
+  // Add auth token for admin routes
+  if (path.includes('/admin') || path.includes('/auth')) {
+    const token = localStorage.getItem('adminToken');
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+  }
+
   const res = await fetchWithTimeout(buildUrl(path, params), {
     method,
-    headers: body ? { 'Content-Type': 'application/json' } : undefined,
+    headers,
     body: body ? JSON.stringify(body) : undefined,
   });
 
