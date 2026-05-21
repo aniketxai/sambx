@@ -591,7 +591,7 @@ export default function Checkout() {
                 </Button>
 
                 <Button type="submit" size="lg">
-                  Review Order
+                 Next
                 </Button>
               </div>
             </motion.div>
