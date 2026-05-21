@@ -66,13 +66,17 @@ export function AppProvider({ children }) {
   // Save state to localStorage whenever it changes
   useEffect(() => {
     try {
+      console.log('Saving app state:', state);
       localStorage.setItem('appState', JSON.stringify(state));
     } catch (error) {
       console.error('Failed to save state to localStorage:', error);
     }
   }, [state]);
 
-  const addToCart = useCallback((product) => dispatch({ type: 'ADD_TO_CART', payload: product }), []);
+  const addToCart = useCallback((product) => {
+    console.log('Adding to cart:', product);
+    dispatch({ type: 'ADD_TO_CART', payload: product });
+  }, []);
   const removeFromCart = useCallback((id) => dispatch({ type: 'REMOVE_FROM_CART', payload: id }), []);
   const updateQuantity = useCallback((id, quantity) => dispatch({ type: 'UPDATE_QUANTITY', payload: { id, quantity } }), []);
   const clearCart = useCallback(() => dispatch({ type: 'CLEAR_CART' }), []);

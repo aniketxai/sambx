@@ -14,6 +14,11 @@ export default function ProductCard({ product, index = 0 }) {
     toggleWishlist(product.id);
   };
 
+  const handleAddToCart = () => {
+    console.log('Add to cart clicked for:', product);
+    addToCart(product);
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -94,7 +99,7 @@ export default function ProductCard({ product, index = 0 }) {
             </div>
             <motion.button
               whileTap={{ scale: 0.9 }}
-              onClick={() => addToCart(product)}
+              onClick={handleAddToCart}
               className="w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center hover:shadow-md transition-material"
             >
               <ShoppingCart size={14} />

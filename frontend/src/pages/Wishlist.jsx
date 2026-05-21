@@ -60,47 +60,48 @@ export default function Wishlist() {
 
   return (
     <div className="pt-24 pb-20 min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <SectionHeading label="Saved" title="Your Wishlist" description="Products you have saved for later." />
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <SectionHeading label="Saved" title="Your Wishlist" description="Products you have saved for later." center={false} />
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <div className="space-y-4 mb-8">
           {wishlistProducts.map((product, i) => (
             <motion.div
               key={product.id}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: i * 0.05 }}
-              className="bg-surface-container rounded-3xl overflow-hidden group"
+              className="bg-surface-container rounded-3xl p-4 flex flex-col sm:flex-row gap-4 sm:items-center"
             >
-              <div className="relative aspect-square overflow-hidden bg-surface-muted">
-                <Link to={`/products/${product.id}`}>
-                  <img
-                    src={product.images[0]}
-                    alt={product.name}
-                    className="w-full h-full object-cover transition-material group-hover:scale-105"
-                  />
+              <Link to={`/products/${product.id}`} className="shrink-0">
+                <img
+                  src={product.images?.[0]}
+                  alt={product.name}
+                  className="w-full sm:w-20 h-40 sm:h-20 rounded-2xl object-cover"
+                />
+              </Link>
+              <div className="flex-1 min-w-0 text-center sm:text-left">
+                <Link to={`/products/${product.id}`} className="font-semibold text-foreground text-sm hover:text-primary transition-material line-clamp-1">
+                  {product.name}
                 </Link>
+                <p className="text-xs text-outline mt-0.5">{product.category}</p>
+                <p className="text-lg font-bold text-foreground mt-1">{formatINR(product.price)}</p>
               </div>
-              <div className="p-4">
-                <p className="text-xs text-outline mb-1">{product.category}</p>
-                <Link to={`/products/${product.id}`}>
-                  <h3 className="font-semibold text-foreground text-sm mb-2 hover:text-primary transition-material line-clamp-1">
-                    {product.name}
-                  </h3>
-                </Link>
-                <p className="text-lg font-bold text-foreground mb-3">{formatINR(product.price)}</p>
-                <div className="flex gap-2">
-                  <Button size="sm" icon={ShoppingCart} onClick={() => addToCart(product)} className="flex-1">
-                    Add to Cart
-                  </Button>
-                  <motion.button
-                    whileTap={{ scale: 0.9 }}
-                    onClick={() => toggleWishlist(product.id)}
-                    className="w-9 h-9 rounded-full bg-surface-muted flex items-center justify-center text-error hover:bg-error/10 transition-material"
-                  >
-                    <Trash2 size={14} />
-                  </motion.button>
-                </div>
+              <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                <Button 
+                  size="sm" 
+                  icon={ShoppingCart} 
+                  onClick={() => addToCart(product)}
+                  className="flex-1 sm:flex-none"
+                >
+                  Add to Cart
+                </Button>
+                <motion.button
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => toggleWishlist(product.id)}
+                  className="p-2 rounded-full hover:bg-error/10 text-outline hover:text-error transition-material self-center sm:self-auto"
+                >
+                  <Trash2 size={16} />
+                </motion.button>
               </div>
             </motion.div>
           ))}
