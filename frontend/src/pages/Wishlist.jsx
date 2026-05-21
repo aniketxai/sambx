@@ -2,14 +2,46 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Heart, ShoppingCart, Trash2, ArrowRight } from 'lucide-react';
 import { useApp } from '../context/useApp';
-import { products } from '../data/products';
+import { useState, useEffect } from 'react';
 import Button from '../components/Button';
 import SectionHeading from '../components/SectionHeading';
 import { formatINR } from '../utils/currency';
+import api from '../api';
 
 export default function Wishlist() {
   const { wishlist, toggleWishlist, addToCart } = useApp();
-  const wishlistProducts = products.filter(p => wishlist.includes(p.id));
+  const [wishlistProducts, setWishlistProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (wishlist.length === 0) {
+      setWishlistProducts([]);
+      return;
+    }
+
+    setLoading(true);
+    api.fetchProducts()
+      .then(products => {
+        const filtered = products.filter(p => wishlist.includes(String(p.id)));
+        setWishlistProducts(filtered);
+      })
+      .catch(err => {
+        console.error('Failed to fetch wishlist products:', err);
+        setWishlistProducts([]);
+      })
+      .finally(() => setLoading(false));
+  }, [wishlist]);
+
+  if (loading) {
+    return (
+      <div className="pt-24 pb-20 min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-secondary-text">Loading wishlist...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (wishlistProducts.length === 0) {
     return (

@@ -8,6 +8,12 @@ export default function ProductCard({ product, index = 0 }) {
   const { addToCart, toggleWishlist, wishlist } = useApp();
   const isWished = wishlist.includes(product.id);
 
+  const handleWishlistToggle = () => {
+    console.log('Wishlist toggle clicked for:', product.id);
+    console.log('Current wishlist:', wishlist);
+    toggleWishlist(product.id);
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -39,10 +45,10 @@ export default function ProductCard({ product, index = 0 }) {
           )}
 
           {/* Quick actions */}
-          <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-material">
+          <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-100 transition-material">
             <motion.button
               whileTap={{ scale: 0.9 }}
-              onClick={() => toggleWishlist(product.id)}
+              onClick={handleWishlistToggle}
               className={`w-9 h-9 rounded-full flex items-center justify-center transition-material ${
                 isWished
                   ? 'bg-primary text-white shadow-md'

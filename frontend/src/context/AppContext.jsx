@@ -1,9 +1,20 @@
-import { useReducer, useCallback } from 'react';
-import { AppContext } from './appContextValue';
+import { useReducer, useCallback, useEffect } from 'react';
+import { AppContext } from './appContext';
 
 const initialState = {
   cart: [],
   wishlist: [],
+};
+
+// Load state from localStorage
+const loadState = () => {
+  try {
+    const saved = localStorage.getItem('appState');
+    return saved ? JSON.parse(saved) : initialState;
+  } catch (error) {
+    console.error('Failed to load state from localStorage:', error);
+    return initialState;
+  }
 };
 
 function appReducer(state, action) {
@@ -50,7 +61,16 @@ function appReducer(state, action) {
 }
 
 export function AppProvider({ children }) {
-  const [state, dispatch] = useReducer(appReducer, initialState);
+  const [state, dispatch] = useReducer(appReducer, initialState, loadState);
+
+  // Save state to localStorage whenever it changes
+  useEffect(() => {
+    try {
+      localStorage.setItem('appState', JSON.stringify(state));
+    } catch (error) {
+      console.error('Failed to save state to localStorage:', error);
+    }
+  }, [state]);
 
   const addToCart = useCallback((product) => dispatch({ type: 'ADD_TO_CART', payload: product }), []);
   const removeFromCart = useCallback((id) => dispatch({ type: 'REMOVE_FROM_CART', payload: id }), []);
