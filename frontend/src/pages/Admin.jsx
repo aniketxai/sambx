@@ -398,10 +398,14 @@ export default function Admin() {
       } else {
         await api.createAdminProduct(payload);
         setSuccessMessage('Product created successfully');
-        resetProductForm();
       }
 
       await refreshData();
+      
+      // Close modal and reset form after successful save
+      setIsProductModalOpen(false);
+      resetProductForm();
+      setEditingProductId(null);
     } catch (err) {
       console.error('Failed to save product:', err);
       setError(err.message || 'Failed to save product');
