@@ -38,7 +38,7 @@ export default function About() {
       name: 'Aniket Singh',
       role: 'Founder',
       image:
-        'https://res.cloudinary.com/du8wgbo8b/image/upload/v1779364123/profile_zl7blg.jpg',
+        'https://res.cloudinary.com/du8wgbo8b/image/upload/v1779372383/WhatsApp_Image_2026-05-21_at_19.36.08_d1tznj.jpg',
       about:
         'Engineering student and creator focused on AI, IoT, embedded systems, robotics, and modern digital manufacturing. Passionate about building intelligent hardware, real-world tech products, and future-driven startups. Hackathon builder and innovator.',
     },
