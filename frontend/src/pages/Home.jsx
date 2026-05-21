@@ -512,7 +512,7 @@ function CTABanner() {
               Send your file. Get a quote.
             </p>
             <div className="flex flex-wrap justify-center gap-3">
-              <Link to="/products">
+              <Link to="/contact">
                 <Button variant="secondary" size="lg" icon={ArrowRight}>
                   Submit Quote Request
                 </Button>
