@@ -45,7 +45,7 @@ export default function Home() {
       <HeroSection />
       <SimpleCapabilities />
       <FeaturedProducts products={homeData.featuredProducts} loading={loading} />
-      <ServicesSection services={homeData.services} />
+      {/* <ServicesSection services={homeData.services} /> */}
       {/* <WorkflowSection /> */}
       {/* <WhyChooseUs /> */}
       <TestimonialsSection testimonials={homeData.testimonials} />
