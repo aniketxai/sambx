@@ -8,6 +8,9 @@ import {
 
 import Logo from './Logo';
 import logoImage from '../assets/logo.png';
+import { useState } from "react";
+
+
 
 const footerLinks = {
   Products: [
@@ -75,7 +78,27 @@ const footerLinks = {
   ],
 };
 
+const InstagramIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+  </svg>
+);
+
+
 export default function Footer() {
+  const [isSharing, setIsSharing] = useState(false);
   return (
     <footer className="bg-surface-container border-t border-surface-muted">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -103,17 +126,33 @@ export default function Footer() {
       icon: Globe,
       href: 'https://sambx.vercel.app',
     },
-
     {
-      icon: Share2,
-      href: 'https://instagram.com/sambx.forge',
-    },
+  icon: Share2,
+  onClick: async () => {
+    if (isSharing) return;
 
+    try {
+      setIsSharing(true);
+
+      if (navigator.share) {
+        await navigator.share({
+          title: 'SAMBX',
+          url: 'https://sambx.vercel.app/',
+        });
+      } else {
+        window.open('https://sambx.vercel.app/', '_blank');
+      }
+    } catch (err) {
+      console.log("Share cancelled or failed", err);
+    } finally {
+      setIsSharing(false);
+    }
+  },
+},
     {
-      icon: Code,
-      href: 'https://linkedin.com/in/aniketxai',
+      icon: InstagramIcon,
+      href: 'https://instagram.com/aniketxai',
     },
-
     {
       icon: Mail,
       href: 'mailto:sambx.tech@gmail.com',
@@ -121,12 +160,20 @@ export default function Footer() {
   ].map((item, i) => {
     const Icon = item.icon;
 
-    return (
+    return item.onClick ? (
+      <button
+        key={i}
+        onClick={item.onClick}
+        className="w-9 h-9 rounded-full bg-surface-muted flex items-center justify-center text-outline hover:bg-primary hover:text-white transition-material"
+      >
+        <Icon size={16} />
+      </button>
+    ) : (
       <a
         key={i}
         href={item.href}
-        target="_blank"
-        rel="noopener noreferrer"
+        target={item.href.startsWith('http') ? '_blank' : undefined}
+        rel={item.href.startsWith('http') ? 'noopener noreferrer' : undefined}
         className="w-9 h-9 rounded-full bg-surface-muted flex items-center justify-center text-outline hover:bg-primary hover:text-white transition-material"
       >
         <Icon size={16} />
@@ -135,7 +182,6 @@ export default function Footer() {
   })}
 </div>
           </div>
-
           {/* FOOTER LINKS */}
           {Object.entries(footerLinks).map(
             ([title, links]) => (
