@@ -126,7 +126,7 @@ export default function About() {
                   key={stat.label}
                   className="bg-background rounded-3xl p-6 text-center"
                 >
-                  <p className="text-2xl font-bold text-primary font-display">
+                  <p className="text-1.5xl font-bold text-primary font-display">
                     {stat.num}
                   </p>
 
