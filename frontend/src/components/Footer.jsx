@@ -143,7 +143,7 @@ export default function Footer() {
 },
     {
       icon: InstagramIcon,
-      href: 'https://instagram.com/aniketxai',
+      href: 'https://instagram.com/sambx.forge',
     },
     {
       icon: Mail,
