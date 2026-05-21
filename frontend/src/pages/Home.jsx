@@ -517,15 +517,19 @@ function CTABanner() {
                   Submit Quote Request
                 </Button>
               </Link>
-              <Link to="/contact">
-                <Button
-                  variant="ghost"
-                  size="lg"
-                  className="text-white border border-white/30 hover:bg-white/10"
-                >
-                  Chat Directly on WhatsApp
-                </Button>
-              </Link>
+             <Link
+  to="https://wa.me/918210993912?text=Hi%20I%20want%20to%20get%20a%20quote%20from%20SAMBX"
+  target="_blank"
+  rel="noopener noreferrer"
+>
+  <Button
+    variant="ghost"
+    size="lg"
+    className="text-white border border-white/30 hover:bg-white/10"
+  >
+    Chat Directly on WhatsApp
+  </Button>
+</Link>
             </div>
           </div>
         </motion.div>
