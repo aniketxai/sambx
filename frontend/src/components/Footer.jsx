@@ -60,14 +60,6 @@ const footerLinks = {
       label: 'Contact',
       to: '/contact',
     },
-    {
-      label: 'Careers',
-      to: '/about',
-    },
-    {
-      label: 'Blog',
-      to: '/about',
-    },
   ],
 
   Catalogue: [
