@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Lock, LogOut } from 'lucide-react';
+import { getBaseUrl } from '../api';
 
 export function AdminLogin({ onLogin }) {
   const [password, setPassword] = useState('');
@@ -12,14 +13,11 @@ export function AdminLogin({ onLogin }) {
     setLoading(true);
 
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:5002'}/api/auth/login`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ password }),
-        }
-      );
+      const response = await fetch(`${getBaseUrl()}/api/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
+      });
 
       const data = await response.json();
 

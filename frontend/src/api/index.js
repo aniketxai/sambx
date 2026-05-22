@@ -1,12 +1,22 @@
-const BASE = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:5002' : null);
 const REQUEST_TIMEOUT_MS = 12000;
 
-function getBaseUrl() {
-  if (!BASE) {
-    throw new Error('VITE_API_URL is missing. Set it to your deployed backend URL.');
+export function getBaseUrl() {
+  const configured = import.meta.env.VITE_API_URL?.trim();
+
+  if (configured) {
+    return configured.replace(/\/+$/, '');
   }
 
-  return BASE.replace(/\/+$/, '');
+  if (import.meta.env.DEV) {
+    return 'http://localhost:5002';
+  }
+
+  if (typeof window !== 'undefined' && window.location?.origin) {
+    console.warn('VITE_API_URL is missing. Falling back to the current site origin for API requests.');
+    return window.location.origin.replace(/\/+$/, '');
+  }
+
+  throw new Error('VITE_API_URL is missing. Set it to your deployed backend URL.');
 }
 
 function buildUrl(path, params = {}) {

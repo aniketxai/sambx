@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import { Upload, FileJson, AlertCircle, CheckCircle, Loader } from 'lucide-react';
+import { getBaseUrl } from '../api';
 
 export default function ImportProductsModal({ isOpen, onClose, onImportComplete }) {
   const fileInputRef = useRef(null);
@@ -32,13 +33,10 @@ export default function ImportProductsModal({ isOpen, onClose, onImportComplete 
       const formData = new FormData();
       formData.append('file', selectedFile);
 
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:5002'}/api/admin/import-products`,
-        {
-          method: 'POST',
-          body: formData,
-        }
-      );
+      const response = await fetch(`${getBaseUrl()}/api/admin/import-products`, {
+        method: 'POST',
+        body: formData,
+      });
 
       if (!response.ok) {
         const errorData = await response.json();
