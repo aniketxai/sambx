@@ -51,6 +51,14 @@ export default function About() {
       about:
         'Passionate about operations, design, branding, and scaling creative technology products.',
     },
+    {
+      name: 'Vansh',
+      role: 'Co-Founder',
+      image:
+        'https://res.cloudinary.com/du8wgbo8b/image/upload/ar_1:1,c_auto/vansh_saoohu.png',
+      about:
+        'Co-founder focusing on product strategy, growth, and operations.',
+    },
   ];
 
   return (
@@ -146,7 +154,7 @@ export default function About() {
           description="The people building the SAMBX vision."
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-20">
           {founders.map((founder, i) => (
             <motion.div
               key={founder.name}
@@ -157,26 +165,26 @@ export default function About() {
                 duration: 0.5,
                 delay: i * 0.1,
               }}
-              className="bg-surface-container rounded-3xl overflow-hidden"
+              className="bg-surface-container rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 flex flex-col"
             >
-              <div className="aspect-[4/3] overflow-hidden">
+              <div className="aspect-square overflow-hidden bg-surface-muted">
                 <img
                   src={founder.image}
                   alt={founder.name}
-                  className="w-full h-full object-cover hover:scale-105 transition duration-500"
+                  className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
                 />
               </div>
 
-              <div className="p-6">
-                <p className="text-primary text-sm font-medium mb-2">
+              <div className="p-6 bg-surface-container flex flex-col flex-1">
+                <p className="text-primary text-xs font-semibold uppercase tracking-wider mb-2">
                   {founder.role}
                 </p>
 
-                <h3 className="text-2xl font-bold text-foreground mb-3">
+                <h3 className="text-xl font-bold text-foreground mb-3">
                   {founder.name}
                 </h3>
 
-                <p className="text-secondary-text leading-relaxed">
+                <p className="text-secondary-text text-sm leading-relaxed flex-1">
                   {founder.about}
                 </p>
               </div>
