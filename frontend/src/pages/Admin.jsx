@@ -22,6 +22,7 @@ import api from '../api/index.js';
 import AdminAnalytics from './AdminAnalytics';
 import AdminSettings from './AdminSettings';
 import ImportProductsModal from '../components/ImportProductsModal';
+import ReplyModal from '../components/ReplyModal';
 import { AdminLogin, AdminLogoutButton } from './AdminLogin';
 import {
   ProductEditModal,
@@ -245,8 +246,16 @@ const loadAdminData = useCallback(async ({ showLoading = true } = {}) => {
   }, [orderFilter, adminOrders]);
 
   const filteredEnquiries = useMemo(() => {
-    if (enquiryFilter === 'All') return [...(adminContacts || []), ...(adminQuotes || [])];
-    const enquiries = [...(adminContacts || []), ...(adminQuotes || [])];
+    const enquiries = [
+      ...(adminContacts || []).map((item) => ({
+        ...item,
+        enquiryType: 'contact',
+        status: item.status === 'read' ? 'in-review' : item.status,
+      })),
+      ...(adminQuotes || []).map((item) => ({ ...item, enquiryType: 'quote' })),
+    ].sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+
+    if (enquiryFilter === 'All') return enquiries;
     return enquiries.filter((item) => item.status === enquiryFilter);
   }, [enquiryFilter, adminContacts, adminQuotes]);
 
@@ -523,11 +532,9 @@ const loadAdminData = useCallback(async ({ showLoading = true } = {}) => {
     setIsOrderDetailOpen(true);
   }, []);
 
-  const handleRespondToEnquiry = useCallback((enquiry) => {
-    const name = enquiry.companyName || enquiry.name;
-    const message = enquiry.message || enquiry.subject;
-    alert(`Respond to ${name}:\n\n"${message}"`);
-  }, []);
+  const [isReplyModalOpen, setIsReplyModalOpen] = useState(false);
+  const [replyTarget, setReplyTarget] = useState(null);
+  const [replyLoading, setReplyLoading] = useState(false);
 
   const handleUpdateQuoteStatus = useCallback(async (quoteId, status) => {
     if (!quoteId || !status) return;
@@ -558,6 +565,38 @@ const loadAdminData = useCallback(async ({ showLoading = true } = {}) => {
       setError(err.message || 'Failed to update contact status');
     }
   }, [refreshData]);
+  const handleRespondToEnquiry = useCallback((enquiry) => {
+    setReplyTarget(enquiry);
+    setIsReplyModalOpen(true);
+  }, []);
+
+  const sendReply = useCallback(async ({ subject, body }) => {
+    if (!replyTarget) return;
+    const id = replyTarget?._id || replyTarget?.id;
+    const enquiryType = replyTarget?.enquiryType || (replyTarget?.material ? 'quote' : 'contact');
+
+    try {
+      setReplyLoading(true);
+      setError(null);
+      setSuccessMessage(null);
+
+      if (enquiryType === 'contact') {
+        await api.postAdminContactReply(id, { subject, body });
+      } else {
+        await api.postAdminQuoteReply(id, { subject, body });
+      }
+
+      setSuccessMessage('Reply sent successfully');
+      setIsReplyModalOpen(false);
+      setReplyTarget(null);
+      await refreshData();
+    } catch (err) {
+      console.error('Failed to send reply:', err);
+      setError(err.message || 'Failed to send reply');
+    } finally {
+      setReplyLoading(false);
+    }
+  }, [replyTarget, refreshData]);
   // If not authenticated, show login
 if (!isAuthenticated) {
   return (
@@ -813,6 +852,18 @@ if (!isAuthenticated) {
             setSuccessMessage('Products imported successfully!');
             setTimeout(() => setSuccessMessage(null), 3000);
           }}
+        />
+
+        <ReplyModal
+          isOpen={isReplyModalOpen}
+          onClose={() => {
+            setIsReplyModalOpen(false);
+            setReplyTarget(null);
+          }}
+          onSend={sendReply}
+          initialSubject={replyTarget?.subject || replyTarget?.material || ''}
+          initialBody={replyTarget?.message || replyTarget?.notes || ''}
+          loading={replyLoading}
         />
 
         {/* Order Detail Modal */}

@@ -1,19 +1,33 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Mail, MapPin, Phone, Send } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Mail, MapPin, Phone, Send, CheckCircle2, X } from 'lucide-react';
 import SectionHeading from '../components/SectionHeading';
 import BlurBlob from '../components/BlurBlob';
 import Button from '../components/Button';
+import { postContact } from '../api/index.js';
 
 export default function Contact() {
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 3000);
-    setForm({ name: '', email: '', subject: '', message: '' });
+    setLoading(true);
+    setError('');
+
+    try {
+      await postContact(form);
+      setSubmitted(true);
+      setForm({ name: '', email: '', subject: '', message: '' });
+      setTimeout(() => setSubmitted(false), 6000);
+    } catch (err) {
+      console.error('Contact form submit failed:', err);
+      setError(err.message || 'Failed to send message');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleChange = (e) => {
@@ -99,14 +113,49 @@ export default function Contact() {
             className="lg:col-span-3"
           >
             <form onSubmit={handleSubmit} className="bg-surface-container rounded-3xl p-6 sm:p-8">
-              {submitted && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="bg-success/10 text-success text-sm font-medium px-4 py-3 rounded-2xl mb-6"
-                >
-                  Message sent successfully. We will get back to you soon.
-                </motion.div>
+              <AnimatePresence>
+                {submitted && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -20, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -20, scale: 0.95 }}
+                    transition={{ duration: 0.4 }}
+                    className="mb-6 relative"
+                  >
+                    <div className="bg-linear-to-br from-emerald-500/20 to-green-500/10 border border-emerald-500/30 rounded-2xl p-4 backdrop-blur-sm">
+                      <div className="flex items-start gap-4">
+                        <motion.div
+                          animate={{ scale: [1, 1.2, 1] }}
+                          transition={{ duration: 0.5, repeat: 1 }}
+                        >
+                          <CheckCircle2 size={24} className="text-emerald-500 mt-0.5 shrink-0" />
+                        </motion.div>
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-emerald-600 text-base mb-1">
+                            Message Sent Successfully! ✨
+                          </h3>
+                          <p className="text-emerald-600/80 text-sm leading-relaxed">
+                            Thank you for reaching out! We've received your message and will get back to you within 4 hours.
+                          </p>
+                        </div>
+                        <motion.button
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => setSubmitted(false)}
+                          className="text-emerald-600/60 hover:text-emerald-600 shrink-0"
+                        >
+                          <X size={20} />
+                        </motion.button>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {error && (
+                <div className="bg-red-500/10 text-red-400 text-sm font-medium px-4 py-3 rounded-2xl mb-6">
+                  {error}
+                </div>
               )}
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
@@ -162,8 +211,8 @@ export default function Contact() {
                 />
               </div>
 
-              <Button type="submit" size="lg" icon={Send} className="w-full sm:w-auto">
-                Send Message
+              <Button type="submit" size="lg" icon={Send} className="w-full sm:w-auto" disabled={loading}>
+                {loading ? 'Sending...' : 'Send Message'}
               </Button>
             </form>
           </motion.div>

@@ -28,6 +28,36 @@ export function OverviewSection({
   setEnquiryFilter,
   handleRespondToEnquiry,
 }) {
+  // Calculate week data from orders for revenue trend
+  const getWeekData = () => {
+    const now = new Date();
+    const weekData = [0, 0, 0, 0, 0, 0, 0];
+    
+    (filteredOrders || []).forEach(order => {
+      const orderDate = new Date(order.createdAt || 0);
+      const dayDiff = Math.floor((now - orderDate) / (1000 * 60 * 60 * 24));
+      
+      if (dayDiff < 7) {
+        const dayIndex = 6 - dayDiff;
+        if (dayIndex >= 0 && dayIndex < 7) {
+          weekData[dayIndex] += (order.total || order.totalAmount || 0);
+        }
+      }
+    });
+    
+    // Normalize to percentages (0-100)
+    const maxValue = Math.max(...weekData, 100000) || 100000;
+    return weekData.map(val => Math.round((val / maxValue) * 100) || 5);
+  };
+  
+  const weekData = getWeekData();
+  const weekRevenue = (filteredOrders || [])
+    .filter(order => {
+      const orderDate = new Date(order.createdAt || 0);
+      const dayDiff = Math.floor((new Date() - orderDate) / (1000 * 60 * 60 * 24));
+      return dayDiff < 7;
+    })
+    .reduce((sum, order) => sum + (order.total || order.totalAmount || 0), 0);
   return (
     <div className="space-y-6">
       {/* KPIs */}
@@ -82,18 +112,22 @@ export function OverviewSection({
               <div className="flex items-center justify-between mb-5">
                 <div>
                   <p className="text-sm text-secondary-text">Revenue trend</p>
-                  <p className="text-2xl font-bold font-display">₹2,84,900</p>
+                  <p className="text-2xl font-bold font-display">{formatINR(weekRevenue)}</p>
                 </div>
-                <div className="rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-semibold text-emerald-300">
-                  +18.4% vs last week
+                <div className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                  (kpis[0]?.delta?.includes('-') || kpis[0]?.delta?.includes('−')) 
+                    ? 'bg-red-500/15 text-red-300' 
+                    : 'bg-emerald-500/15 text-emerald-300'
+                }`}>
+                  {kpis[0]?.delta || '+0%'}
                 </div>
               </div>
               <div className="flex items-end gap-3 h-56">
-                {[36, 52, 41, 68, 58, 73, 66].map((height, index) => (
+                {weekData.map((height, index) => (
                   <div key={index} className="flex-1 flex flex-col items-center gap-2">
                     <div
                       className="w-full max-w-10 rounded-t-2xl bg-linear-to-t from-primary via-primary-light to-white/30"
-                      style={{ height: `${height}%` }}
+                      style={{ height: `${Math.max(height, 5)}%` }}
                     />
                     <span className="text-[11px] text-outline">W{index + 1}</span>
                   </div>
@@ -124,9 +158,9 @@ export function OverviewSection({
               <div className="rounded-3xl border border-white/8 bg-black/20 p-4">
                 <p className="text-sm text-secondary-text mb-3">Quick alerts</p>
                 <div className="space-y-3">
-                  <AlertRow icon={Bell} title="2 items need restocking" value="View inventory" />
-                  <AlertRow icon={ChevronRight} title="4 orders awaiting review" value="Open orders" />
-                  <AlertRow icon={Mail} title="3 fresh enquiries" value="Reply now" />
+                  <AlertRow icon={Bell} title={`${lowStockProducts?.length || 0} items need restocking`} value="View inventory" />
+                  <AlertRow icon={ChevronRight} title={`${filteredOrders?.filter(o => ['pending', 'paid'].includes(o.status))?.length || 0} orders awaiting review`} value="Open orders" />
+                  <AlertRow icon={Mail} title={`${filteredEnquiries?.filter(e => e.status === 'new')?.length || 0} fresh enquiries`} value="Reply now" />
                 </div>
               </div>
             </div>
@@ -182,7 +216,9 @@ export function OverviewSection({
                       <StatusPill status={order.status} />
                     </div>
                     <p className="text-sm text-secondary-text">
-                      {order.customerName || order.customer} · {order.items?.length || order.items || 1} items
+                      {order.shipping?.firstName && order.shipping?.lastName
+                        ? `${order.shipping.firstName} ${order.shipping.lastName}`
+                        : order.customerName || order.customer || 'Unknown'} · {order.items?.length || order.items || 1} items
                     </p>
                   </div>
                   <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">

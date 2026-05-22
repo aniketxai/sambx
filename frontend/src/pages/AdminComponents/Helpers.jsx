@@ -5,6 +5,7 @@ const statusStyles = {
   shipped: 'bg-violet-500/15 text-violet-300 border-violet-500/25',
   delivered: 'bg-teal-500/15 text-teal-300 border-teal-500/25',
   new: 'bg-sky-500/15 text-sky-300 border-sky-500/25',
+  read: 'bg-amber-500/15 text-amber-300 border-amber-500/25',
   'in-review': 'bg-amber-500/15 text-amber-300 border-amber-500/25',
   quoted: 'bg-purple-500/15 text-purple-300 border-purple-500/25',
   replied: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/25',
@@ -12,9 +13,10 @@ const statusStyles = {
 
 export function StatusPill({ status }) {
   const className = statusStyles[status] || 'bg-white/10 text-secondary-text border-white/10';
+  const label = status === 'read' ? 'in review' : status.replace('-', ' ');
   return (
     <span className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold capitalize ${className}`}>
-      {status.replace('-', ' ')}
+      {label}
     </span>
   );
 }

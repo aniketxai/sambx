@@ -149,6 +149,9 @@ export function EnquiriesSection({
                   <div>
                     <div className="flex flex-wrap items-center gap-2 mb-2">
                       <p className="font-semibold text-foreground">{item.companyName || item.name}</p>
+                      <span className="rounded-full border border-white/8 bg-white/5 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-secondary-text">
+                        {item.enquiryType === 'quote' ? 'Quote' : 'Contact'}
+                      </span>
                       <StatusPill status={item.status || 'new'} />
                     </div>
                     <p className="text-sm text-secondary-text truncate">{item.subject || item.message?.substring(0, 40)}</p>

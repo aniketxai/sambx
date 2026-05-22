@@ -153,6 +153,20 @@ export async function updateContactStatus(id, status) {
   });
 }
 
+export async function postAdminContactReply(id, payload) {
+  return requestJson(`/api/admin/contacts/${encodeURIComponent(id)}/reply`, {
+    method: 'POST',
+    body: payload,
+  });
+}
+
+export async function postAdminQuoteReply(id, payload) {
+  return requestJson(`/api/admin/quotes/${encodeURIComponent(id)}/reply`, {
+    method: 'POST',
+    body: payload,
+  });
+}
+
 export async function postContact(payload) {
   const res = await fetchWithTimeout(`${getBaseUrl()}/api/contact`, {
     method: 'POST',
@@ -202,4 +216,6 @@ export default {
   updateQuoteStatus,
   fetchAdminContacts,
   updateContactStatus,
+  postAdminContactReply,
+  postAdminQuoteReply,
 };

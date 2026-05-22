@@ -1,6 +1,6 @@
 import { ContactMessage } from '../models/ContactMessage.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
-import { sendEmail } from '../utils/sendEmail.js';
+import { sendContactNotificationEmail } from '../utils/mailer.js';
 
 export const createContactMessage = asyncHandler(async (req, res) => {
   const {
@@ -23,39 +23,16 @@ export const createContactMessage = asyncHandler(async (req, res) => {
     message,
   });
 
-  // EMAIL NOTIFICATION
-  await sendEmail({
-    to: process.env.EMAIL_USER,
-
-    subject: `New Contact Message - ${subject}`,
-
-    html: `
-      <h2>New Contact Form Message</h2>
-
-      <p>
-        <strong>Name:</strong>
-        ${name}
-      </p>
-
-      <p>
-        <strong>Email:</strong>
-        ${email}
-      </p>
-
-      <p>
-        <strong>Subject:</strong>
-        ${subject}
-      </p>
-
-      <p>
-        <strong>Message:</strong>
-      </p>
-
-      <div style="padding:12px;background:#f5f5f5;border-radius:8px;">
-        ${message}
-      </div>
-    `,
-  });
+  try {
+    await sendContactNotificationEmail({
+      name,
+      email,
+      subject,
+      message,
+    });
+  } catch (error) {
+    console.error('Contact email failed:', error);
+  }
 
   res.status(201).json({
     success: true,

@@ -33,7 +33,7 @@ export default function ImportProductsModal({ isOpen, onClose, onImportComplete 
       formData.append('file', selectedFile);
 
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/admin/import-products`,
+        `${import.meta.env.VITE_API_URL || 'http://localhost:5002'}/api/admin/import-products`,
         {
           method: 'POST',
           body: formData,
@@ -100,7 +100,7 @@ export default function ImportProductsModal({ isOpen, onClose, onImportComplete 
             {/* Error Message */}
             {error && (
               <div className="flex items-center gap-2 p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
-                <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
+                <AlertCircle className="w-5 h-5 text-red-500 shrink-0" />
                 <span className="text-red-400 text-sm">{error}</span>
               </div>
             )}
@@ -130,7 +130,7 @@ export default function ImportProductsModal({ isOpen, onClose, onImportComplete 
         {result && (
           <div className="space-y-4">
             <div className="flex items-center gap-2 p-3 bg-green-500/10 border border-green-500/30 rounded-lg">
-              <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+              <CheckCircle className="w-5 h-5 text-green-500 shrink-0" />
               <span className="text-green-400 font-medium">Import completed!</span>
             </div>
 

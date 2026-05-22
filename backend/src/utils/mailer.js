@@ -3,6 +3,10 @@ import nodemailer from 'nodemailer';
 
 const DEFAULT_RECIPIENT = 'aniketxai@gmail.com';
 
+function buildRecipient() {
+  return process.env.ORDER_NOTIFICATION_EMAIL || DEFAULT_RECIPIENT;
+}
+
 function buildTransport() {
   const host = process.env.SMTP_HOST;
   const port = Number(process.env.SMTP_PORT || 587);
@@ -35,9 +39,7 @@ function formatCurrency(value) {
 }
 
 function buildOrderEmail(order) {
-  const recipient =
-    process.env.ORDER_NOTIFICATION_EMAIL ||
-    DEFAULT_RECIPIENT;
+  const recipient = buildRecipient();
 
   const from =
     process.env.MAIL_FROM ||
@@ -328,6 +330,86 @@ function buildOrderEmail(order) {
   };
 }
 
+function buildContactEmail(contact) {
+  const recipient = buildRecipient();
+
+  return {
+    from: process.env.MAIL_FROM || process.env.SMTP_USER || 'no-reply@sambx.local',
+
+    to: recipient,
+
+    subject: `📩 New Contact Message - ${contact.subject || 'No Subject'}`,
+
+    text: [
+      `Name: ${contact.name || 'N/A'}`,
+      `Email: ${contact.email || 'N/A'}`,
+      `Subject: ${contact.subject || 'N/A'}`,
+      '',
+      'Message:',
+      `${contact.message || ''}`,
+    ].join('\n'),
+
+    html: `
+      <div style="font-family:Arial,sans-serif;background:#f5f5f5;padding:24px;color:#111827;">
+        <div style="max-width:720px;margin:auto;background:white;border-radius:16px;overflow:hidden;">
+          <div style="background:#111827;color:white;padding:24px;">
+            <h1 style="margin:0;font-size:24px;">New Contact Message 📩</h1>
+            <p style="margin-top:10px;">
+              Subject: <strong>${contact.subject || 'No Subject'}</strong>
+            </p>
+          </div>
+
+          <div style="padding:24px;">
+            <p><strong>Name:</strong> ${contact.name || 'N/A'}</p>
+            <p><strong>Email:</strong> ${contact.email || 'N/A'}</p>
+            <p><strong>Subject:</strong> ${contact.subject || 'N/A'}</p>
+
+            <h2 style="margin-top:24px;">Message</h2>
+            <div style="padding:16px;background:#f9fafb;border-radius:12px;white-space:pre-wrap;line-height:1.6;">
+              ${contact.message || ''}
+            </div>
+          </div>
+        </div>
+      </div>
+    `,
+
+    replyTo: contact.email || process.env.SMTP_USER,
+  };
+}
+
+export async function sendContactNotificationEmail(contact) {
+  try {
+    const transport = buildTransport();
+    const recipient = buildRecipient();
+
+    if (!transport) {
+      console.log('SMTP NOT CONFIGURED: check SMTP_HOST, SMTP_PORT, SMTP_USER, and SMTP_PASS');
+      console.log('SMTP NOT CONFIGURED');
+      return null;
+    }
+
+    if (!process.env.ORDER_NOTIFICATION_EMAIL) {
+      console.log('ORDER_NOTIFICATION_EMAIL is missing');
+      return null;
+    }
+
+    console.log('Sending contact email to:', recipient);
+
+    await transport.verify();
+
+    await transport.sendMail(buildContactEmail(contact));
+
+    console.log('CONTACT MAIL SENT');
+
+    return true;
+  } catch (error) {
+    console.log('CONTACT EMAIL ERROR');
+    console.log(error);
+
+    return null;
+  }
+}
+
 export async function sendOrderNotificationEmail(order) {
   try {
     const transport = buildTransport();
@@ -524,6 +606,36 @@ export async function sendOrderNotificationEmail(order) {
     console.log('EMAIL ERROR');
     console.log(error);
 
+    return null;
+  }
+}
+
+export async function sendCustomEmail({ to, subject, text, html, from, replyTo }) {
+  try {
+    const transport = buildTransport();
+
+    if (!transport) {
+      console.log('SMTP NOT CONFIGURED: cannot send custom email');
+      return null;
+    }
+
+    await transport.verify();
+
+    const mail = {
+      from: from || (`"Sambx Forge" <${process.env.SMTP_USER || 'no-reply@sambx.local'}>`),
+      to,
+      subject,
+      text,
+      html,
+      replyTo,
+    };
+
+    await transport.sendMail(mail);
+
+    console.log('CUSTOM MAIL SENT to', to);
+    return true;
+  } catch (error) {
+    console.log('CUSTOM EMAIL ERROR', error);
     return null;
   }
 }

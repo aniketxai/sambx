@@ -11,6 +11,8 @@ import {
   updateOrderStatus,
   updateAdminProduct,
   updateQuoteStatus,
+  replyToContact,
+  replyToQuote,
 } from '../controllers/adminController.js';
 
 const router = Router();
@@ -30,5 +32,7 @@ router.patch('/quotes/:id/status', updateQuoteStatus);
 
 router.get('/contacts', listAdminContacts);
 router.patch('/contacts/:id/status', updateContactStatus);
+router.post('/contacts/:id/reply', replyToContact);
+router.post('/quotes/:id/reply', replyToQuote);
 
 export default router;

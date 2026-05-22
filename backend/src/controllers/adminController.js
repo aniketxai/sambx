@@ -5,6 +5,7 @@ import { Order } from '../models/Order.js';
 import { ContactMessage } from '../models/ContactMessage.js';
 import { QuoteRequest } from '../models/QuoteRequest.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
+import { sendCustomEmail } from '../utils/mailer.js';
 
 function escapeRegex(value) {
   return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -413,4 +414,83 @@ export const updateContactStatus = asyncHandler(async (req, res) => {
   }
 
   res.json({ success: true, message: 'Contact status updated', data: updated });
+});
+
+export const replyToContact = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { subject, body } = req.body;
+
+  if (!subject || !body) {
+    res.status(400);
+    throw new Error('Subject and body are required');
+  }
+
+  const contact = await ContactMessage.findById(id).lean();
+
+  if (!contact) {
+    res.status(404);
+    throw new Error('Contact message not found');
+  }
+
+  if (!contact.email) {
+    res.status(400);
+    throw new Error('Contact has no email address');
+  }
+
+  // send email to the contact's email
+  const sent = await sendCustomEmail({
+    to: contact.email,
+    subject,
+    text: body,
+    html: `<pre style="white-space:pre-wrap;">${body}</pre>`,
+    replyTo: process.env.SMTP_USER,
+  });
+
+  if (!sent) {
+    res.status(500);
+    throw new Error('Failed to send reply email');
+  }
+
+  const updated = await ContactMessage.findByIdAndUpdate(id, { $set: { status: 'replied' } }, { new: true, runValidators: true }).lean();
+
+  res.json({ success: true, message: 'Reply sent', data: updated });
+});
+
+export const replyToQuote = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { subject, body } = req.body;
+
+  if (!subject || !body) {
+    res.status(400);
+    throw new Error('Subject and body are required');
+  }
+
+  const quote = await QuoteRequest.findById(id).lean();
+
+  if (!quote) {
+    res.status(404);
+    throw new Error('Quote request not found');
+  }
+
+  if (!quote.email) {
+    res.status(400);
+    throw new Error('Quote request has no email address');
+  }
+
+  const sent = await sendCustomEmail({
+    to: quote.email,
+    subject,
+    text: body,
+    html: `<pre style="white-space:pre-wrap;">${body}</pre>`,
+    replyTo: process.env.SMTP_USER,
+  });
+
+  if (!sent) {
+    res.status(500);
+    throw new Error('Failed to send reply email');
+  }
+
+  const updated = await QuoteRequest.findByIdAndUpdate(id, { $set: { status: 'quoted' } }, { new: true, runValidators: true }).lean();
+
+  res.json({ success: true, message: 'Reply sent', data: updated });
 });
