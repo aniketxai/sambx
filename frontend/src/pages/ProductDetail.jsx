@@ -40,7 +40,7 @@ export default function ProductDetail() {
       api.fetchProductById(id),
       api.fetchProducts()
     ])
-      .then(([singleProduct, allProducts]) => {
+      .then(([singleProduct, productsResult]) => {
         if (!active) return;
 
         // Safe fallback structure
@@ -54,7 +54,8 @@ export default function ProductDetail() {
           : null;
 
         setProduct(safeProduct);
-        setProducts(allProducts || []);
+        const all = Array.isArray(productsResult) ? productsResult : (productsResult.items || []);
+        setProducts(all || []);
       })
       .catch((err) => {
         console.error('Product fetch error:', err);

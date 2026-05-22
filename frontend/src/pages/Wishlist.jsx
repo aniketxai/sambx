@@ -21,8 +21,9 @@ export default function Wishlist() {
 
     setLoading(true);
     api.fetchProducts()
-      .then(products => {
-        const filtered = products.filter(p => wishlist.includes(String(p.id)));
+      .then(result => {
+        const all = Array.isArray(result) ? result : (result.items || []);
+        const filtered = all.filter(p => wishlist.includes(String(p.id)));
         setWishlistProducts(filtered);
       })
       .catch(err => {
