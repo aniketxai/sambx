@@ -80,8 +80,8 @@ export async function fetchProducts({ category, q, sort } = {}) {
   const url = buildUrl('/api/products', { category, q, sort });
   const res = await fetchWithTimeout(url);
   if (!res.ok) throw new Error('Failed to fetch products');
-  const data = await res.json();
-  return data.data || [];
+  const json = await res.json();
+  return { items: json.data || [], dataSource: json.dataSource || 'db' };
 }
 
 export async function fetchProductById(id) {
@@ -136,6 +136,13 @@ export async function updateOrderStatus(id, status) {
   return requestJson(`/api/admin/orders/${encodeURIComponent(id)}/status`, {
     method: 'PATCH',
     body: { status },
+  });
+}
+
+export async function cancelOrder(id, cancellationReason = '') {
+  return requestJson(`/api/orders/${encodeURIComponent(id)}/cancel`, {
+    method: 'PATCH',
+    body: { cancellationReason },
   });
 }
 

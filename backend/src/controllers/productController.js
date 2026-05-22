@@ -57,6 +57,9 @@ function filterFallbackProducts({ category, q, sort }) {
 
 async function loadProducts({ category, q, sort }) {
   if (!isDatabaseReady()) {
+    if (process.env.NODE_ENV === 'production') {
+      return [];
+    }
     return filterFallbackProducts({ category, q, sort });
   }
 
@@ -86,6 +89,9 @@ async function loadProducts({ category, q, sort }) {
     return await Product.find(filter).sort(sortMap[sort] || sortMap.featured).lean();
   } catch (error) {
     console.error('Product query failed, falling back to static data:', error);
+    if (process.env.NODE_ENV === 'production') {
+      return [];
+    }
     return filterFallbackProducts({ category, q, sort });
   }
 }
@@ -94,7 +100,8 @@ export const getProducts = asyncHandler(async (req, res) => {
   const { category, q, sort } = req.query;
 
   const products = await loadProducts({ category, q, sort });
-  res.json({ success: true, count: products.length, data: products });
+  const dataSource = isDatabaseReady() ? 'db' : (products.length ? 'fallback' : 'none');
+  res.json({ success: true, count: products.length, data: products, dataSource });
 });
 
 export const getProductById = asyncHandler(async (req, res) => {
@@ -109,14 +116,20 @@ export const getProductById = asyncHandler(async (req, res) => {
   }
 
   if (!product) {
-    product = fallbackProducts.find((item) => item.id === req.params.id) || null;
+    if (process.env.NODE_ENV === 'production') {
+      product = null;
+    } else {
+      product = fallbackProducts.find((item) => item.id === req.params.id) || null;
+    }
   }
 
   if (!product) {
     res.status(404);
     throw new Error('Product not found');
   }
-  res.json({ success: true, data: product });
+
+  const dataSource = isDatabaseReady() ? 'db' : (product ? 'fallback' : 'none');
+  res.json({ success: true, data: product, dataSource });
 });
 
 export const getCategories = asyncHandler(async (req, res) => {
@@ -130,7 +143,14 @@ export const getCategories = asyncHandler(async (req, res) => {
     }
   }
 
-  res.json({ success: true, data: categories.length ? categories : defaultCategories });
+  const dataSource = isDatabaseReady() ? 'db' : (categories.length ? 'fallback' : 'none');
+
+  if (!categories.length && process.env.NODE_ENV === 'production') {
+    res.json({ success: true, data: [], dataSource: 'none' });
+    return;
+  }
+
+  res.json({ success: true, data: categories.length ? categories : defaultCategories, dataSource });
 });
 
 export const getHomeData = asyncHandler(async (req, res) => {
@@ -149,8 +169,14 @@ export const getHomeData = asyncHandler(async (req, res) => {
   }
 
   if (!featuredProducts.length) {
-    featuredProducts = sortProducts(fallbackProducts).slice(0, 4);
+    if (process.env.NODE_ENV === 'production') {
+      featuredProducts = [];
+    } else {
+      featuredProducts = sortProducts(fallbackProducts).slice(0, 4);
+    }
   }
+
+  const dataSource = isDatabaseReady() ? 'db' : (featuredProducts.length ? 'fallback' : 'none');
 
   res.json({
     success: true,

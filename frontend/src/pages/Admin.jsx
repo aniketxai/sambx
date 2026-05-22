@@ -532,6 +532,16 @@ const loadAdminData = useCallback(async ({ showLoading = true } = {}) => {
     setIsOrderDetailOpen(true);
   }, []);
 
+  const handleOrderUpdated = useCallback((updatedOrder) => {
+    // Update the orders list with the updated order
+    setAdminOrders((prevOrders) =>
+      prevOrders.map((order) =>
+        order._id === updatedOrder._id ? updatedOrder : order
+      )
+    );
+    setSelectedOrder(updatedOrder);
+  }, []);
+
   const [isReplyModalOpen, setIsReplyModalOpen] = useState(false);
   const [replyTarget, setReplyTarget] = useState(null);
   const [replyLoading, setReplyLoading] = useState(false);
@@ -681,7 +691,7 @@ if (!isAuthenticated) {
               </div>
             </div>
             <p className="text-xs text-secondary-text leading-relaxed">
-              Product, order, quote, and message management for the full SAMBX store.
+              Product, order, quote, and message management for the full SAMBX Forge.
             </p>
             <AdminLogoutButton onLogout={() => setIsAuthenticated(false)} />
           </div>
@@ -815,6 +825,7 @@ if (!isAuthenticated) {
               handleOrderStatusSave={handleOrderStatusSave}
               savingOrderId={savingOrderId}
               handleViewOrder={handleViewOrder}
+              onOrderUpdated={handleOrderUpdated}
             />
           )}
 
@@ -874,6 +885,7 @@ if (!isAuthenticated) {
             setIsOrderDetailOpen(false);
             setSelectedOrder(null);
           }}
+          onOrderUpdated={handleOrderUpdated}
         />
       </div>
     </div>

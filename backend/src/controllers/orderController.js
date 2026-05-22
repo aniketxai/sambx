@@ -1,6 +1,6 @@
 import { Order } from '../models/Order.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
-import { sendOrderNotificationEmail } from '../utils/mailer.js';
+import { sendOrderNotificationEmail, sendOrderCancellationEmail } from '../utils/mailer.js';
 
 function makeOrderNumber() {
   return `SBX-${Date.now()
@@ -103,4 +103,38 @@ const createOrder = asyncHandler(async (req, res) => {
   });
 });
 
-export { createOrder };
+const cancelOrder = asyncHandler(async (req, res) => {
+  const { orderId } = req.params;
+  const { cancellationReason = '' } = req.body;
+
+  const order = await Order.findById(orderId);
+
+  if (!order) {
+    res.status(404);
+    throw new Error('Order not found');
+  }
+
+  if (order.status === 'cancelled') {
+    res.status(400);
+    throw new Error('Order is already cancelled');
+  }
+
+  if (order.status === 'delivered') {
+    res.status(400);
+    throw new Error('Cannot cancel a delivered order');
+  }
+
+  order.status = 'cancelled';
+  await order.save();
+
+  // Send cancellation email to customer
+  await sendOrderCancellationEmail(order, cancellationReason);
+
+  res.status(200).json({
+    success: true,
+    message: 'Order cancelled successfully',
+    data: order,
+  });
+});
+
+export { createOrder, cancelOrder };

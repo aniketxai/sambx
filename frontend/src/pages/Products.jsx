@@ -21,6 +21,7 @@ export default function Products() {
   const [sort, setSort] = useState('featured');
   const [showFilters, setShowFilters] = useState(false);
   const [products, setProducts] = useState([]);
+  const [dataSource, setDataSource] = useState('db');
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -61,7 +62,7 @@ export default function Products() {
     let active = true;
     setLoading(true);
     api.fetchProducts({ category: activeCategory === 'All' ? undefined : activeCategory, q: search, sort })
-      .then(data => { if (active) setProducts(data); })
+      .then(result => { if (active) { setProducts(result.items); setDataSource(result.dataSource || 'db'); } })
       .catch(() => { if (active) setProducts([]); })
       .finally(() => { if (active) setLoading(false); });
 
@@ -185,6 +186,12 @@ export default function Products() {
         </div>
 
         {/* Results count */}
+        {dataSource !== 'db' && (
+          <div className="mb-4 p-3 rounded-lg bg-yellow-50 text-yellow-800 text-sm">
+            Showing fallback/offline data — some items may be demo entries.
+          </div>
+        )}
+
         <p className="text-sm text-outline mb-6">{filtered.length} product{filtered.length !== 1 ? 's' : ''} found</p>
 
         {/* Grid */}

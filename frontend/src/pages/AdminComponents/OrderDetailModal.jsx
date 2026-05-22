@@ -1,7 +1,14 @@
-import { X, Package, MapPin, CreditCard, Clock } from 'lucide-react';
+import { X, Package, MapPin, CreditCard, Clock, AlertCircle } from 'lucide-react';
 import { formatINR } from '../../utils/currency';
+import { useState } from 'react';
+import { cancelOrder } from '../../api/index.js';
 
-export function OrderDetailModal({ isOpen, order, onClose }) {
+export function OrderDetailModal({ isOpen, order, onClose, onOrderUpdated }) {
+  const [isCanceling, setIsCanceling] = useState(false);
+  const [showCancelPrompt, setShowCancelPrompt] = useState(false);
+  const [cancelReason, setCancelReason] = useState('');
+  const [cancelError, setCancelError] = useState('');
+
   if (!isOpen || !order) return null;
 
   const {
@@ -17,6 +24,34 @@ export function OrderDetailModal({ isOpen, order, onClose }) {
     createdAt,
     codCharge = 0,
   } = order;
+
+  const handleCancelOrder = async () => {
+    try {
+      setIsCanceling(true);
+      setCancelError('');
+      
+      await cancelOrder(order._id, cancelReason);
+      
+      // Update parent with new order state
+      if (onOrderUpdated) {
+        onOrderUpdated({ ...order, status: 'cancelled' });
+      }
+      
+      setShowCancelPrompt(false);
+      setCancelReason('');
+      
+      // Close modal after a brief delay
+      setTimeout(() => {
+        onClose();
+      }, 500);
+    } catch (error) {
+      setCancelError(error.message || 'Failed to cancel order');
+    } finally {
+      setIsCanceling(false);
+    }
+  };
+
+  const canCancel = status !== 'cancelled' && status !== 'delivered';
 
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
@@ -195,13 +230,68 @@ export function OrderDetailModal({ isOpen, order, onClose }) {
           </div>
         )}
 
-        {/* Close Button */}
-        <button
-          onClick={onClose}
-          className="w-full mt-6 px-4 py-3 rounded-full bg-primary text-white font-semibold hover:bg-primary/90 transition-colors"
-        >
-          Close
-        </button>
+        {/* Cancel Prompt */}
+        {showCancelPrompt && (
+          <div className="mb-6 bg-red-500/15 border border-red-500/25 rounded-2xl p-4">
+            <div className="flex items-start gap-3 mb-4">
+              <AlertCircle size={20} className="text-red-400 shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <h4 className="font-semibold text-red-300 mb-2">Cancel Order</h4>
+                <p className="text-sm text-red-200 mb-4">
+                  Are you sure you want to cancel this order? A cancellation email will be sent to the customer.
+                </p>
+                <textarea
+                  value={cancelReason}
+                  onChange={(e) => setCancelReason(e.target.value)}
+                  placeholder="Enter cancellation reason (optional)"
+                  className="w-full bg-red-500/10 border border-red-500/25 rounded-lg p-2 text-sm text-foreground placeholder-secondary-text focus:outline-none focus:ring-2 focus:ring-red-500/50 resize-none"
+                  rows="3"
+                />
+                {cancelError && (
+                  <p className="text-xs text-red-300 mt-2">{cancelError}</p>
+                )}
+                <div className="flex gap-3 mt-4">
+                  <button
+                    onClick={handleCancelOrder}
+                    disabled={isCanceling}
+                    className="flex-1 px-3 py-2 rounded-full bg-red-600 text-white text-sm font-semibold hover:bg-red-700 disabled:opacity-60 transition-colors"
+                  >
+                    {isCanceling ? 'Cancelling...' : 'Confirm Cancel'}
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowCancelPrompt(false);
+                      setCancelReason('');
+                      setCancelError('');
+                    }}
+                    disabled={isCanceling}
+                    className="flex-1 px-3 py-2 rounded-full border border-white/8 bg-white/5 text-foreground text-sm font-semibold hover:bg-white/10 disabled:opacity-60 transition-colors"
+                  >
+                    Keep Order
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Action Buttons */}
+        <div className="flex gap-3">
+          {canCancel && !showCancelPrompt && (
+            <button
+              onClick={() => setShowCancelPrompt(true)}
+              className="flex-1 px-4 py-3 rounded-full bg-red-600/20 text-red-300 border border-red-600/30 font-semibold hover:bg-red-600/30 transition-colors"
+            >
+              Cancel Order
+            </button>
+          )}
+          <button
+            onClick={onClose}
+            className={`${canCancel && !showCancelPrompt ? 'flex-1' : 'w-full'} px-4 py-3 rounded-full bg-primary text-white font-semibold hover:bg-primary/90 transition-colors`}
+          >
+            Close
+          </button>
+        </div>
       </div>
     </div>
   );

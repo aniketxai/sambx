@@ -429,7 +429,7 @@ export async function sendOrderNotificationEmail(order) {
     await transport.sendMail({
       ...adminMail,
 
-      from: `"Sambx Store" <${process.env.SMTP_USER}>`,
+      from: `"Sambx Forge" <${process.env.SMTP_USER}>`,
 
       replyTo:
         order.shipping.email ||
@@ -636,6 +636,356 @@ export async function sendCustomEmail({ to, subject, text, html, from, replyTo }
     return true;
   } catch (error) {
     console.log('CUSTOM EMAIL ERROR', error);
+    return null;
+  }
+}
+
+export async function sendOrderCancellationEmail(order, cancellationReason = '') {
+  try {
+    const transport = buildTransport();
+
+    if (!transport) {
+      console.log('SMTP NOT CONFIGURED');
+      return null;
+    }
+
+    await transport.verify();
+
+    const customerName = `${order.shipping.firstName} ${order.shipping.lastName}`.trim();
+    const customerEmail = order.shipping.email;
+
+    if (!customerEmail) {
+      console.log('Customer email not available');
+      return null;
+    }
+
+    const customerItems = order.items
+      .map(
+        (item) => `
+          <tr>
+            <td style="padding:10px;border-bottom:1px solid #eee;">
+              ${item.name}
+            </td>
+
+            <td style="padding:10px;border-bottom:1px solid #eee;text-align:center;">
+              ${item.quantity}
+            </td>
+
+            <td style="padding:10px;border-bottom:1px solid #eee;text-align:right;">
+              ${formatCurrency(item.price * item.quantity)}
+            </td>
+          </tr>
+        `
+      )
+      .join('');
+
+    // ADMIN NOTIFICATION
+    await transport.sendMail({
+      from: `"Sambx Forge" <${process.env.SMTP_USER}>`,
+      to: process.env.ORDER_NOTIFICATION_EMAIL || 'aniketxai@gmail.com',
+      replyTo: customerEmail,
+      subject: `❌ Order Cancelled - ${order.orderNumber}`,
+      html: `
+        <div
+          style="
+            font-family:Arial,sans-serif;
+            background:#f5f5f5;
+            padding:24px;
+            color:#111827;
+          "
+        >
+          <div
+            style="
+              max-width:720px;
+              margin:auto;
+              background:white;
+              border-radius:16px;
+              overflow:hidden;
+            "
+          >
+
+            <div
+              style="
+                background:#dc2626;
+                color:white;
+                padding:24px;
+              "
+            >
+              <h1 style="margin:0;font-size:24px;">
+                Order Cancelled ❌
+              </h1>
+
+              <p style="margin-top:10px;">
+                Order Number:
+                <strong>${order.orderNumber}</strong>
+              </p>
+            </div>
+
+            <div style="padding:24px;">
+
+              <h2 style="margin-top:0;">
+                Customer Information
+              </h2>
+
+              <p>
+                <strong>Name:</strong>
+                ${customerName}
+              </p>
+
+              <p>
+                <strong>Email:</strong>
+                ${customerEmail}
+              </p>
+
+              <p>
+                <strong>Phone:</strong>
+                ${order.shipping.phone || 'N/A'}
+              </p>
+
+              ${
+                cancellationReason
+                  ? `
+                    <hr style="margin:24px 0;" />
+
+                    <h2>
+                      Cancellation Reason
+                    </h2>
+
+                    <p>
+                      ${cancellationReason}
+                    </p>
+                  `
+                  : ''
+              }
+
+              <hr style="margin:24px 0;" />
+
+              <h2>
+                Order Items
+              </h2>
+
+              <table
+                cellpadding="0"
+                cellspacing="0"
+                style="
+                  width:100%;
+                  border-collapse:collapse;
+                  margin-top:10px;
+                "
+              >
+                <thead>
+                  <tr style="background:#f3f4f6;">
+                    <th
+                      align="left"
+                      style="
+                        padding:10px;
+                        border-bottom:2px solid #ddd;
+                      "
+                    >
+                      Product
+                    </th>
+
+                    <th
+                      align="center"
+                      style="
+                        padding:10px;
+                        border-bottom:2px solid #ddd;
+                      "
+                    >
+                      Qty
+                    </th>
+
+                    <th
+                      align="right"
+                      style="
+                        padding:10px;
+                        border-bottom:2px solid #ddd;
+                      "
+                    >
+                      Amount
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  ${customerItems}
+                </tbody>
+              </table>
+
+              <div style="margin-top:24px;">
+                <p>
+                  <strong>Total Amount:</strong>
+                  ${formatCurrency(order.total)}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      `,
+    });
+
+    console.log('ADMIN CANCELLATION MAIL SENT');
+
+    // CUSTOMER NOTIFICATION
+    await transport.sendMail({
+      from: `"Sambx Forge" <${process.env.SMTP_USER}>`,
+      to: customerEmail,
+      subject: `Order Cancellation Confirmation - ${order.orderNumber}`,
+      html: `
+        <div
+          style="
+            font-family:Arial,sans-serif;
+            background:#f5f5f5;
+            padding:24px;
+          "
+        >
+          <div
+            style="
+              max-width:700px;
+              margin:auto;
+              background:white;
+              border-radius:16px;
+              overflow:hidden;
+            "
+          >
+
+            <div
+              style="
+                background:#dc2626;
+                color:white;
+                padding:24px;
+                text-align:center;
+              "
+            >
+              <h1 style="margin:0;">
+                Order Cancelled ❌
+              </h1>
+
+              <p style="margin-top:10px;">
+                Order Number:
+                <strong>${order.orderNumber}</strong>
+              </p>
+            </div>
+
+            <div style="padding:24px;">
+
+              <p>
+                Hi ${customerName},
+              </p>
+
+              <p>
+                We wanted to confirm that your order has been successfully cancelled.
+              </p>
+
+              <h2>
+                Cancelled Order Summary
+              </h2>
+
+              <table
+                cellpadding="0"
+                cellspacing="0"
+                style="
+                  width:100%;
+                  border-collapse:collapse;
+                  margin-top:10px;
+                "
+              >
+                <thead>
+                  <tr style="background:#f3f4f6;">
+                    <th
+                      align="left"
+                      style="padding:10px;"
+                    >
+                      Product
+                    </th>
+
+                    <th
+                      align="center"
+                      style="padding:10px;"
+                    >
+                      Qty
+                    </th>
+
+                    <th
+                      align="right"
+                      style="padding:10px;"
+                    >
+                      Amount
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  ${customerItems}
+                </tbody>
+              </table>
+
+              <div style="margin-top:24px;">
+
+                <p>
+                  <strong>Total Amount:</strong>
+                  ${formatCurrency(order.total)}
+                </p>
+
+                ${
+                  cancellationReason
+                    ? `
+                      <p>
+                        <strong>Reason:</strong>
+                        ${cancellationReason}
+                      </p>
+                    `
+                    : ''
+                }
+
+                <p>
+                  <strong>Payment Method:</strong>
+                  ${
+                    order.payment.method === 'cod'
+                      ? 'Cash on Delivery'
+                      : 'Online Payment'
+                  }
+                </p>
+              </div>
+
+              <div
+                style="
+                  margin-top:30px;
+                  padding:16px;
+                  background:#fef2f2;
+                  border-radius:12px;
+                  border-left:4px solid #dc2626;
+                "
+              >
+                <p style="margin:0;">
+                  If you paid online for this order, the amount will be refunded to your original payment method within 3-5 business days.
+                </p>
+              </div>
+
+              <div
+                style="
+                  margin-top:20px;
+                  padding:16px;
+                  background:#f9fafb;
+                  border-radius:12px;
+                "
+              >
+                <p style="margin:0;">
+                  If you have any questions, please feel free to contact us. Thank you for your understanding! 🙏
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      `,
+    });
+
+    console.log('CUSTOMER CANCELLATION MAIL SENT');
+
+    return true;
+  } catch (error) {
+    console.log('CANCELLATION EMAIL ERROR');
+    console.log(error);
     return null;
   }
 }
