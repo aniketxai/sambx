@@ -87,7 +87,7 @@ export default function Wishlist() {
                 <p className="text-xs text-outline mt-0.5">{product.category}</p>
                 <p className="text-sm sm:text-lg font-bold text-foreground mt-1">{formatINR(product.price)}</p>
               </div>
-              <div className="col-span-4 sm:col-span-auto flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+              <div className="col-span-4 sm:col-span-1 flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                 <Button 
                   size="sm" 
                   icon={ShoppingCart} 
@@ -98,7 +98,7 @@ export default function Wishlist() {
                 </Button>
                 <motion.button
                   whileTap={{ scale: 0.9 }}
-                  onClick={() => toggleWishlist(product.id)}
+                  onClick={() => toggleWishlist(product)}
                   className="p-2 rounded-full hover:bg-error/10 text-outline hover:text-error transition-material"
                 >
                   <Trash2 size={16} />

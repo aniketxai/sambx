@@ -63,9 +63,9 @@ export default function About() {
 
   return (
     <div className="pt-24 pb-20 min-h-screen">
-      <BlurBlob className="w-125 h-125 top-0 -left-40 bg-primary" />
+      <BlurBlob className="w-[24rem] h-[24rem] sm:w-[32rem] sm:h-[32rem] top-0 -left-40 bg-primary" />
 
-      <BlurBlob className="w-100 h-100 bottom-20 right-0 bg-secondary-container" />
+      <BlurBlob className="w-[18rem] h-[18rem] sm:w-[25rem] sm:h-[25rem] bottom-20 right-0 bg-secondary-container" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <SectionHeading

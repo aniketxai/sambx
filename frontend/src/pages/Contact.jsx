@@ -36,8 +36,8 @@ export default function Contact() {
 
   return (
     <div className="pt-24 pb-20 min-h-screen">
-      <BlurBlob className="w-100 h-100 top-20 -right-20 bg-secondary-container" />
-      <BlurBlob className="w-75 h-75 bottom-40 left-0 bg-accent-glow" />
+      <BlurBlob className="w-[18rem] h-[18rem] sm:w-[25rem] sm:h-[25rem] top-20 -right-20 bg-secondary-container" />
+      <BlurBlob className="w-[14rem] h-[14rem] sm:w-[18rem] sm:h-[18rem] bottom-40 left-0 bg-accent-glow" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <SectionHeading

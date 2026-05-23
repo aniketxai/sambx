@@ -3,6 +3,7 @@ import { AppProvider } from './context/AppContext.jsx';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import BackToTop from './components/BackToTop';
+import Notifications from './components/Notifications';
 import Home from './pages/Home';
 import Products from './pages/Products';
 import ProductDetail from './pages/ProductDetail';
@@ -47,6 +48,7 @@ function AppContent() {
           </Route>
           <Route path="/admin" element={<Admin />} />
         </Routes>
+        <Notifications />
       </div>
     </>
   );

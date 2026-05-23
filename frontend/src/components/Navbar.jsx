@@ -89,6 +89,7 @@ export default function Navbar() {
             <button
               onClick={() => setMobileOpen(true)}
               className="md:hidden p-2 rounded-full hover:bg-surface-container transition-material metal-border bg-white/5 shrink-0"
+              aria-label="Open menu"
             >
               <Menu size={20} className="text-secondary-text" />
             </button>
@@ -112,13 +113,14 @@ export default function Navbar() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed top-0 right-0 bottom-0 z-50 w-72 bg-background shadow-xl p-6"
+              className="fixed top-0 right-0 bottom-0 z-50 w-[88vw] max-w-sm bg-background/95 backdrop-blur-xl shadow-xl p-5 sm:p-6 overflow-y-auto"
             >
               <div className="flex items-center justify-between mb-8">
                 <Logo size="sm" />
                 <button
                   onClick={() => setMobileOpen(false)}
                   className="p-2 rounded-full hover:bg-surface-container transition-material"
+                  aria-label="Close menu"
                 >
                   <X size={20} />
                 </button>

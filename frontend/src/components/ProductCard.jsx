@@ -11,7 +11,7 @@ export default function ProductCard({ product, index = 0 }) {
   const handleWishlistToggle = () => {
     console.log('Wishlist toggle clicked for:', product.id);
     console.log('Current wishlist:', wishlist);
-    toggleWishlist(product.id);
+    toggleWishlist(product);
   };
 
   const handleAddToCart = () => {
@@ -27,7 +27,7 @@ export default function ProductCard({ product, index = 0 }) {
       transition={{ duration: 0.4, delay: index * 0.05 }}
       className="group relative"
     >
-      <div className="bg-surface-container rounded-3xl overflow-hidden transition-material hover:shadow-lg">
+      <div className="bg-surface-container rounded-3xl overflow-hidden transition-material hover:shadow-lg border border-white/5 h-full flex flex-col">
         {/* Image */}
         <div className="relative aspect-square overflow-hidden bg-surface-muted">
           <Link to={`/products/${product.id}`}>
@@ -74,10 +74,10 @@ export default function ProductCard({ product, index = 0 }) {
         </div>
 
         {/* Info */}
-        <div className="p-4">
+        <div className="p-4 flex-1 flex flex-col">
           <p className="text-xs text-outline font-medium mb-1">{product.category}</p>
           <Link to={`/products/${product.id}`}>
-            <h3 className="font-semibold text-foreground text-sm leading-tight mb-2 line-clamp-2 hover:text-primary transition-material">
+            <h3 className="font-semibold text-foreground text-sm sm:text-[15px] leading-tight mb-2 line-clamp-2 hover:text-primary transition-material">
               {product.name}
             </h3>
           </Link>
@@ -90,19 +90,20 @@ export default function ProductCard({ product, index = 0 }) {
           </div>
 
           {/* Price + Cart */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-baseline gap-2">
-              <span className="text-lg font-bold text-foreground">{formatINR(product.price)}</span>
+          <div className="mt-auto flex items-end justify-between gap-3">
+            <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-2 min-w-0">
+              <span className="text-base sm:text-lg font-bold text-foreground">{formatINR(product.price)}</span>
               {product.originalPrice && (
-                <span className="text-sm text-outline line-through">{formatINR(product.originalPrice)}</span>
+                <span className="text-xs sm:text-sm text-outline line-through">{formatINR(product.originalPrice)}</span>
               )}
             </div>
             <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={handleAddToCart}
-              className="w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center hover:shadow-md transition-material"
+              className="w-10 h-10 shrink-0 rounded-full bg-primary text-white flex items-center justify-center hover:shadow-md transition-material"
+              aria-label={`Add ${product.name} to cart`}
             >
-              <ShoppingCart size={14} />
+              <ShoppingCart size={15} />
             </motion.button>
           </div>
         </div>
