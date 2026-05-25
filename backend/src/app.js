@@ -50,18 +50,6 @@ const corsOptions = {
 console.log('CORS_ORIGIN env:', process.env.CORS_ORIGIN);
 console.log('Allowed Origins:', allowedOrigins);
 
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-
-  if (origin && isAllowedOrigin(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-    res.setHeader('Vary', 'Origin');
-  }
-
-  next();
-});
-
 app.use(cors(corsOptions));
 
 // Handle preflight requests
