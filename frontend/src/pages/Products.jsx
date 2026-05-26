@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Search, SlidersHorizontal, X, ChevronDown } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
 import ProductCardSkeleton from '../components/ProductCardSkeleton';
+import ProductsPageSkeleton from '../components/ProductsPageSkeleton';
 import SectionHeading from '../components/SectionHeading';
 import api from '../api';
 
@@ -80,6 +81,10 @@ export default function Products() {
       active = false;
     };
   }, []);
+
+  if (loading) {
+    return <ProductsPageSkeleton />;
+  }
 
   return (
     <div className="pt-24 pb-20 min-h-screen">

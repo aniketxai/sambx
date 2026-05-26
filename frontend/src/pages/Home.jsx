@@ -5,6 +5,7 @@ import Button from '../components/Button';
 import ProductCard from '../components/ProductCard';
 import SectionHeading from '../components/SectionHeading';
 import BlurBlob from '../components/BlurBlob';
+import HomePageSkeleton from '../components/HomePageSkeleton';
 import api from '../api';
 import { useState, useRef, useEffect } from 'react';
 
@@ -39,6 +40,10 @@ export default function Home() {
 
     return () => { active = false; };
   }, []);
+
+  if (loading) {
+    return <HomePageSkeleton />;
+  }
 
   return (
     <div className="overflow-hidden bg-background text-foreground">
@@ -238,7 +243,7 @@ function BrandClosing() {
 function FeaturedProducts({ products, loading }) {
   return (
     <section className="pt-8 pb-20 relative">
-      <BlurBlob className="w-[18rem] h-[18rem] sm:w-[25rem] sm:h-[25rem] top-0 right-0 bg-secondary-container" />
+      <BlurBlob className="w-72 h-72 sm:w-100 sm:h-100 top-0 right-0 bg-secondary-container" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <SectionHeading
           label="Featured"
@@ -273,7 +278,7 @@ function FeaturedProducts({ products, loading }) {
 function ServicesSection({ services }) {
   return (
     <section className="py-20 bg-surface-container relative">
-      <BlurBlob className="w-[14rem] h-[14rem] sm:w-[18rem] sm:h-[18rem] bottom-0 left-10 bg-accent-glow" />
+      <BlurBlob className="w-56 h-56 sm:w-72 sm:h-72 bottom-0 left-10 bg-accent-glow" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <SectionHeading
           label="Categories"
@@ -493,8 +498,8 @@ function FAQSection({ faqs }) {
 function CTABanner() {
   return (
     <section className="py-20 relative">
-      <BlurBlob className="w-[24rem] h-[24rem] sm:w-[32rem] sm:h-[32rem] top-0 left-1/4 bg-primary" />
-      <BlurBlob className="w-[14rem] h-[14rem] sm:w-[18rem] sm:h-[18rem] bottom-0 right-10 bg-accent-glow" />
+      <BlurBlob className="w-96 h-96 sm:w-128 sm:h-128 top-0 left-1/4 bg-primary" />
+      <BlurBlob className="w-56 h-56 sm:w-72 sm:h-72 bottom-0 right-10 bg-accent-glow" />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
