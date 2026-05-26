@@ -12,6 +12,7 @@ const navLinks = [
   { to: '/services', label: 'Services' },
   { to: '/about', label: 'About' },
   { to: '/contact', label: 'Contact' },
+  { to: '/custom-order', label: 'Custom Order' },
 ];
 
 export default function Navbar() {

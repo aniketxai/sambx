@@ -86,7 +86,7 @@ export function OrderDetailModal({ isOpen, order, onClose, onOrderUpdated }) {
             onClick={onClose}
             className="p-2 hover:bg-white/5 rounded-full transition-colors"
           >
-            <X size={20} />
+            <X className="w-[20px] h-[20px]" />
           </button>
         </div>
 
@@ -101,7 +101,7 @@ export function OrderDetailModal({ isOpen, order, onClose, onOrderUpdated }) {
           </span>
           {createdAt && (
             <p className="text-xs text-secondary-text mt-2 flex items-center gap-2">
-              <Clock size={14} />
+              <Clock className="w-[14px] h-[14px]" />
               {formatDate(createdAt)}
             </p>
           )}
@@ -110,7 +110,7 @@ export function OrderDetailModal({ isOpen, order, onClose, onOrderUpdated }) {
         {/* Order Items */}
         <div className="mb-6">
           <h3 className="text-lg font-semibold text-foreground mb-3 flex items-center gap-2">
-            <Package size={18} />
+            <Package className="w-[18px] h-[18px]" />
             Order Items
           </h3>
           <div className="space-y-2 bg-white/5 rounded-2xl p-4">
@@ -169,7 +169,7 @@ export function OrderDetailModal({ isOpen, order, onClose, onOrderUpdated }) {
         {/* Shipping Address */}
         <div className="mb-6">
           <h3 className="text-lg font-semibold text-foreground mb-3 flex items-center gap-2">
-            <MapPin size={18} />
+            <MapPin className="w-[18px] h-[18px]" />
             Shipping Address
           </h3>
           <div className="bg-white/5 rounded-2xl p-4 space-y-1">
@@ -201,7 +201,7 @@ export function OrderDetailModal({ isOpen, order, onClose, onOrderUpdated }) {
         {/* Payment Information */}
         <div className="mb-6">
           <h3 className="text-lg font-semibold text-foreground mb-3 flex items-center gap-2">
-            <CreditCard size={18} />
+            <CreditCard className="w-[18px] h-[18px]" />
             Payment Information
           </h3>
           <div className="bg-white/5 rounded-2xl p-4 space-y-2">
@@ -234,7 +234,7 @@ export function OrderDetailModal({ isOpen, order, onClose, onOrderUpdated }) {
         {showCancelPrompt && (
           <div className="mb-6 bg-red-500/15 border border-red-500/25 rounded-2xl p-4">
             <div className="flex items-start gap-3 mb-4">
-              <AlertCircle size={20} className="text-red-400 shrink-0 mt-0.5" />
+              <AlertCircle className="w-[20px] h-[20px] text-red-400 shrink-0 mt-0.5" />
               <div className="flex-1">
                 <h4 className="font-semibold text-red-300 mb-2">Cancel Order</h4>
                 <p className="text-sm text-red-200 mb-4">

@@ -130,7 +130,7 @@ export default function ProductDetail() {
 
   return (
     <div className="pt-24 pb-20 min-h-screen relative">
-      <BlurBlob className="w-[18rem] h-[18rem] sm:w-[25rem] sm:h-[25rem] top-20 -left-20 bg-secondary-container" />
+      <BlurBlob className="w-[18rem] h-[18rem] sm:w-[25rem] sm:h-[25rem] top-20 left-6 bg-secondary-container" />
       <BlurBlob className="w-[14rem] h-[14rem] sm:w-[18rem] sm:h-[18rem] bottom-20 right-0 bg-accent-glow" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">

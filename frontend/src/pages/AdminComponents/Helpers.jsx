@@ -8,6 +8,9 @@ const statusStyles = {
   read: 'bg-amber-500/15 text-amber-300 border-amber-500/25',
   'in-review': 'bg-amber-500/15 text-amber-300 border-amber-500/25',
   quoted: 'bg-purple-500/15 text-purple-300 border-purple-500/25',
+  accepted: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/25',
+  completed: 'bg-teal-500/15 text-teal-300 border-teal-500/25',
+  rejected: 'bg-rose-500/15 text-rose-300 border-rose-500/25',
   replied: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/25',
 };
 

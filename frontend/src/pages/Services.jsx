@@ -11,8 +11,8 @@ const iconMap = { Printer, Zap, Cog, Navigation, PenTool, Box };
 export default function Services() {
   return (
     <div className="pt-24 pb-20 min-h-screen">
-      <BlurBlob className="w-56 h-56 sm:w-96 sm:h-96 -top-20 right-0 bg-secondary-container" />
-      <BlurBlob className="w-36 h-36 sm:w-56 sm:h-56 bottom-40 -left-20 bg-accent-glow" />
+      <BlurBlob className="w-56 h-56 sm:w-96 sm:h-96 top-0 right-0 bg-secondary-container" />
+      <BlurBlob className="w-36 h-36 sm:w-56 sm:h-56 bottom-40 left-0 bg-accent-glow" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <SectionHeading

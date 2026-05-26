@@ -4,6 +4,7 @@ import {
   Boxes,
   ShoppingCart,
   MessageSquareText,
+  FileUp,
   LineChart,
   Settings2,
   Plus,
@@ -31,6 +32,7 @@ import {
   CatalogSection,
   OrdersSection,
   EnquiriesSection,
+  CustomOrdersSection,
   formatPaymentValue,
 } from './AdminComponents';
 
@@ -38,6 +40,7 @@ const navItems = [
   { id: 'overview', label: 'Overview', icon: LayoutDashboard },
   { id: 'catalog', label: 'Catalog', icon: Boxes },
   { id: 'orders', label: 'Orders', icon: ShoppingCart },
+  { id: 'custom-orders', label: 'Custom Orders', icon: FileUp },
   { id: 'enquiries', label: 'Enquiries', icon: MessageSquareText },
   { id: 'analytics', label: 'Analytics', icon: LineChart },
   { id: 'settings', label: 'Settings', icon: Settings2 },
@@ -115,6 +118,7 @@ export default function Admin() {
   const [productQuery, setProductQuery] = useState('');
   const [productCategory, setProductCategory] = useState('All');
   const [orderFilter, setOrderFilter] = useState('All');
+  const [customOrderFilter, setCustomOrderFilter] = useState('All');
   const [enquiryFilter, setEnquiryFilter] = useState('All');
   const [productForm, setProductForm] = useState(emptyProductForm);
   const [editingProductId, setEditingProductId] = useState(null);
@@ -122,6 +126,9 @@ export default function Admin() {
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [isOrderDetailOpen, setIsOrderDetailOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [respondingToCustomOrderId, setRespondingToCustomOrderId] = useState(null);
+  const [customOrderReplyText, setCustomOrderReplyText] = useState('');
+  const [sendingCustomOrderReply, setSendingCustomOrderReply] = useState(false);
   const [savingProduct, setSavingProduct] = useState(false);
   const [uploadingImages, setUploadingImages] = useState(false);
   const [savingOrderId, setSavingOrderId] = useState(null);
@@ -133,6 +140,7 @@ export default function Admin() {
   const [summary, setSummary] = useState(null);
   const [adminProducts, setAdminProducts] = useState([]);
   const [adminOrders, setAdminOrders] = useState([]);
+  const [adminCustomOrders, setAdminCustomOrders] = useState([]);
   const [adminQuotes, setAdminQuotes] = useState([]);
   const [adminContacts, setAdminContacts] = useState([]);
   const [activity, setActivity] = useState([]);
@@ -154,10 +162,11 @@ const loadAdminData = useCallback(async ({ showLoading = true } = {}) => {
     try {
       setError(null);
 
-      const [summaryResult, productsResult, ordersResult, quotesResult, contactsResult] = await Promise.allSettled([
+      const [summaryResult, productsResult, ordersResult, customOrdersResult, quotesResult, contactsResult] = await Promise.allSettled([
         api.fetchAdminSummary(),
         api.fetchAdminProducts(),
         api.fetchAdminOrders(),
+        api.fetchAdminCustomOrders(),
         api.fetchAdminQuotes(),
         api.fetchAdminContacts(),
       ]);
@@ -167,12 +176,14 @@ const loadAdminData = useCallback(async ({ showLoading = true } = {}) => {
       const summaryData = summaryResult.status === 'fulfilled' ? summaryResult.value : null;
       const productsData = productsResult.status === 'fulfilled' ? productsResult.value : [];
       const ordersData = ordersResult.status === 'fulfilled' ? ordersResult.value : [];
+      const customOrdersData = customOrdersResult.status === 'fulfilled' ? customOrdersResult.value : [];
       const quotesData = quotesResult.status === 'fulfilled' ? quotesResult.value : [];
       const contactsData = contactsResult.status === 'fulfilled' ? contactsResult.value : [];
 
       setSummary(summaryData);
       setAdminProducts(productsData);
       setAdminOrders(ordersData);
+      setAdminCustomOrders(customOrdersData);
       setAdminQuotes(quotesData);
       setAdminContacts(contactsData);
       
@@ -180,11 +191,17 @@ const loadAdminData = useCallback(async ({ showLoading = true } = {}) => {
         summaryData,
         productsData,
         ordersData,
+        customOrdersData,
         quotesData,
         contactsData,
       });
 
       const recentActivity = [
+        ...(customOrdersData.slice(0, 1).map((co) => ({
+          title: `Custom order from ${co.name}`,
+          time: 'just now',
+          type: 'custom-order',
+        })) || []),
         ...(ordersData.slice(0, 1).map((o) => ({
           title: `New order ${o._id || o.id} accepted`,
           time: '4 min ago',
@@ -607,6 +624,57 @@ const loadAdminData = useCallback(async ({ showLoading = true } = {}) => {
       setReplyLoading(false);
     }
   }, [replyTarget, refreshData]);
+
+  const handleViewCustomOrder = useCallback((order) => {
+    setSelectedOrder(order);
+    setIsOrderDetailOpen(true);
+  }, []);
+
+  const handleReplyCustomOrder = useCallback((order, text) => {
+    if (!order && !text) {
+      // Cancel/close
+      setRespondingToCustomOrderId(null);
+      setCustomOrderReplyText('');
+      return;
+    }
+
+    if (!text) {
+      // Open reply mode
+      setRespondingToCustomOrderId(order._id || order.id);
+      setCustomOrderReplyText('');
+      return;
+    }
+
+    // Send reply
+    sendCustomOrderReply(order, text);
+  }, []);
+
+  const sendCustomOrderReply = useCallback(async (order, text) => {
+    if (!order || !text.trim()) return;
+    const orderId = order._id || order.id;
+
+    try {
+      setSendingCustomOrderReply(true);
+      setError(null);
+      setSuccessMessage(null);
+
+      await api.postAdminCustomOrderReply(orderId, {
+        subject: `Quote for Custom Order - ${order.name}`,
+        body: text,
+      });
+
+      setSuccessMessage('Quote sent successfully');
+      setRespondingToCustomOrderId(null);
+      setCustomOrderReplyText('');
+      await refreshData();
+    } catch (err) {
+      console.error('Failed to send custom order reply:', err);
+      setError(err.message || 'Failed to send reply');
+    } finally {
+      setSendingCustomOrderReply(false);
+    }
+  }, [refreshData]);
+
   // If not authenticated, show login
 if (!isAuthenticated) {
   return (
@@ -826,6 +894,21 @@ if (!isAuthenticated) {
               savingOrderId={savingOrderId}
               handleViewOrder={handleViewOrder}
               onOrderUpdated={handleOrderUpdated}
+            />
+          )}
+
+          {/* CUSTOM ORDERS SECTION */}
+          {activeSection === 'custom-orders' && (
+            <CustomOrdersSection
+              customOrders={adminCustomOrders}
+              customOrderFilter={customOrderFilter}
+              setCustomOrderFilter={setCustomOrderFilter}
+              handleViewCustomOrder={handleViewCustomOrder}
+              handleReplyCustomOrder={handleReplyCustomOrder}
+              respondingToOrderId={respondingToCustomOrderId}
+              replyText={customOrderReplyText}
+              setReplyText={setCustomOrderReplyText}
+              sendingReply={sendingCustomOrderReply}
             />
           )}
 

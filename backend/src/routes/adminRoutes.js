@@ -13,6 +13,9 @@ import {
   updateQuoteStatus,
   replyToContact,
   replyToQuote,
+  listAdminCustomOrders,
+  updateCustomOrderStatus,
+  replyToCustomOrder,
 } from '../controllers/adminController.js';
 
 const router = Router();
@@ -26,6 +29,10 @@ router.delete('/products/:id', deleteAdminProduct);
 
 router.get('/orders', listAdminOrders);
 router.patch('/orders/:id/status', updateOrderStatus);
+
+router.get('/custom-orders', listAdminCustomOrders);
+router.patch('/custom-orders/:id/status', updateCustomOrderStatus);
+router.post('/custom-orders/:id/reply', replyToCustomOrder);
 
 router.get('/quotes', listAdminQuotes);
 router.patch('/quotes/:id/status', updateQuoteStatus);

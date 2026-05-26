@@ -9,6 +9,7 @@ import productRoutes from './routes/productRoutes.js';
 import contactRoutes from './routes/contactRoutes.js';
 import quoteRoutes from './routes/quoteRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
+import customOrderRoutes from './routes/customOrderRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import importRoutes from './routes/importRoutes.js';
 import { notFound } from './middleware/notFound.js';
@@ -90,6 +91,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/quotes', quoteRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/custom-orders', customOrderRoutes);
 app.use('/api/admin', importRoutes);
 
 /* =========================

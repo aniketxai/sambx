@@ -83,11 +83,11 @@ export function OverviewSection({
                   <p className="mt-2 text-3xl font-bold font-display">{item.value}</p>
                 </div>
                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/15 text-primary">
-                  <Icon size={20} />
+                  <Icon className="w-[20px] h-[20px]" />
                 </div>
               </div>
               <div className={`mt-4 inline-flex items-center gap-1 text-sm font-semibold ${toneClass}`}>
-                {item.tone === 'down' ? <TrendingDown size={14} /> : <TrendingUp size={14} />}
+                {item.tone === 'down' ? <TrendingDown className="w-[14px] h-[14px]" /> : <TrendingUp className="w-[14px] h-[14px]" />}
                 <span>{item.delta}</span>
               </div>
             </motion.div>
@@ -102,7 +102,7 @@ export function OverviewSection({
           description="Orders, revenue, and traffic trends for the current week."
           action={
             <span className="inline-flex items-center gap-2 rounded-full border border-white/8 bg-white/4 px-3 py-1 text-xs font-semibold text-secondary-text">
-              <Sparkles size={12} className="text-primary" />
+              <Sparkles className="w-[12px] h-[12px] text-primary" />
               Updated 2 min ago
             </span>
           }
@@ -139,7 +139,7 @@ export function OverviewSection({
               <div className="rounded-3xl border border-white/8 bg-black/20 p-4">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/15 text-primary">
-                    <Truck size={18} />
+                    <Truck className="w-[18px] h-[18px]" />
                   </div>
                   <div>
                     <p className="font-semibold">Fulfilment</p>
@@ -172,7 +172,7 @@ export function OverviewSection({
             {activity.map((item) => (
               <div key={item.title} className="flex items-start gap-3 rounded-2xl border border-white/8 bg-black/20 p-4">
                 <div className="mt-0.5 flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/15 text-primary">
-                  <ArrowUpRight size={18} />
+                  <ArrowUpRight className="w-[18px] h-[18px]" />
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="font-medium text-foreground">{item.title}</p>
@@ -230,7 +230,7 @@ export function OverviewSection({
                       onClick={() => handleViewOrder(order)}
                       className="inline-flex items-center gap-2 rounded-full border border-white/8 bg-white/5 px-3 py-2 text-xs font-semibold text-foreground hover:bg-white/10 transition-material">
                       View
-                      <ChevronRight size={14} />
+                      <ChevronRight className="w-[14px] h-[14px]" />
                     </button>
                   </div>
                 </div>
@@ -300,7 +300,7 @@ export function OverviewSection({
                   onClick={() => handleRespondToEnquiry(item)}
                   className="inline-flex items-center gap-2 rounded-full border border-white/8 bg-white/5 px-3 py-2 text-xs font-semibold text-foreground hover:bg-white/10 transition-material">
                   Respond
-                  <Reply size={14} />
+                  <Reply className="w-[14px] h-[14px]" />
                 </button>
               </div>
             </div>

@@ -138,7 +138,7 @@ export function OrdersSection({
                           onClick={() => handleViewOrder(order)}
                           className="inline-flex items-center gap-2 rounded-full border border-white/8 bg-white/5 px-3 py-2 text-xs font-semibold text-foreground hover:bg-white/10 transition-material"
                         >
-                          <Eye size={14} />
+                          <Eye className="w-[14px] h-[14px]" />
                           View
                         </button>
                         {canCancel && (
@@ -147,7 +147,7 @@ export function OrdersSection({
                             disabled={cancelingOrderId === order._id}
                             className="inline-flex items-center gap-2 rounded-full border border-red-500/25 bg-red-500/10 px-3 py-2 text-xs font-semibold text-red-300 hover:bg-red-500/20 disabled:opacity-60 transition-material"
                           >
-                            <X size={14} />
+                            <X className="w-[14px] h-[14px]" />
                             Cancel
                           </button>
                         )}
@@ -171,7 +171,7 @@ export function OrdersSection({
                           </select>
                           {savingOrderId === (order._id || order.id) && (
                             <span className="inline-flex items-center gap-2 text-xs text-foreground">
-                              <Loader size={14} className="animate-spin" />
+                              <Loader className="w-[14px] h-[14px] animate-spin" />
                               Updating...
                             </span>
                           )}
@@ -243,7 +243,7 @@ export function EnquiriesSection({
                     onClick={() => handleRespondToEnquiry(item)}
                     className="inline-flex items-center gap-2 rounded-full border border-white/8 bg-white/5 px-3 py-2 text-xs font-semibold text-foreground hover:bg-white/10 transition-material">
                     Respond
-                    <Reply size={14} />
+                    <Reply className="w-[14px] h-[14px]" />
                   </button>
                 </div>
               </div>

@@ -32,13 +32,13 @@ export function CatalogSection({
                   setIsProductModalOpen(true);
                 }}
                 className="inline-flex items-center gap-2 rounded-full border border-primary/50 bg-primary/15 px-3 py-2 text-xs font-semibold text-primary hover:bg-primary/25 transition-material">
-                <Plus size={14} />
+                <Plus className="w-[14px] h-[14px]" />
                 Add
               </button>
               <button 
                 onClick={() => setIsImportModalOpen(true)}
                 className="inline-flex items-center gap-2 rounded-full border border-white/8 bg-white/5 px-3 py-2 text-xs font-semibold text-secondary-text hover:bg-white/10 transition-material">
-                <Upload size={14} />
+                <Upload className="w-[14px] h-[14px]" />
                 Import
               </button>
             </div>
@@ -46,7 +46,7 @@ export function CatalogSection({
         >
           <div className="mb-4 grid gap-3 md:grid-cols-[1fr_220px]">
             <div className="relative">
-              <Search size={16} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-outline" />
+              <Search className="w-[16px] h-[16px] pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-outline" />
               <input
                 value={productQuery}
                 onChange={(e) => setProductQuery(e.target.value)}
@@ -55,7 +55,7 @@ export function CatalogSection({
               />
             </div>
             <div className="relative">
-              <Filter size={16} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-outline" />
+              <Filter className="w-[16px] h-[16px] pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-outline" />
               <select
                 value={productCategory}
                 onChange={(e) => setProductCategory(e.target.value)}
@@ -115,7 +115,7 @@ export function CatalogSection({
                       <td className="px-4 py-4 text-sm font-semibold text-foreground">{formatINR(product.price)}</td>
                       <td className="px-4 py-4">
                         <div className="inline-flex items-center gap-1 text-sm font-semibold text-amber-300">
-                          <Star size={14} fill="currentColor" />
+                          <Star className="w-[14px] h-[14px] fill-current" />
                           {product.rating || 0}
                         </div>
                       </td>
@@ -131,14 +131,14 @@ export function CatalogSection({
                             className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/8 bg-white/5 text-secondary-text hover:bg-white/10 hover:text-foreground transition-material"
                             title="View/Edit"
                           >
-                            <Eye size={14} />
+                            <Eye className="w-[14px] h-[14px]" />
                           </button>
                           <button
                             onClick={() => handleDeleteProduct(product)}
                             className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-red-500/20 bg-red-500/10 text-red-300 hover:bg-red-500/20 transition-material"
                             title="Delete"
                           >
-                            <Trash2 size={14} />
+                            <Trash2 className="w-[14px] h-[14px]" />
                           </button>
                         </div>
                       </td>
@@ -163,7 +163,7 @@ export function CatalogSection({
               }}
               className="inline-flex items-center gap-2 rounded-full border border-primary/50 bg-primary/15 px-4 py-2 text-sm font-semibold text-primary hover:bg-primary/25 transition-material"
             >
-              <Plus size={16} />
+              <Plus className="w-[16px] h-[16px]" />
               Add Product
             </button>
           }
@@ -171,21 +171,21 @@ export function CatalogSection({
           <div className="grid gap-4 sm:grid-cols-3">
             <div className="rounded-3xl border border-white/8 bg-black/20 p-4 text-center">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/15 text-primary mx-auto mb-3">
-                <Plus size={20} />
+                <Plus className="w-[20px] h-[20px]" />
               </div>
               <p className="font-semibold text-foreground">Add New</p>
               <p className="text-xs text-secondary-text mt-1">Create a new product</p>
             </div>
             <div className="rounded-3xl border border-white/8 bg-black/20 p-4 text-center">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-300 mx-auto mb-3">
-                <PackageCheck size={20} />
+                <PackageCheck className="w-[20px] h-[20px]" />
               </div>
               <p className="font-semibold text-foreground">{adminProducts.length}</p>
               <p className="text-xs text-secondary-text mt-1">Total products</p>
             </div>
             <div className="rounded-3xl border border-white/8 bg-black/20 p-4 text-center">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-amber-500/15 text-amber-300 mx-auto mb-3">
-                <AlertCircle size={20} />
+                <AlertCircle className="w-[20px] h-[20px]" />
               </div>
               <p className="font-semibold text-foreground">{(adminProducts || []).filter((p) => !p.inStock).length}</p>
               <p className="text-xs text-secondary-text mt-1">Out of stock</p>

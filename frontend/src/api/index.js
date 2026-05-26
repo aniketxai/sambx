@@ -184,6 +184,25 @@ export async function postAdminQuoteReply(id, payload) {
   });
 }
 
+export async function fetchAdminCustomOrders(params = {}) {
+  const data = await requestJson('/api/admin/custom-orders', { params });
+  return data.data || [];
+}
+
+export async function updateCustomOrderStatus(id, status) {
+  return requestJson(`/api/admin/custom-orders/${encodeURIComponent(id)}/status`, {
+    method: 'PATCH',
+    body: { status },
+  });
+}
+
+export async function postAdminCustomOrderReply(id, payload) {
+  return requestJson(`/api/admin/custom-orders/${encodeURIComponent(id)}/reply`, {
+    method: 'POST',
+    body: payload,
+  });
+}
+
 export async function postContact(payload) {
   const res = await fetchWithTimeout(`${getBaseUrl()}/api/contact`, {
     method: 'POST',
@@ -214,6 +233,56 @@ export async function postOrder(payload) {
   return res.json();
 }
 
+export async function submitCustomOrder(formData) {
+  const res = await fetchWithTimeout(`${getBaseUrl()}/api/custom-orders`, {
+    method: 'POST',
+    body: formData, // FormData with file
+  });
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({}));
+    throw new Error(error.message || 'Failed to submit custom order');
+  }
+  return res.json();
+}
+
+export async function fetchCustomOrders() {
+  const res = await fetchWithTimeout(`${getBaseUrl()}/api/custom-orders`);
+  if (!res.ok) throw new Error('Failed to fetch custom orders');
+  return res.json();
+}
+
+export async function fetchCustomOrderById(id) {
+  const res = await fetchWithTimeout(`${getBaseUrl()}/api/custom-orders/${id}`);
+  if (!res.ok) throw new Error('Failed to fetch custom order');
+  return res.json();
+}
+
+export async function updateCustomOrder(id, payload) {
+  const res = await fetchWithTimeout(`${getBaseUrl()}/api/custom-orders/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error('Failed to update custom order');
+  return res.json();
+}
+
+export async function cancelCustomOrder(id) {
+  const res = await fetchWithTimeout(`${getBaseUrl()}/api/custom-orders/${id}/cancel`, {
+    method: 'PATCH',
+  });
+  if (!res.ok) throw new Error('Failed to cancel custom order');
+  return res.json();
+}
+
+export async function deleteCustomOrder(id) {
+  const res = await fetchWithTimeout(`${getBaseUrl()}/api/custom-orders/${id}`, {
+    method: 'DELETE',
+  });
+  if (!res.ok) throw new Error('Failed to delete custom order');
+  return res.json();
+}
+
 export default {
   fetchProducts,
   fetchProductById,
@@ -222,6 +291,12 @@ export default {
   postContact,
   postQuote,
   postOrder,
+  submitCustomOrder,
+  fetchCustomOrders,
+  fetchCustomOrderById,
+  updateCustomOrder,
+  cancelCustomOrder,
+  deleteCustomOrder,
   fetchAdminSummary,
   fetchAdminProducts,
   createAdminProduct,
@@ -231,6 +306,9 @@ export default {
   updateOrderStatus,
   fetchAdminQuotes,
   updateQuoteStatus,
+  fetchAdminCustomOrders,
+  updateCustomOrderStatus,
+  postAdminCustomOrderReply,
   fetchAdminContacts,
   updateContactStatus,
   postAdminContactReply,

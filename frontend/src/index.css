@@ -46,6 +46,7 @@
 
   body {
     margin: 0;
+    overflow-x: hidden;
     background-color: var(--color-background);
     background-image:
       radial-gradient(circle at top, rgba(255, 106, 0, 0.12), transparent 32%),

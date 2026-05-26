@@ -1,7 +1,7 @@
 export function MiniFeature({ icon: Icon, text }) {
   return (
     <div className="inline-flex items-center gap-2 rounded-2xl border border-white/8 bg-white/4 px-3 py-2">
-      <Icon size={14} className="text-primary shrink-0" />
+      <Icon className="w-[14px] h-[14px] text-primary shrink-0" />
       <span>{text}</span>
     </div>
   );
@@ -41,7 +41,7 @@ export function AlertRow({ icon: Icon, title, value }) {
     <div className="flex items-center justify-between gap-3 rounded-2xl border border-white/8 bg-white/4 px-3 py-3">
       <div className="flex items-center gap-3 min-w-0">
         <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/15 text-primary">
-          <Icon size={16} />
+          <Icon className="w-[16px] h-[16px]" />
         </div>
         <p className="text-sm text-secondary-text truncate">{title}</p>
       </div>

@@ -989,3 +989,141 @@ export async function sendOrderCancellationEmail(order, cancellationReason = '')
     return null;
   }
 }
+
+export async function sendCustomOrderNotificationEmail(customOrder) {
+  try {
+    const transport = buildTransport();
+
+    if (!transport) {
+      console.error('❌ SMTP NOT CONFIGURED - Email will not be sent');
+      return null;
+    }
+
+    console.log('🔄 Verifying SMTP connection...');
+    await transport.verify();
+    console.log('✅ SMTP connection verified');
+
+    const recipient = buildRecipient();
+    const from =
+      process.env.MAIL_FROM ||
+      process.env.SMTP_USER ||
+      'no-reply@sambx.local';
+
+    console.log(`📧 Preparing email to: ${recipient}`);
+
+    const fileInfo = customOrder.fileUrl
+      ? `<p><strong>File Uploaded:</strong> ${customOrder.fileName} (${(customOrder.fileSize / 1024).toFixed(2)} KB)</p>`
+      : '<p><em>No file uploaded - design description provided</em></p>';
+
+    const deadlineInfo = customOrder.deadline
+      ? `<p><strong>Preferred Delivery:</strong> ${new Date(customOrder.deadline).toLocaleDateString('en-IN')}</p>`
+      : '';
+
+    const budgetInfo = customOrder.budget
+      ? `<p><strong>Budget Range:</strong> ${customOrder.budget}</p>`
+      : '';
+
+    const html = `
+      <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#f9fafb;padding:0;">
+        <div style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);padding:30px;text-align:center;color:white;">
+          <h1 style="margin:0;font-size:28px;">✨ New Custom Order Request</h1>
+          <p style="margin:10px 0 0 0;font-size:14px;opacity:0.9;">Order #${customOrder.orderNumber}</p>
+        </div>
+
+        <div style="padding:30px;color:#374151;">
+          <h2 style="color:#1f2937;margin-top:0;">👤 Customer Information</h2>
+          
+          <div style="background:#f3f4f6;padding:20px;border-radius:12px;margin-bottom:24px;">
+            <p style="margin:8px 0;"><strong>Name:</strong> ${customOrder.name}</p>
+            <p style="margin:8px 0;"><strong>Email:</strong> <a href="mailto:${customOrder.email}" style="color:#667eea;text-decoration:none;">${customOrder.email}</a></p>
+            <p style="margin:8px 0;"><strong>Phone:</strong> <a href="tel:${customOrder.phone}" style="color:#667eea;text-decoration:none;">${customOrder.phone}</a></p>
+            <p style="margin:8px 0;"><strong>Quantity:</strong> ${customOrder.quantity}</p>
+          </div>
+
+          <h2 style="color:#1f2937;margin-top:24px;">📋 Project Details</h2>
+
+          <div style="background:#f3f4f6;padding:20px;border-radius:12px;margin-bottom:24px;">
+            <p><strong>Description:</strong></p>
+            <p style="white-space:pre-wrap;color:#4b5563;line-height:1.6;">${customOrder.description.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p>
+            
+            ${customOrder.specifications ? `
+              <p style="margin-top:16px;"><strong>Specifications:</strong></p>
+              <p style="white-space:pre-wrap;color:#4b5563;line-height:1.6;">${customOrder.specifications.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p>
+            ` : ''}
+          </div>
+
+          <h2 style="color:#1f2937;margin-top:24px;">📁 Design Files & Timeline</h2>
+
+          <div style="background:#f3f4f6;padding:20px;border-radius:12px;margin-bottom:24px;">
+            ${fileInfo}
+            ${deadlineInfo}
+            ${budgetInfo}
+          </div>
+
+          <div style="
+            margin-top:30px;
+            padding:20px;
+            background:#dbeafe;
+            border-radius:12px;
+            border-left:4px solid #0284c7;
+          ">
+            <p style="margin:0;color:#0c4a6e;font-weight:bold;"><strong>⚠️ Action Required:</strong> Review this custom order request and send a quote to the customer within 24-48 hours.</p>
+          </div>
+
+          <div style="margin-top:24px;padding:16px;background:#f9fafb;border-radius:12px;text-align:center;">
+            <a
+              href="${process.env.VITE_FRONTEND_URL || 'https://sambx.com'}/admin"
+              style="display:inline-block;padding:12px 24px;background:#667eea;color:white;text-decoration:none;border-radius:8px;font-weight:bold;transition:background 0.3s;"
+            >
+              Review Order in Admin Panel
+            </a>
+          </div>
+
+          <div style="margin-top:30px;padding-top:20px;border-top:1px solid #e5e7eb;font-size:12px;color:#6b7280;text-align:center;">
+            <p style="margin:0;">This is an automated message from SAMBX. Please do not reply to this email.</p>
+            <p style="margin:8px 0 0 0;">© 2024 SAMBX. All rights reserved.</p>
+          </div>
+        </div>
+      </div>
+    `;
+
+    console.log(`📤 Sending email with subject: "New Custom Order - ${customOrder.orderNumber}"`);
+    
+    const result = await transport.sendMail({
+      from,
+      to: recipient,
+      subject: `🎨 New Custom Order - ${customOrder.orderNumber}`,
+      html,
+      text: `
+New Custom Order Received
+Order #${customOrder.orderNumber}
+
+Customer: ${customOrder.name}
+Email: ${customOrder.email}
+Phone: ${customOrder.phone}
+Quantity: ${customOrder.quantity}
+
+Description:
+${customOrder.description}
+
+${customOrder.specifications ? `Specifications:\n${customOrder.specifications}\n` : ''}
+${customOrder.deadline ? `Preferred Delivery: ${new Date(customOrder.deadline).toLocaleDateString('en-IN')}\n` : ''}
+${customOrder.budget ? `Budget Range: ${customOrder.budget}\n` : ''}
+${customOrder.fileUrl ? `File Uploaded: ${customOrder.fileName} (${(customOrder.fileSize / 1024).toFixed(2)} KB)\n` : 'No file uploaded\n'}
+
+Please review this order in your admin panel and send a quote within 24-48 hours.
+      `,
+    });
+
+    console.log('✅ CUSTOM ORDER NOTIFICATION EMAIL SENT');
+    console.log(`📬 Message ID: ${result.messageId}`);
+    return true;
+  } catch (error) {
+    console.error('❌ CUSTOM ORDER EMAIL ERROR');
+    console.error('Error details:', error.message);
+    if (error.response) {
+      console.error('SMTP Response:', error.response);
+    }
+    return null;
+  }
+}

@@ -5,3 +5,4 @@ export { OrderDetailModal } from './OrderDetailModal';
 export { OverviewSection } from './OverviewSection';
 export { CatalogSection } from './CatalogSection';
 export { OrdersSection, EnquiriesSection } from './OrdersAndEnquiriesSection';
+export { CustomOrdersSection } from './CustomOrdersSection';

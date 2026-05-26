@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 
 import { Product } from '../models/Product.js';
 import { Order } from '../models/Order.js';
+import { CustomOrder } from '../models/CustomOrder.js';
 import { ContactMessage } from '../models/ContactMessage.js';
 import { QuoteRequest } from '../models/QuoteRequest.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
@@ -455,7 +456,98 @@ export const replyToContact = asyncHandler(async (req, res) => {
 
   res.json({ success: true, message: 'Reply sent', data: updated });
 });
+export const listAdminCustomOrders = asyncHandler(async (req, res) => {
+  const { status, sort = '-createdAt' } = req.query;
 
+  const query = {};
+  if (status && status !== 'all' && status !== 'All') {
+    query.status = status;
+  }
+
+  console.log('[ADMIN] Fetching custom orders with query:', query, 'sort:', sort);
+
+  const orders = await CustomOrder.find(query)
+    .sort(sort)
+    .lean()
+    .maxTimeMS(5000);
+
+  console.log('[ADMIN] Found custom orders:', orders.length);
+
+  res.json({ success: true, data: orders || [] });
+});
+
+export const updateCustomOrderStatus = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  if (!status) {
+    res.status(400);
+    throw new Error('Status is required');
+  }
+
+  const validStatuses = ['new', 'in-review', 'quoted', 'accepted', 'completed', 'rejected'];
+  if (!validStatuses.includes(status)) {
+    res.status(400);
+    throw new Error(`Invalid status. Allowed: ${validStatuses.join(', ')}`);
+  }
+
+  const updated = await CustomOrder.findByIdAndUpdate(id, { $set: { status } }, { new: true, runValidators: true }).lean();
+
+  if (!updated) {
+    res.status(404);
+    throw new Error('Custom order not found');
+  }
+
+  res.json({ success: true, message: 'Custom order status updated', data: updated });
+});
+
+export const replyToCustomOrder = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { subject, body } = req.body;
+
+  if (!subject || !body) {
+    res.status(400);
+    throw new Error('Subject and body are required');
+  }
+
+  const order = await CustomOrder.findById(id).lean();
+
+  if (!order) {
+    res.status(404);
+    throw new Error('Custom order not found');
+  }
+
+  if (!order.email) {
+    res.status(400);
+    throw new Error('Custom order has no email address');
+  }
+
+  const sent = await sendCustomEmail({
+    to: order.email,
+    subject: `${subject}`,
+    text: body,
+    html: `
+      <div style="font-family: Arial, sans-serif; color: #333;">
+        <h3>${subject}</h3>
+        <pre style="white-space:pre-wrap; font-family: Arial, sans-serif;">${body}</pre>
+        <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;" />
+        <p style="font-size: 12px; color: #666;">
+          This is a response to your custom order request. Please review and get back to us if you have any questions.
+        </p>
+      </div>
+    `,
+    replyTo: process.env.SMTP_USER,
+  });
+
+  if (!sent) {
+    res.status(500);
+    throw new Error('Failed to send reply email');
+  }
+
+  const updated = await CustomOrder.findByIdAndUpdate(id, { $set: { status: 'quoted' } }, { new: true, runValidators: true }).lean();
+
+  res.json({ success: true, message: 'Quote sent successfully', data: updated });
+});
 export const replyToQuote = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { subject, body } = req.body;

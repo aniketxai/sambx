@@ -60,7 +60,7 @@ export function ProductEditModal({
                   onClick={onClose}
                   className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/8 bg-white/5 text-secondary-text hover:bg-white/10 hover:text-foreground transition-material"
                 >
-                  <X size={18} />
+                  <X className="w-[18px] h-[18px]" />
                 </button>
               </div>
 
@@ -168,7 +168,7 @@ export function ProductEditModal({
                     </div>
 
                     <label className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-white/8 bg-white/5 px-4 py-2 text-xs font-semibold text-foreground hover:bg-white/10 transition-material">
-                      <UploadCloud size={14} />
+                      <UploadCloud className="w-[14px] h-[14px]" />
                       {uploadingImages ? 'Uploading...' : 'Choose files'}
                       <input
                         type="file"
@@ -215,7 +215,7 @@ export function ProductEditModal({
                               onClick={() => onRemoveImage?.(index)}
                               className="absolute right-2 top-2 inline-flex h-8 w-8 items-center justify-center rounded-full bg-black/60 text-white hover:bg-red-500"
                             >
-                              <Trash2 size={14} />
+                              <Trash2 className="w-[14px] h-[14px]" />
                             </button>
                           </div>
                         </div>
@@ -244,9 +244,9 @@ export function ProductEditModal({
                   className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-primary px-4 py-3 text-sm font-semibold text-white"
                 >
                   {loading ? (
-                    <Loader size={16} className="animate-spin" />
+                    <Loader className="w-[16px] h-[16px] animate-spin" />
                   ) : (
-                    <Save size={16} />
+                    <Save className="w-[16px] h-[16px]" />
                   )}
 
                   {product?.id || product?._id ? 'Update' : 'Create'}
