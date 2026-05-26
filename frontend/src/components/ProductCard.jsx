@@ -1,10 +1,13 @@
 import { motion } from 'framer-motion';
 import { Heart, ShoppingCart, Star, Eye } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
 import { useApp } from '../context/useApp';
 import { formatINR } from '../utils/currency';
+import Skeleton from './Skeleton';
 
 export default function ProductCard({ product, index = 0 }) {
+  const [imageLoading, setImageLoading] = useState(true);
   const { addToCart, toggleWishlist, wishlist } = useApp();
   const isWished = wishlist.includes(product.id);
   const imageSrc = product.images?.[0] || 'https://via.placeholder.com/600x600?text=No+Image';
@@ -31,14 +34,21 @@ export default function ProductCard({ product, index = 0 }) {
       <div className="bg-surface-container rounded-3xl overflow-hidden transition-material hover:shadow-lg border border-white/5 h-full flex flex-col">
         {/* Image */}
         <div className="relative aspect-square overflow-hidden bg-surface-muted">
-          <Link to={`/products/${product.id}`}>
+          {imageLoading && (
+            <Skeleton className="absolute inset-0 rounded-none w-full h-full z-10 bg-surface-container" />
+          )}
+          <Link to={`/products/${product.id}`} className="block w-full h-full">
             <img
               src={imageSrc}
               alt={product.name}
               width="500"
               height="500"
               decoding="async"
-              className="w-full h-full object-contain object-center transition-material group-hover:scale-105 bg-white/5"
+              onLoad={() => setImageLoading(false)}
+              onError={() => setImageLoading(false)}
+              className={`w-full h-full object-contain object-center transition-all duration-300 group-hover:scale-105 bg-white/5 ${
+                imageLoading ? 'opacity-0' : 'opacity-100'
+              }`}
               loading="lazy"
             />
           </Link>
