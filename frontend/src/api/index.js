@@ -1,4 +1,66 @@
+import { categories as fallbackCategories, products as fallbackProducts } from '../data/products';
+
 const REQUEST_TIMEOUT_MS = 12000;
+const PRODUCT_CACHE_KEY = 'sambx.products.cache.v1';
+const CATEGORY_CACHE_KEY = 'sambx.categories.cache.v1';
+const HOME_CACHE_KEY = 'sambx.home.cache.v1';
+
+function isBrowserStorageAvailable() {
+  return typeof window !== 'undefined' && typeof localStorage !== 'undefined';
+}
+
+function readJsonCache(key, fallback) {
+  if (!isBrowserStorageAvailable()) return fallback;
+
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function writeJsonCache(key, value) {
+  if (!isBrowserStorageAvailable()) return;
+
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    // Ignore storage quota / privacy mode failures.
+  }
+}
+
+function normalizeProductList(items) {
+  return Array.isArray(items) ? items : [];
+}
+
+function getCachedProducts() {
+  return normalizeProductList(readJsonCache(PRODUCT_CACHE_KEY, []));
+}
+
+function cacheProducts(items) {
+  writeJsonCache(PRODUCT_CACHE_KEY, normalizeProductList(items));
+}
+
+function getCachedProductById(id) {
+  return getCachedProducts().find(item => String(item?.id) === String(id)) || null;
+}
+
+function getCachedCategories() {
+  return normalizeProductList(readJsonCache(CATEGORY_CACHE_KEY, []));
+}
+
+function cacheCategories(items) {
+  writeJsonCache(CATEGORY_CACHE_KEY, normalizeProductList(items));
+}
+
+function getCachedHomeData() {
+  return readJsonCache(HOME_CACHE_KEY, null);
+}
+
+function cacheHomeData(data) {
+  writeJsonCache(HOME_CACHE_KEY, data);
+}
 
 export function getBaseUrl() {
   const configured = import.meta.env.VITE_API_URL?.trim();
@@ -78,31 +140,129 @@ async function requestJson(path, { method = 'GET', body, params } = {}) {
 
 export async function fetchProducts({ category, q, sort } = {}) {
   const url = buildUrl('/api/products', { category, q, sort });
-  const res = await fetchWithTimeout(url);
-  if (!res.ok) throw new Error('Failed to fetch products');
-  const json = await res.json();
-  return { items: json.data || [], dataSource: json.dataSource || 'db' };
+  try {
+    const res = await fetchWithTimeout(url);
+    if (!res.ok) throw new Error('Failed to fetch products');
+
+    const json = await res.json();
+    const items = normalizeProductList(json.data);
+
+    if (items.length && json.dataSource === 'db') {
+      cacheProducts(items);
+      cacheCategories([...new Set(items.map(item => item?.category).filter(Boolean))]);
+    }
+
+    const cachedProducts = getCachedProducts();
+    const cachedCategories = getCachedCategories();
+
+    if (json.dataSource !== 'db') {
+      if (cachedProducts.length) {
+        return { items: cachedProducts, dataSource: 'cache', categories: cachedCategories };
+      }
+
+      if (items.length) {
+        return {
+          items,
+          dataSource: json.dataSource || 'fallback',
+          categories: [...new Set(items.map(item => item?.category).filter(Boolean))],
+        };
+      }
+    }
+
+    const resolvedItems = items.length ? items : cachedProducts;
+    return {
+      items: resolvedItems,
+      dataSource: json.dataSource || (cachedProducts.length ? 'cache' : 'none'),
+      categories: cachedCategories.length
+        ? cachedCategories
+        : [...new Set(resolvedItems.map(item => item?.category).filter(Boolean))],
+    };
+  } catch (error) {
+    const cachedProducts = getCachedProducts();
+    if (cachedProducts.length) {
+      return { items: cachedProducts, dataSource: 'cache', categories: getCachedCategories() };
+    }
+
+    if (fallbackProducts.length) {
+      return { items: fallbackProducts, dataSource: 'fallback', categories: fallbackCategories };
+    }
+
+    throw error;
+  }
 }
 
 export async function fetchProductById(id) {
-  const res = await fetchWithTimeout(`${getBaseUrl()}/api/products/${encodeURIComponent(id)}`);
-  if (!res.ok) throw new Error('Product not found');
-  const data = await res.json();
-  return data.data;
+  try {
+    const res = await fetchWithTimeout(`${getBaseUrl()}/api/products/${encodeURIComponent(id)}`);
+    if (!res.ok) throw new Error('Product not found');
+
+    const data = await res.json();
+    const product = data.data || null;
+
+    if (product && data.dataSource === 'db') {
+      const existing = getCachedProducts();
+      const next = existing.filter(item => String(item?.id) !== String(product.id));
+      cacheProducts([...next, product]);
+    }
+
+    return product || getCachedProductById(id) || fallbackProducts.find(item => String(item.id) === String(id)) || null;
+  } catch {
+    return getCachedProductById(id) || fallbackProducts.find(item => String(item.id) === String(id)) || null;
+  }
 }
 
 export async function fetchCategories() {
-  const res = await fetchWithTimeout(`${getBaseUrl()}/api/products/categories`);
-  if (!res.ok) throw new Error('Failed to fetch categories');
-  const data = await res.json();
-  return data.data || [];
+  try {
+    const res = await fetchWithTimeout(`${getBaseUrl()}/api/products/categories`);
+    if (!res.ok) throw new Error('Failed to fetch categories');
+
+    const data = await res.json();
+    const categories = normalizeProductList(data.data);
+
+    if (categories.length) {
+      cacheCategories(categories);
+      return categories;
+    }
+
+    const cachedCategories = getCachedCategories();
+    if (cachedCategories.length) return cachedCategories;
+
+    return fallbackCategories;
+  } catch {
+    const cachedCategories = getCachedCategories();
+    if (cachedCategories.length) return cachedCategories;
+
+    return fallbackCategories;
+  }
 }
 
 export async function fetchHomeData() {
-  const res = await fetchWithTimeout(`${getBaseUrl()}/api/products/home`);
-  if (!res.ok) throw new Error('Failed to fetch home data');
-  const data = await res.json();
-  return data.data || {};
+  try {
+    const res = await fetchWithTimeout(`${getBaseUrl()}/api/products/home`);
+    if (!res.ok) throw new Error('Failed to fetch home data');
+
+    const data = await res.json();
+    const homeData = data.data || {};
+
+    if (homeData.featuredProducts?.length) {
+      cacheProducts(homeData.featuredProducts);
+    }
+
+    cacheHomeData(homeData);
+    return homeData;
+  } catch {
+    const cachedHomeData = getCachedHomeData();
+    if (cachedHomeData) return cachedHomeData;
+
+    const cachedProducts = getCachedProducts();
+    return {
+      featuredProducts: cachedProducts.slice(0, 4),
+      services: [],
+      testimonials: [],
+      faqs: [],
+      categories: getCachedCategories(),
+    };
+  }
 }
 
 export async function fetchAdminSummary() {
@@ -288,6 +448,9 @@ export default {
   fetchProductById,
   fetchCategories,
   fetchHomeData,
+  getCachedProducts,
+  getCachedProductById,
+  getCachedCategories,
   postContact,
   postQuote,
   postOrder,

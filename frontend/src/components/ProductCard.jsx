@@ -7,6 +7,7 @@ import { formatINR } from '../utils/currency';
 export default function ProductCard({ product, index = 0 }) {
   const { addToCart, toggleWishlist, wishlist } = useApp();
   const isWished = wishlist.includes(product.id);
+  const imageSrc = product.images?.[0] || 'https://via.placeholder.com/600x600?text=No+Image';
 
   const handleWishlistToggle = () => {
     console.log('Wishlist toggle clicked for:', product.id);
@@ -32,7 +33,7 @@ export default function ProductCard({ product, index = 0 }) {
         <div className="relative aspect-square overflow-hidden bg-surface-muted">
           <Link to={`/products/${product.id}`}>
             <img
-              src={product.images[0]}
+              src={imageSrc}
               alt={product.name}
               width="500"
               height="500"

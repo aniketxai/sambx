@@ -18,7 +18,19 @@ import { useApp } from '../context/useApp';
 import Button from '../components/Button';
 import ProductCard from '../components/ProductCard';
 import BlurBlob from '../components/BlurBlob';
+import ProductDetailSkeleton from '../components/ProductDetailSkeleton';
 import { formatINR } from '../utils/currency';
+
+function safeProductShape(product) {
+  if (!product) return null;
+
+  return {
+    ...product,
+    images: product.images || [],
+    features: product.features || [],
+    specifications: product.specifications || {},
+  };
+}
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -36,34 +48,23 @@ export default function ProductDetail() {
     setLoading(true);
     setSelectedImage(0);
 
-    Promise.all([
+    Promise.allSettled([
       api.fetchProductById(id),
       api.fetchProducts()
     ])
-      .then(([singleProduct, productsResult]) => {
+      .then(([singleProductResult, productsResult]) => {
         if (!active) return;
 
-        // Safe fallback structure
-        const safeProduct = singleProduct
-          ? {
-              ...singleProduct,
-              images: singleProduct.images || [],
-              features: singleProduct.features || [],
-              specifications: singleProduct.specifications || {},
-            }
-          : null;
+        const singleProduct = singleProductResult.status === 'fulfilled' ? singleProductResult.value : null;
+        const allProducts = productsResult.status === 'fulfilled'
+          ? (Array.isArray(productsResult.value) ? productsResult.value : (productsResult.value.items || []))
+          : api.getCachedProducts();
 
-        setProduct(safeProduct);
-        const all = Array.isArray(productsResult) ? productsResult : (productsResult.items || []);
-        setProducts(all || []);
-      })
-      .catch((err) => {
-        console.error('Product fetch error:', err);
+        const productFromList = allProducts.find(item => String(item?.id) === String(id)) || null;
+        const cachedProduct = api.getCachedProductById(id);
 
-        if (active) {
-          setProduct(null);
-          setProducts([]);
-        }
+        setProduct(safeProductShape(singleProduct || productFromList || cachedProduct));
+        setProducts(Array.isArray(allProducts) ? allProducts : []);
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -75,13 +76,7 @@ export default function ProductDetail() {
   }, [id]);
 
   if (loading) {
-    return (
-      <div className="pt-24 pb-20 min-h-screen flex items-center justify-center">
-        <p className="text-secondary-text text-lg">
-          Loading product...
-        </p>
-      </div>
-    );
+    return <ProductDetailSkeleton />;
   }
 
   if (!product) {
@@ -130,8 +125,8 @@ export default function ProductDetail() {
 
   return (
     <div className="pt-24 pb-20 min-h-screen relative">
-      <BlurBlob className="w-[18rem] h-[18rem] sm:w-[25rem] sm:h-[25rem] top-20 left-6 bg-secondary-container" />
-      <BlurBlob className="w-[14rem] h-[14rem] sm:w-[18rem] sm:h-[18rem] bottom-20 right-0 bg-accent-glow" />
+      <BlurBlob className="w-72 h-72 sm:w-100 sm:h-100 top-20 left-6 bg-secondary-container" />
+      <BlurBlob className="w-56 h-56 sm:w-72 sm:h-72 bottom-20 right-0 bg-accent-glow" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 

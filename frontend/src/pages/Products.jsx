@@ -1,10 +1,9 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, SlidersHorizontal, X, ChevronDown } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
 import ProductCardSkeleton from '../components/ProductCardSkeleton';
 import SectionHeading from '../components/SectionHeading';
-import { useEffect } from 'react';
 import api from '../api';
 
 const sortOptions = [
@@ -20,10 +19,13 @@ export default function Products() {
   const [activeCategory, setActiveCategory] = useState('All');
   const [sort, setSort] = useState('featured');
   const [showFilters, setShowFilters] = useState(false);
-  const [products, setProducts] = useState([]);
-  const [dataSource, setDataSource] = useState('db');
-  const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState(() => api.getCachedProducts());
+  const [loading, setLoading] = useState(() => api.getCachedProducts().length === 0);
+
+  const categories = useMemo(
+    () => [...new Set(products.map(product => product.category).filter(Boolean))],
+    [products]
+  );
 
   const filtered = useMemo(() => {
     let result = [...products];
@@ -60,20 +62,24 @@ export default function Products() {
 
   useEffect(() => {
     let active = true;
-    setLoading(true);
-    api.fetchProducts({ category: activeCategory === 'All' ? undefined : activeCategory, q: search, sort })
-      .then(result => { if (active) { setProducts(result.items); setDataSource(result.dataSource || 'db'); } })
-      .catch(() => { if (active) setProducts([]); })
-      .finally(() => { if (active) setLoading(false); });
 
-    api.fetchCategories()
-      .then(data => {
-        if (active) setCategories([...new Set(data.filter(cat => cat !== 'All'))]);
+    api.fetchProducts()
+      .then(result => {
+        if (!active) return;
+        setProducts(result.items || []);
       })
-      .catch(() => {});
+      .catch(() => {
+        if (!active) return;
+        setProducts(api.getCachedProducts());
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
 
-    return () => { active = false; };
-  }, [search, activeCategory, sort]);
+    return () => {
+      active = false;
+    };
+  }, []);
 
   return (
     <div className="pt-24 pb-20 min-h-screen">
@@ -184,13 +190,6 @@ export default function Products() {
             </button>
           ))}
         </div>
-
-        {/* Results count */}
-        {dataSource !== 'db' && (
-          <div className="mb-4 p-3 rounded-lg bg-yellow-50 text-yellow-800 text-sm">
-            Showing fallback/offline data — some items may be demo entries.
-          </div>
-        )}
 
         <p className="text-sm text-outline mb-6">{filtered.length} product{filtered.length !== 1 ? 's' : ''} found</p>
 
