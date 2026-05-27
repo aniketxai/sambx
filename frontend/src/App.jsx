@@ -14,6 +14,7 @@ import CustomOrder from './pages/CustomOrder';
 import Cart from './pages/Cart';
 import Wishlist from './pages/Wishlist';
 import Checkout from './pages/Checkout';
+import UPIPayment from './pages/UPIPayment';
 import Admin from './pages/Admin';
 import ScrollToTop from './components/ScrollToTop';
 
@@ -47,6 +48,7 @@ function AppContent() {
             <Route path="/cart" element={<Cart />} />
             <Route path="/wishlist" element={<Wishlist />} />
             <Route path="/checkout" element={<Checkout />} />
+            <Route path="/pay/upi" element={<UPIPayment />} />
           </Route>
           <Route path="/admin" element={<Admin />} />
         </Routes>

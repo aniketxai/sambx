@@ -1,7 +1,6 @@
-
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Check } from 'lucide-react';
 
 import { useApp } from '../context/useApp';
@@ -11,6 +10,7 @@ import { postOrder } from '../api';
 
 export default function Checkout() {
   const { cart, cartTotal, clearCart } = useApp();
+  const navigate = useNavigate();
 
   const [step, setStep] = useState(1);
   const [orderPlaced, setOrderPlaced] = useState(false);
@@ -38,6 +38,23 @@ export default function Checkout() {
 
   const finalTotal = cartTotal + codCharge;
 
+  const buildOrderPayload = () => ({
+    items: cart.map((item) => ({
+      productId: item.id,
+      name: item.name,
+      price: item.price,
+      quantity: item.quantity,
+      image: item.images?.[0] || '',
+    })),
+    shipping,
+    payment: {
+      method: paymentMethod,
+      codCharge,
+    },
+    subtotal: cartTotal,
+    total: finalTotal,
+  });
+
   const handlePlaceOrder = async (e) => {
     e.preventDefault();
 
@@ -59,28 +76,23 @@ export default function Checkout() {
       return;
     }
 
+    const payload = buildOrderPayload();
+
+    if (paymentMethod === 'online') {
+      sessionStorage.setItem('checkoutDraft', JSON.stringify(payload));
+      navigate('/pay/upi', {
+        state: {
+          amount: finalTotal.toFixed(2),
+          note: `SAMBX order payment - ${shipping.firstName || 'Customer'}`,
+        },
+      });
+      return;
+    }
+
     setLoading(true);
 
     try {
-      const payload = {
-        items: cart.map((item) => ({
-          productId: item.id,
-          name: item.name,
-          price: item.price,
-          quantity: item.quantity,
-          image: item.images?.[0] || '',
-        })),
-
-        shipping,
-
-        payment: {
-          method: paymentMethod,
-          codCharge,
-        },
-
-        subtotal: cartTotal,
-        total: finalTotal,
-      };
+      sessionStorage.removeItem('checkoutDraft');
 
       const response = await postOrder(payload);
 
@@ -697,7 +709,9 @@ export default function Checkout() {
                   size="lg"
                   disabled={loading}
                 >
-                  {loading
+                  {paymentMethod === 'online'
+                    ? 'Proceed to UPI Payment'
+                    : loading
                     ? 'Placing Order...'
                     : 'Place Order'}
                 </Button>
@@ -709,4 +723,3 @@ export default function Checkout() {
     </div>
   );
 }
-

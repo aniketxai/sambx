@@ -39,7 +39,7 @@ export function ProductEditModal({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
+            className="fixed inset-0 z-50 flex items-start sm:items-center justify-center px-4 py-10 sm:py-12"
           >
             <div className="w-full max-w-2xl max-h-[90vh] rounded-[28px] border border-white/8 bg-linear-to-br from-white/8 to-white/4 backdrop-blur-xl shadow-2xl overflow-hidden flex flex-col">
               
