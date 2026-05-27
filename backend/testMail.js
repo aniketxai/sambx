@@ -25,7 +25,7 @@ try {
     text: 'Mail working successfully',
   });
 
-  console.log(info);
+  
 } catch (err) {
-  console.log(err);
+  
 }

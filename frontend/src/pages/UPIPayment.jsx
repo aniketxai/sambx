@@ -5,6 +5,9 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { postOrder } from '../api';
 import { useApp } from '../context/useApp';
 
+const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+
 function readCheckoutDraft() {
   try {
     const raw = sessionStorage.getItem('checkoutDraft');
@@ -29,16 +32,19 @@ export default function UPIPayment() {
   const [vpa, setVpa] = useState(DEFAULT_VPA);
   const [name, setName] = useState(DEFAULT_NAME);
   const [amount, setAmount] = useState(
-    checkoutState.amount || storedDraft?.total?.toFixed?.(2) || storedDraft?.total || '100.00'
+    // Only use checkout state or stored draft total. If neither exists, leave empty to avoid showing a default amount.
+    checkoutState.amount ?? (storedDraft?.total != null ? (Number(storedDraft.total).toFixed?.(2) ?? String(storedDraft.total)) : '')
   );
   const [note, setNote] = useState(
     checkoutState.note ||
     (storedDraft?.shipping
       ? `SAMBX order payment - ${[storedDraft.shipping.firstName, storedDraft.shipping.lastName].filter(Boolean).join(' ').trim() || 'Customer'}`
-      : DEFAULT_NOTE)
+      : '')
   );
   const [copied, setCopied] = useState(false);
+  const [paymentScreenshotFile, setPaymentScreenshotFile] = useState(null);
   const [paymentScreenshot, setPaymentScreenshot] = useState(null);
+  const [paymentScreenshotName, setPaymentScreenshotName] = useState('');
   const [paymentReference, setPaymentReference] = useState('');
   const [paymentSubmitted, setPaymentSubmitted] = useState(false);
   const [placingOrder, setPlacingOrder] = useState(false);
@@ -74,10 +80,12 @@ export default function UPIPayment() {
   );
 
   useEffect(() => {
+    // Remove query string if present and preserve state navigation
     if (window.location.search) {
       navigate('/pay/upi', { replace: true, state: checkoutState });
     }
 
+    // If there is a valid checkout draft, populate amount and note
     if (hasValidCheckoutDraft) {
       const nextAmount = Number(checkoutDraft.total || 0);
       if (!Number.isNaN(nextAmount) && nextAmount > 0) {
@@ -91,6 +99,11 @@ export default function UPIPayment() {
 
       if (customerName) {
         setNote(`SAMBX order payment - ${customerName}`);
+      }
+    } else {
+      // No valid draft or amount provided — redirect back to checkout to prevent accidental payment page access
+      if (!checkoutState.amount) {
+        navigate('/checkout', { replace: true });
       }
     }
   }, [checkoutDraft, hasValidCheckoutDraft, navigate, checkoutState]);
@@ -114,9 +127,46 @@ export default function UPIPayment() {
   const handleScreenshotChange = (event) => {
     const file = event.target.files?.[0] || null;
     if (file) {
+      if (paymentScreenshot) {
+        URL.revokeObjectURL(paymentScreenshot);
+      }
+
+      setPaymentScreenshotFile(file);
       setPaymentScreenshot(URL.createObjectURL(file));
+      setPaymentScreenshotName(file.name || 'payment-proof');
       setPaymentSubmitted(false);
     }
+  };
+
+  const uploadPaymentScreenshot = async (file) => {
+    if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_UPLOAD_PRESET) {
+      throw new Error('Payment screenshot upload is not configured.');
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+
+    const response = await fetch(
+      `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
+      {
+        method: 'POST',
+        body: formData,
+      }
+    );
+
+    if (!response.ok) {
+      let message = 'Screenshot upload failed';
+      try {
+        const data = await response.json();
+        message = data?.error?.message || message;
+      } catch {
+        message = response.statusText || message;
+      }
+      throw new Error(message);
+    }
+
+    return response.json();
   };
 
   const handleMarkPaid = () => {
@@ -131,6 +181,16 @@ export default function UPIPayment() {
       return;
     }
 
+    if (!paymentScreenshot) {
+      setPlaceOrderError('Please upload a payment screenshot before placing the order.');
+      return;
+    }
+
+    if (!paymentScreenshotFile) {
+      setPlaceOrderError('Please re-upload the payment screenshot and try again.');
+      return;
+    }
+
     if (!hasValidCheckoutDraft) {
       setPlaceOrderError('Checkout details are missing. Please return to checkout first.');
       return;
@@ -139,12 +199,32 @@ export default function UPIPayment() {
     setPlacingOrder(true);
 
     try {
-      const response = await postOrder(checkoutDraft);
+      const uploadResult = await uploadPaymentScreenshot(paymentScreenshotFile);
+      const screenshotUrl = uploadResult?.secure_url || uploadResult?.url || '';
+
+      const payload = {
+        ...checkoutDraft,
+        payment: {
+          ...(checkoutDraft.payment || {}),
+          method: checkoutDraft.payment?.method || 'online',
+          reference: paymentReference.trim(),
+          screenshotUrl,
+          screenshotName: paymentScreenshotName,
+          verified: false,
+        },
+        notes: [checkoutDraft.notes, paymentReference.trim() ? `UPI Ref: ${paymentReference.trim()}` : '']
+          .filter(Boolean)
+          .join('\n'),
+      };
+
+      const response = await postOrder(payload);
+      
       setOrderNumber(response?.data?.orderNumber || '');
       clearCart();
       sessionStorage.removeItem('checkoutDraft');
       setOrderPlaced(true);
     } catch (err) {
+      console.error('Order error:', err);
       setPlaceOrderError(err?.message || 'Unable to place order. Please try again.');
     } finally {
       setPlacingOrder(false);
@@ -197,7 +277,7 @@ export default function UPIPayment() {
 
               <a
                 href={upiUri}
-                className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-semibold text-white transition hover:brightness-110 sm:w-auto"
+                className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/8 bg-white/5 px-5 py-3 text-sm font-semibold text-foreground transition hover:bg-white/10 sm:w-auto"
               >
                 <Smartphone className="h-4 w-4" />
                 Open in UPI app
@@ -283,7 +363,12 @@ export default function UPIPayment() {
                     <button
                       type="button"
                       onClick={() => {
+                        if (paymentScreenshot) {
+                          URL.revokeObjectURL(paymentScreenshot);
+                        }
+                        setPaymentScreenshotFile(null);
                         setPaymentScreenshot(null);
+                        setPaymentScreenshotName('');
                         setPaymentReference('');
                         setPaymentSubmitted(false);
                       }}

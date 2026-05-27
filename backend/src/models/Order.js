@@ -32,6 +32,10 @@ const paymentSchema = new mongoose.Schema(
   {
     method: { type: String, default: 'card' },
     last4: { type: String, default: '' },
+    reference: { type: String, default: '' },
+    screenshotUrl: { type: String, default: '' },
+    screenshotName: { type: String, default: '' },
+    verified: { type: Boolean, default: false },
   },
   { _id: false }
 );

@@ -135,7 +135,7 @@ export default function Footer() {
         window.open('https://sambx.vercel.app/', '_blank');
       }
     } catch (err) {
-      console.log("Share cancelled or failed", err);
+      
     } finally {
       setIsSharing(false);
     }

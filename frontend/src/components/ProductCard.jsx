@@ -13,13 +13,12 @@ export default function ProductCard({ product, index = 0 }) {
   const imageSrc = product.images?.[0] || 'https://via.placeholder.com/600x600?text=No+Image';
 
   const handleWishlistToggle = () => {
-    console.log('Wishlist toggle clicked for:', product.id);
-    console.log('Current wishlist:', wishlist);
+    
     toggleWishlist(product);
   };
 
   const handleAddToCart = () => {
-    console.log('Add to cart clicked for:', product);
+    
     addToCart(product);
   };
 

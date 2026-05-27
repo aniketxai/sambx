@@ -71,7 +71,7 @@ router.post('/import-products', upload.single('file'), async (req, res) => {
       return res.status(400).json({ error: 'JSON must contain an array of products' });
     }
 
-    console.log(`\n📦 Starting import of ${jsonData.length} products...`);
+    console.info(`\n📦 Starting import of ${jsonData.length} products...`);
 
     let successCount = 0;
     let errorCount = 0;

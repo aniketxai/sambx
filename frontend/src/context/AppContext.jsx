@@ -104,7 +104,6 @@ export function AppProvider({ children }) {
   // Save state to localStorage whenever it changes
   useEffect(() => {
     try {
-      console.log('Saving app state:', state);
       localStorage.setItem('appState', JSON.stringify(state));
     } catch (error) {
       console.error('Failed to save state to localStorage:', error);

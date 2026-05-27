@@ -63,7 +63,7 @@ async function importProducts(jsonFilePath) {
       throw new Error('JSON file must contain an array of products');
     }
 
-    console.log(`\n📦 Starting import of ${products.length} products...\n`);
+    console.info(`\n📦 Starting import of ${products.length} products...\n`);
 
     let successCount = 0;
     let errorCount = 0;
@@ -73,7 +73,7 @@ async function importProducts(jsonFilePath) {
     for (let i = 0; i < products.length; i++) {
       const product = products[i];
       try {
-        console.log(`[${i + 1}/${products.length}] Processing: ${product.name}`);
+        console.info(`[${i + 1}/${products.length}] Processing: ${product.name}`);
 
         let imageUrl = null;
 
@@ -82,15 +82,15 @@ async function importProducts(jsonFilePath) {
           try {
             // Check if it's a data URL (base64)
             if (product.img.startsWith('data:')) {
-              console.log(`  └─ Uploading image to Cloudinary...`);
+              console.info(`  └─ Uploading image to Cloudinary...`);
               const imageBuffer = dataURLtoBuffer(product.img);
               const fileName = `${product.id}-${Date.now()}.jpg`;
               imageUrl = await uploadToCloudinary(imageBuffer, fileName);
-              console.log(`  └─ ✓ Image uploaded: ${imageUrl.substring(0, 60)}...`);
+              console.info(`  └─ ✓ Image uploaded: ${imageUrl.substring(0, 60)}...`);
             } else if (product.img.startsWith('http')) {
               // If it's already a URL, use it directly
               imageUrl = product.img;
-              console.log(`  └─ Using existing URL: ${imageUrl.substring(0, 60)}...`);
+              console.info(`  └─ Using existing URL: ${imageUrl.substring(0, 60)}...`);
             }
           } catch (imgError) {
             console.warn(`  └─ ⚠ Image upload failed, continuing without image: ${imgError.message}`);
@@ -114,7 +114,7 @@ async function importProducts(jsonFilePath) {
 
         // Save to database
         await newProduct.save();
-        console.log(`  └─ ✓ Saved to database`);
+        console.info(`  └─ ✓ Saved to database`);
         successCount++;
       } catch (error) {
         errorCount++;
@@ -130,20 +130,20 @@ async function importProducts(jsonFilePath) {
     }
 
     // Print summary
-    console.log(`\n${'='.repeat(60)}`);
-    console.log(`📊 Import Summary`);
-    console.log(`${'='.repeat(60)}`);
-    console.log(`✓ Successfully imported: ${successCount}/${products.length}`);
-    console.log(`✗ Failed: ${errorCount}/${products.length}`);
+    console.info(`\n${'='.repeat(60)}`);
+    console.info(`📊 Import Summary`);
+    console.info(`${'='.repeat(60)}`);
+    console.info(`✓ Successfully imported: ${successCount}/${products.length}`);
+    console.info(`✗ Failed: ${errorCount}/${products.length}`);
 
     if (errors.length > 0) {
-      console.log(`\n⚠️  Errors encountered:`);
+      console.info(`\n⚠️  Errors encountered:`);
       errors.forEach((error, idx) => {
-        console.log(`  ${idx + 1}. ${error}`);
+        console.info(`  ${idx + 1}. ${error}`);
       });
     }
 
-    console.log(`${'='.repeat(60)}\n`);
+    console.info(`${'='.repeat(60)}\n`);
 
     return {
       success: successCount,
@@ -161,9 +161,9 @@ async function importProducts(jsonFilePath) {
 const args = process.argv.slice(2);
 const jsonFilePath = args[0] || path.join(__dirname, '../../sambx-catalogue.json');
 
-console.log(`\n🚀 Product Import Script`);
-console.log(`📁 File: ${jsonFilePath}`);
-console.log(`☁️  Cloudinary: ${CLOUDINARY_CLOUD_NAME}`);
+console.info(`\n🚀 Product Import Script`);
+console.info(`📁 File: ${jsonFilePath}`);
+console.info(`☁️  Cloudinary: ${CLOUDINARY_CLOUD_NAME}`);
 
 if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_UPLOAD_PRESET) {
   console.error(

@@ -299,6 +299,13 @@ export async function updateOrderStatus(id, status) {
   });
 }
 
+export async function updateOrderPaymentVerification(id, payload) {
+  return requestJson(`/api/admin/orders/${encodeURIComponent(id)}/payment`, {
+    method: 'PATCH',
+    body: payload,
+  });
+}
+
 export async function cancelOrder(id, cancellationReason = '') {
   return requestJson(`/api/orders/${encodeURIComponent(id)}/cancel`, {
     method: 'PATCH',
@@ -467,6 +474,7 @@ export default {
   deleteAdminProduct,
   fetchAdminOrders,
   updateOrderStatus,
+  updateOrderPaymentVerification,
   fetchAdminQuotes,
   updateQuoteStatus,
   fetchAdminCustomOrders,

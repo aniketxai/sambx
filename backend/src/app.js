@@ -30,12 +30,9 @@ function isAllowedOrigin(origin) {
 
 const corsOptions = {
   origin: (origin, callback) => {
-    console.log('Incoming request origin:', origin);
-
     if (isAllowedOrigin(origin)) {
       return callback(null, true);
     }
-
     console.warn('Blocked by CORS:', origin);
     return callback(new Error('Not allowed by CORS'));
   },
@@ -46,10 +43,8 @@ const corsOptions = {
 };
 
 /* =========================
-   CORS SETUP
+  CORS SETUP
 ========================= */
-console.log('CORS_ORIGIN env:', process.env.CORS_ORIGIN);
-console.log('Allowed Origins:', allowedOrigins);
 
 app.use(cors(corsOptions));
 

@@ -9,7 +9,7 @@ async function start() {
 
   const startServer = (port) => {
     const server = app.listen(port, () => {
-      console.log(`SAMBX API listening on port ${port}`);
+      console.info(`SAMBX API listening on port ${port}`);
     });
 
     server.on('error', (error) => {

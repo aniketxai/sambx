@@ -383,28 +383,28 @@ export async function sendContactNotificationEmail(contact) {
     const recipient = buildRecipient();
 
     if (!transport) {
-      console.log('SMTP NOT CONFIGURED: check SMTP_HOST, SMTP_PORT, SMTP_USER, and SMTP_PASS');
-      console.log('SMTP NOT CONFIGURED');
+      console.info('SMTP NOT CONFIGURED: check SMTP_HOST, SMTP_PORT, SMTP_USER, and SMTP_PASS');
+      console.info('SMTP NOT CONFIGURED');
       return null;
     }
 
     if (!process.env.ORDER_NOTIFICATION_EMAIL) {
-      console.log('ORDER_NOTIFICATION_EMAIL is missing');
+      console.info('ORDER_NOTIFICATION_EMAIL is missing');
       return null;
     }
 
-    console.log('Sending contact email to:', recipient);
+    console.info('Sending contact email to:', recipient);
 
     await transport.verify();
 
     await transport.sendMail(buildContactEmail(contact));
 
-    console.log('CONTACT MAIL SENT');
+    console.info('CONTACT MAIL SENT');
 
     return true;
   } catch (error) {
-    console.log('CONTACT EMAIL ERROR');
-    console.log(error);
+    console.info('CONTACT EMAIL ERROR');
+    console.error(error);
 
     return null;
   }
@@ -415,13 +415,13 @@ export async function sendOrderNotificationEmail(order) {
     const transport = buildTransport();
 
     if (!transport) {
-      console.log('SMTP NOT CONFIGURED');
+      console.info('SMTP NOT CONFIGURED');
       return null;
     }
 
     await transport.verify();
 
-    console.log('SMTP CONNECTED');
+    console.info('SMTP CONNECTED');
 
     // ADMIN EMAIL
     const adminMail = buildOrderEmail(order);
@@ -436,7 +436,7 @@ export async function sendOrderNotificationEmail(order) {
         process.env.SMTP_USER,
     });
 
-    console.log('ADMIN MAIL SENT');
+    console.info('ADMIN MAIL SENT');
 
     // CUSTOMER EMAIL
     if (order.shipping.email) {
@@ -597,14 +597,14 @@ export async function sendOrderNotificationEmail(order) {
         `,
       });
 
-      console.log('CUSTOMER MAIL SENT');
+      console.info('CUSTOMER MAIL SENT');
     }
 
     return true;
 
   } catch (error) {
-    console.log('EMAIL ERROR');
-    console.log(error);
+    console.info('EMAIL ERROR');
+    console.error(error);
 
     return null;
   }
@@ -615,7 +615,7 @@ export async function sendCustomEmail({ to, subject, text, html, from, replyTo }
     const transport = buildTransport();
 
     if (!transport) {
-      console.log('SMTP NOT CONFIGURED: cannot send custom email');
+      console.info('SMTP NOT CONFIGURED: cannot send custom email');
       return null;
     }
 
@@ -632,10 +632,10 @@ export async function sendCustomEmail({ to, subject, text, html, from, replyTo }
 
     await transport.sendMail(mail);
 
-    console.log('CUSTOM MAIL SENT to', to);
+    console.info('CUSTOM MAIL SENT to', to);
     return true;
   } catch (error) {
-    console.log('CUSTOM EMAIL ERROR', error);
+    console.error('CUSTOM EMAIL ERROR', error);
     return null;
   }
 }
@@ -645,7 +645,7 @@ export async function sendOrderCancellationEmail(order, cancellationReason = '')
     const transport = buildTransport();
 
     if (!transport) {
-      console.log('SMTP NOT CONFIGURED');
+      console.info('SMTP NOT CONFIGURED');
       return null;
     }
 
@@ -655,7 +655,7 @@ export async function sendOrderCancellationEmail(order, cancellationReason = '')
     const customerEmail = order.shipping.email;
 
     if (!customerEmail) {
-      console.log('Customer email not available');
+      console.info('Customer email not available');
       return null;
     }
 
@@ -824,7 +824,7 @@ export async function sendOrderCancellationEmail(order, cancellationReason = '')
       `,
     });
 
-    console.log('ADMIN CANCELLATION MAIL SENT');
+    console.info('ADMIN CANCELLATION MAIL SENT');
 
     // CUSTOMER NOTIFICATION
     await transport.sendMail({
@@ -980,12 +980,12 @@ export async function sendOrderCancellationEmail(order, cancellationReason = '')
       `,
     });
 
-    console.log('CUSTOMER CANCELLATION MAIL SENT');
+    console.info('CUSTOMER CANCELLATION MAIL SENT');
 
     return true;
   } catch (error) {
-    console.log('CANCELLATION EMAIL ERROR');
-    console.log(error);
+    console.info('CANCELLATION EMAIL ERROR');
+    console.error(error);
     return null;
   }
 }
@@ -999,9 +999,9 @@ export async function sendCustomOrderNotificationEmail(customOrder) {
       return null;
     }
 
-    console.log('🔄 Verifying SMTP connection...');
+    console.info('🔄 Verifying SMTP connection...');
     await transport.verify();
-    console.log('✅ SMTP connection verified');
+    console.info('✅ SMTP connection verified');
 
     const recipient = buildRecipient();
     const from =
@@ -1009,7 +1009,7 @@ export async function sendCustomOrderNotificationEmail(customOrder) {
       process.env.SMTP_USER ||
       'no-reply@sambx.local';
 
-    console.log(`📧 Preparing email to: ${recipient}`);
+    console.info(`📧 Preparing email to: ${recipient}`);
 
     const fileInfo = customOrder.fileUrl
       ? `<p><strong>File Uploaded:</strong> ${customOrder.fileName} (${(customOrder.fileSize / 1024).toFixed(2)} KB)</p>`
@@ -1087,7 +1087,7 @@ export async function sendCustomOrderNotificationEmail(customOrder) {
       </div>
     `;
 
-    console.log(`📤 Sending email with subject: "New Custom Order - ${customOrder.orderNumber}"`);
+    console.info(`📤 Sending email with subject: "New Custom Order - ${customOrder.orderNumber}"`);
     
     const result = await transport.sendMail({
       from,
@@ -1115,8 +1115,8 @@ Please review this order in your admin panel and send a quote within 24-48 hours
       `,
     });
 
-    console.log('✅ CUSTOM ORDER NOTIFICATION EMAIL SENT');
-    console.log(`📬 Message ID: ${result.messageId}`);
+    console.info('✅ CUSTOM ORDER NOTIFICATION EMAIL SENT');
+    console.info(`📬 Message ID: ${result.messageId}`);
     return true;
   } catch (error) {
     console.error('❌ CUSTOM ORDER EMAIL ERROR');

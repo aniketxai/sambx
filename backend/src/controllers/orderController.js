@@ -16,6 +16,8 @@ const createOrder = asyncHandler(async (req, res) => {
     notes = '',
   } = req.body;
 
+  
+
   if (!Array.isArray(items) || items.length === 0) {
     res.status(400);
     throw new Error('Order items are required');
@@ -60,6 +62,13 @@ const createOrder = asyncHandler(async (req, res) => {
     payment.method ?? 'online'
   ).toLowerCase();
 
+  const paymentReference = String(payment.reference ?? payment.paymentReference ?? '').trim();
+  const paymentScreenshotUrl = String(payment.screenshotUrl ?? payment.screenshot ?? '').trim();
+  const paymentScreenshotName = String(payment.screenshotName ?? payment.paymentScreenshotName ?? '').trim();
+  const paymentVerified = Boolean(payment.verified ?? false);
+
+  
+
   const codCharge =
     paymentMethod === 'cod' ? 100 : 0;
 
@@ -84,7 +93,11 @@ const createOrder = asyncHandler(async (req, res) => {
     shipping: normalizedShipping,
     payment: {
       method: paymentMethod,
-      codCharge,
+      last4: String(payment.last4 ?? '').trim(),
+      reference: paymentReference,
+      screenshotUrl: paymentScreenshotUrl,
+      screenshotName: paymentScreenshotName,
+      verified: paymentVerified,
     },
     subtotal,
     shippingFee,
@@ -93,6 +106,8 @@ const createOrder = asyncHandler(async (req, res) => {
     status: 'pending',
     notes: String(notes ?? '').trim(),
   });
+
+  
 
   await sendOrderNotificationEmail(order);
 

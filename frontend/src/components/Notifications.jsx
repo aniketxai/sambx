@@ -1,3 +1,4 @@
+import React, { forwardRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { CheckCircle2, Heart, ShoppingCart, Sparkles, X } from 'lucide-react';
@@ -30,7 +31,7 @@ const themeMap = {
   },
 };
 
-function NotificationToast({ notification, onClose }) {
+const NotificationToast = forwardRef(function NotificationToast({ notification, onClose }, ref) {
   const navigate = useNavigate();
   const Icon = iconMap[notification.icon] || Sparkles;
   const theme = themeMap[notification.type] || themeMap.success;
@@ -44,6 +45,7 @@ function NotificationToast({ notification, onClose }) {
 
   return (
     <motion.div
+      ref={ref}
       layout
       initial={{ opacity: 0, y: -14, scale: 0.96 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -84,7 +86,7 @@ function NotificationToast({ notification, onClose }) {
       </div>
     </motion.div>
   );
-}
+});
 
 export default function Notifications() {
   const { notifications, removeNotification } = useApp();

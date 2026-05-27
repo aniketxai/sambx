@@ -9,6 +9,7 @@ import {
   listAdminQuotes,
   updateContactStatus,
   updateOrderStatus,
+  updateOrderPaymentVerification,
   updateAdminProduct,
   updateQuoteStatus,
   replyToContact,
@@ -29,6 +30,7 @@ router.delete('/products/:id', deleteAdminProduct);
 
 router.get('/orders', listAdminOrders);
 router.patch('/orders/:id/status', updateOrderStatus);
+router.patch('/orders/:id/payment', updateOrderPaymentVerification);
 
 router.get('/custom-orders', listAdminCustomOrders);
 router.patch('/custom-orders/:id/status', updateCustomOrderStatus);

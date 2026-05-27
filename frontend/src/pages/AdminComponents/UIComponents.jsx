@@ -1,7 +1,7 @@
 export function MiniFeature({ icon: Icon, text }) {
   return (
     <div className="inline-flex items-center gap-2 rounded-2xl border border-white/8 bg-white/4 px-3 py-2">
-      <Icon className="w-[14px] h-[14px] text-primary shrink-0" />
+      <Icon className="w-3.5 h-3.5 text-primary shrink-0" />
       <span>{text}</span>
     </div>
   );
@@ -41,7 +41,7 @@ export function AlertRow({ icon: Icon, title, value }) {
     <div className="flex items-center justify-between gap-3 rounded-2xl border border-white/8 bg-white/4 px-3 py-3">
       <div className="flex items-center gap-3 min-w-0">
         <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/15 text-primary">
-          <Icon className="w-[16px] h-[16px]" />
+          <Icon className="w-4 h-4" />
         </div>
         <p className="text-sm text-secondary-text truncate">{title}</p>
       </div>
@@ -68,7 +68,8 @@ export function formatPaymentValue(payment) {
   if (typeof payment === 'object') {
     const method = payment.method ? String(payment.method).toUpperCase() : '';
     const last4 = payment.last4 ? ` •••• ${payment.last4}` : '';
-    return `${method}${last4}`.trim() || 'N/A';
+    const ref = payment.reference ? ` • ${payment.reference}` : '';
+    return `${method}${last4}${ref}`.trim() || 'N/A';
   }
   return String(payment);
 }

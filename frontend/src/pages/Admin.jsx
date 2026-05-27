@@ -187,14 +187,7 @@ const loadAdminData = useCallback(async ({ showLoading = true } = {}) => {
       setAdminQuotes(quotesData);
       setAdminContacts(contactsData);
       
-      console.log('Admin Data Loaded:', {
-        summaryData,
-        productsData,
-        ordersData,
-        customOrdersData,
-        quotesData,
-        contactsData,
-      });
+      
 
       const recentActivity = [
         ...(customOrdersData.slice(0, 1).map((co) => ({
@@ -490,6 +483,34 @@ const loadAdminData = useCallback(async ({ showLoading = true } = {}) => {
     } catch (err) {
       console.error('Failed to update order status:', err);
       setError(err.message || 'Failed to update order status');
+    } finally {
+      setSavingOrderId(null);
+    }
+  }, [refreshData]);
+
+  const handlePaymentVerificationSave = useCallback(async (orderId, verified, paymentData = {}) => {
+    if (!orderId) return;
+
+    try {
+      setSavingOrderId(orderId);
+      setError(null);
+      setSuccessMessage(null);
+      const result = await api.updateOrderPaymentVerification(orderId, {
+        verified,
+        ...paymentData,
+      });
+      const updatedOrder = result?.data || null;
+      if (updatedOrder) {
+        setAdminOrders((prevOrders) =>
+          prevOrders.map((order) => (order._id === updatedOrder._id ? updatedOrder : order))
+        );
+        setSelectedOrder(updatedOrder);
+      }
+      setSuccessMessage(verified ? 'Payment marked verified' : 'Payment marked unverified');
+      await refreshData();
+    } catch (err) {
+      console.error('Failed to update payment verification:', err);
+      setError(err.message || 'Failed to update payment verification');
     } finally {
       setSavingOrderId(null);
     }
@@ -969,6 +990,7 @@ if (!isAuthenticated) {
             setSelectedOrder(null);
           }}
           onOrderUpdated={handleOrderUpdated}
+          onPaymentVerificationSave={handlePaymentVerificationSave}
         />
       </div>
     </div>

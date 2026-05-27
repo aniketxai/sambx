@@ -335,6 +335,36 @@ export const updateOrderStatus = asyncHandler(async (req, res) => {
   res.json({ success: true, message: 'Order status updated', data: updated });
 });
 
+export const updateOrderPaymentVerification = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { verified, screenshotUrl, screenshotName, reference } = req.body;
+
+  const update = {
+    ...(typeof verified !== 'undefined' ? { 'payment.verified': Boolean(verified) } : {}),
+    ...(typeof screenshotUrl === 'string' ? { 'payment.screenshotUrl': screenshotUrl.trim() } : {}),
+    ...(typeof screenshotName === 'string' ? { 'payment.screenshotName': screenshotName.trim() } : {}),
+    ...(typeof reference === 'string' ? { 'payment.reference': reference.trim() } : {}),
+  };
+
+  if (!Object.keys(update).length) {
+    res.status(400);
+    throw new Error('No payment fields provided');
+  }
+
+  const updated = await Order.findByIdAndUpdate(
+    id,
+    { $set: update },
+    { new: true, runValidators: true }
+  ).lean();
+
+  if (!updated) {
+    res.status(404);
+    throw new Error('Order not found');
+  }
+
+  res.json({ success: true, message: 'Payment updated', data: updated });
+});
+
 export const listAdminQuotes = asyncHandler(async (req, res) => {
   const filter = {};
 
@@ -464,14 +494,14 @@ export const listAdminCustomOrders = asyncHandler(async (req, res) => {
     query.status = status;
   }
 
-  console.log('[ADMIN] Fetching custom orders with query:', query, 'sort:', sort);
+  
 
   const orders = await CustomOrder.find(query)
     .sort(sort)
     .lean()
     .maxTimeMS(5000);
 
-  console.log('[ADMIN] Found custom orders:', orders.length);
+  
 
   res.json({ success: true, data: orders || [] });
 });

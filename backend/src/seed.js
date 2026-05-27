@@ -51,7 +51,7 @@ export async function seedProducts(productsToSeed = []) {
 
   await Product.deleteMany({});
   const inserted = await Product.insertMany(productsToSeed);
-  console.log(`Replaced products collection with ${inserted.length} products`);
+  console.info(`Replaced products collection with ${inserted.length} products`);
 }
 
 async function run() {
