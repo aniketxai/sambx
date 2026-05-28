@@ -73,6 +73,8 @@ const emptyProductForm = {
   stockQty: '',
   featured: false,
   inStock: true,
+  netWeight: '',
+  netWeightUnit: 'g',
 };
 
 const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
@@ -355,6 +357,8 @@ const loadAdminData = useCallback(async ({ showLoading = true } = {}) => {
       images: Array.isArray(product.images) ? product.images.join(', ') : (product.images || ''),
       badge: product.badge || '',
       stockQty: product.stockQty ?? '',
+      netWeight: product.netWeight ?? '',
+      netWeightUnit: product.netWeightUnit || 'g',
       featured: Boolean(product.featured),
       inStock: Boolean(product.inStock),
     });
@@ -418,6 +422,8 @@ const loadAdminData = useCallback(async ({ showLoading = true } = {}) => {
       rating: productForm.rating === '' ? '' : Number(productForm.rating),
       reviews: productForm.reviews === '' ? '' : Number(productForm.reviews),
       stockQty: productForm.stockQty === '' ? '' : Number(productForm.stockQty),
+      netWeight: productForm.netWeight === '' ? null : Number(productForm.netWeight),
+      netWeightUnit: productForm.netWeightUnit || 'g',
       features: productForm.features,
       images: productForm.images,
       specifications: {},

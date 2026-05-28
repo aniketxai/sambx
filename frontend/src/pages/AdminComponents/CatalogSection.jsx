@@ -77,6 +77,7 @@ export function CatalogSection({
                   <tr>
                     <th className="px-4 py-3 font-semibold">Product</th>
                     <th className="px-4 py-3 font-semibold">Category</th>
+                    <th className="px-4 py-3 font-semibold">Net wt</th>
                     <th className="px-4 py-3 font-semibold">Price</th>
                     <th className="px-4 py-3 font-semibold">Rating</th>
                     <th className="px-4 py-3 font-semibold">Stock</th>
@@ -112,6 +113,7 @@ export function CatalogSection({
                         </div>
                       </td>
                       <td className="px-4 py-4 text-sm text-secondary-text">{product.category}</td>
+                      <td className="px-4 py-4 text-sm text-secondary-text">{product.netWeight ? `${product.netWeight}${product.netWeightUnit || 'g'}` : '-'}</td>
                       <td className="px-4 py-4 text-sm font-semibold text-foreground">{formatINR(product.price)}</td>
                       <td className="px-4 py-4">
                         <div className="inline-flex items-center gap-1 text-sm font-semibold text-amber-300">

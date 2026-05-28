@@ -141,6 +141,42 @@ export function ProductEditModal({
                   </label>
                 </div>
 
+                {/* Net Weight (admin-only) */}
+                <div className="grid gap-4 sm:grid-cols-3">
+                  <label className="block">
+                    <span className="mb-2 block text-xs uppercase tracking-[0.2em] text-outline">
+                      Net Weight
+                    </span>
+                    <input
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      value={form.netWeight}
+                      onChange={(e) => onChange('netWeight', e.target.value)}
+                      placeholder="e.g. 250"
+                      className="w-full rounded-2xl border border-white/8 bg-black/20 px-4 py-3 text-sm text-foreground outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
+                    />
+                  </label>
+
+                  <label className="block">
+                    <span className="mb-2 block text-xs uppercase tracking-[0.2em] text-outline">
+                      Unit
+                    </span>
+                    <select
+                      value={form.netWeightUnit}
+                      onChange={(e) => onChange('netWeightUnit', e.target.value)}
+                      className="w-full appearance-none rounded-2xl border border-white/8 bg-black/20 px-4 py-3 text-sm text-foreground outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
+                    >
+                      <option value="g">g</option>
+                      <option value="kg">kg</option>
+                    </select>
+                  </label>
+
+                  <div className="text-sm text-secondary-text p-3">
+                    Net weight is admin-only metadata used for pricing calculations.
+                  </div>
+                </div>
+
                 {/* Description */}
                 <label className="block">
                   <span className="mb-2 block text-xs uppercase tracking-[0.2em] text-outline">

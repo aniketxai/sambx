@@ -73,6 +73,8 @@ function toProductPayload(body = {}) {
     inStock: normalizeBoolean(body.inStock, true),
     stockQty: normalizeNumber(body.stockQty, 0),
     featured: normalizeBoolean(body.featured, false),
+    netWeight: typeof body.netWeight === 'undefined' || body.netWeight === '' ? null : normalizeNumber(body.netWeight),
+    netWeightUnit: body.netWeightUnit ? String(body.netWeightUnit).trim() : 'g',
   };
 }
 

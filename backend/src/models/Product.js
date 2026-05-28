@@ -14,6 +14,9 @@ const productSchema = new mongoose.Schema(
     description: { type: String, required: true },
     features: [{ type: String }],
     specifications: { type: specificationSchema, default: {} },
+    // Net weight is admin-only metadata used for price calculations
+    netWeight: { type: Number, default: null },
+    netWeightUnit: { type: String, default: 'g' },
     images: [{ type: String }],
     badge: { type: String, default: null },
     inStock: { type: Boolean, default: true },
